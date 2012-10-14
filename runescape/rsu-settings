@@ -1,0 +1,95 @@
+#!/usr/bin/perl -w
+
+# Be strict to avoid messy code
+use strict;
+
+# Use FindBin module to get script directory
+use FindBin;
+
+# Get script directory
+my $cwd = $FindBin::RealBin;
+# Get script filename
+my $scriptname = $FindBin::Script;
+# Detect the current OS
+my $OS = "$^O";
+
+# URL for the maclibs download
+my $maclib_url = "https://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/modules/darwin.tar.gz";
+
+# Perl command to launch the rsu-settings script with
+my $perl = "perl";
+
+# If we are running on darwin/MacOSX then
+if ($OS =~ /darwin/)
+{
+	$perl = "DYLD_FALLBACK_LIBRARY_PATH=\"$cwd/modules/darwin/perl/lib/site_perl/5.14.2/darwin-thread-multi-2level/Alien/wxWidgets/osx_cocoa_2_9_3_uni/lib\":\"$cwd/modules/darwin/perl/lib/5.14.2/darwin-thread-multi-2level/CORE\" PATH=\"$cwd/modules/darwin/perl/bin\":\$PATH PERL5LIB=\"$cwd/modules/darwin/perl/lib/site_perl/5.14.2/darwin-thread-multi-2level/\":\"$cwd/modules/darwin/perl/lib/site_perl/5.14.2/\":\"$cwd/modules/darwin/perl/lib/5.14.2/darwin-thread-multi-2level/\":\"$cwd/modules/darwin/perl/lib/5.14.2\" perl";
+}
+# Else if STATEMENT
+elsif($OS =~ /MSWin32/)
+{
+	$perl = "set PATH=$cwd\\win32\\perl\\bin;$cwd\\win32\\gnu\\;$cwd\\win32\\7-zip\\;%PATH% && perl";
+}
+else
+{
+	$perl = "perl";
+}
+
+	
+# run the script
+main();
+
+sub main
+{
+	# Make a variable to contain the directory list
+	my $maclibs;
+	
+	if ($OS =~ /darwin/)
+	{
+		# Get a list of files in the client directory
+		$maclibs = `ls "$cwd/modules"`;
+	}
+	
+	# If we are running on darwin/MacOSX
+	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
+	{
+		print "The rsu-settings requires extra libraries on MacOSX
+(because apple broke their own in 10.5 and up)
+So i have compiled the wxPerl module for use by this script to save you
+1 - 2 hours of your life.
+
+Is it ok for me to download these libraries into the client directory?
+Answer with yes or no (default = yes):";
+
+		# Wait for users answer
+		my $answer = <STDIN>;
+		
+		# If the user answers no
+		if ($answer =~ /(no|n)/i)
+		{
+			# Exit the script
+			exit;
+		}
+		else
+		{
+			fetchmaclibs();
+		}
+	}
+	
+	system "$perl \"$cwd/modules/settings\"";
+	exit
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub fetchmaclibs
+{
+	# Download the perl bundle containing the libraries
+	system "cd \"$cwd/modules\" && curl -o \"$cwd/modules/darwin.tar.gz\" $maclib_url && tar -zxvf \"$cwd/modules/darwin.tar.gz\" && rm \"$cwd/modules/darwin.tar.gz\"";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+

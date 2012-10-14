@@ -1,0 +1,171 @@
+#!/usr/bin/perl -w
+
+# Be strict to avoid messy code
+use strict;
+
+# Use FindBin module to get script directory
+use FindBin;
+
+# Get script directory
+my $cwd = $FindBin::Bin;
+# Get the homefolder 
+my $homedir = $ENV{"HOME"};
+# Detect the current OS
+my $OS = "$^O";
+
+# Kill script if we run on MacOSX or Windows, since this script is
+# made for unix platforms like linux, bsd and solaris (with exception of mac)
+die "Installing desktop icons works only on Linux, BSD, MacOSX and Solaris platforms
+I suggest you download the runescape client for your platform if you
+want it in the StartMenu.\n"
+if $OS =~ /(MSWin32)/;
+# End of the unsupported platform check
+
+# Check if we are root 
+my $isroot = `whoami`; 
+
+# Settings Start
+my $settings = {
+	# Name of the uninstaller
+	uninstaller => "uninstall-desktop-icons",
+	};
+
+# If we are on mac OSX
+if ($OS =~ /(darwin)/)
+{
+	# Run the make_osx_app function
+	make_osx_app();
+}
+# Else we are on other unix platforms
+else
+{
+	# run install_desktop_files function
+	install_desktop_files();
+}
+
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub install_desktop_files
+{
+	# Prepare an uninstall header
+	system "echo \"#!/bin/sh\" > /tmp/$settings->{uninstaller}";
+	
+	# Find the desktop file for symlinking
+    my $desktopfiles = `find $cwd/templates/launchers/ -name "*.conf"`;
+    
+    # Split the list by newlines
+    my @desktopfiles = split(/\n/, $desktopfiles);
+    
+    # Make a counter for the desktop files
+    my $desktopcounter = 0;
+    
+	# For each value in the array
+	foreach(@desktopfiles)
+	{
+		# Get the file content
+		my $content = `cat $desktopfiles[$desktopcounter]`;
+		
+		# Edit the desktop file correctly for system install
+		if ($isroot =~ /root/)
+		{
+			# Replace Icon= with Icon={PATH TO ICONS}
+			$content =~ s/Icon=/Icon=$cwd\/share\//;
+			
+			# Replace Exec= with Exec={PATH TO BINARY}
+			$content =~ s/Exec=/Exec=$cwd\//;
+			
+			# Fix parts using xterm
+			$content =~ s/Exec=$cwd\/xterm/Exec=xterm/;
+		}
+		# else if local install then edit the file for that
+		else
+		{
+			# Replace Icon= with Icon={PATH TO ICONS}
+			$content =~ s/Icon=/Icon=$cwd\/share\//;
+			
+			# Replace Exec= with Exec={PATH TO BINARY}
+			$content =~ s/Exec=/Exec=$cwd\//;
+			
+			# Fix parts using xterm
+			$content =~ s/Exec=$cwd\/xterm/Exec=xterm/;
+			$content =~ s/update-runescape-client/$cwd\/update-runescape-client/;
+		}
+		
+		# Get the filename
+		my $filename = $desktopfiles[$desktopcounter];
+		my @filename = split(/\//, $filename);
+		@filename = split(/\./, $filename[-1]);
+		
+		# Write a temp file
+		system("echo \"$content\" > /tmp/$filename[0].desktop");
+		
+		# Move the temp file to its proper location and make it executable
+		if ($isroot =~ /root/)
+		{
+			# Move the desktop file to the system applications folder
+			system("mv /tmp/$filename[0].desktop /usr/share/applications/ && chmod 755 /usr/share/applications/$filename[0].desktop && echo sudo rm -fv /usr/share/applications/$filename[0].desktop >> /tmp/$settings->{uninstaller}");
+		}
+		# Else
+		else
+		{
+			# Move the desktop file to the local applications folder
+			system("mv /tmp/$filename[0].desktop $homedir/.local/share/applications/ && chmod 755 $homedir/.local/share/applications/$filename[0].desktop && echo rm -fv $homedir/.local/share/applications/$filename[0].desktop >> /tmp/$settings->{uninstaller}");
+		}
+		
+		# Increase the counter by 1
+		$desktopcounter += 1;
+	}
+	
+	# Copy the uninstallscript to $cwd and make it executable
+	system("mv /tmp/$settings->{uninstaller} \"$cwd/\" && chmod 755 \"$cwd/$settings->{uninstaller}\"");
+}
+
+sub make_osx_app
+{
+	# Tell user what we are doing
+	print "Making application directory.\n";
+	
+	# Make the client directory
+	system "mkdir -v -p /Applications/RuneScape_Unix/";
+	
+	# Tell user what we are doing
+	print "\nCopying the template to the directory.\n";
+	
+	# Copy the template
+	system "cp -R -v \"$cwd/templates/darwin/RuneScape.app\" /Applications/RuneScape_Unix/";
+	
+	# Tell user what we are doing
+	print "\nCopying client files into the template.\n";
+	
+	# Copy the client files to the files directory 
+	system "cp -R -v \"$cwd/\"* /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/";
+	
+	# Tell user what we are doing
+	print "\nMaking symlinks to the runescape script and RSU icon\n";
+	
+	# Make symlinks to the RSU icon and the runescape script
+	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s runescape script && ln -s share/runescape.icns runescape.icns";
+	
+	# Tell user what we are doing
+	print "\nCreating a symlink to Resource folder so that the client files are easily accessable.\n";
+	
+	# Symlink the client files to the launcher
+	system "cd /Applications/RuneScape_Unix/ && ln -v -s RuneScape.app/Contents/Resources ./";
+	
+	# Tell user what we are doing
+	print "\nCreating symlink to the rsu-settings script\n";
+	
+	# Symlink the rsu-settings script to the RuneScape_Unix folder
+	system "cd /Applications/RuneScape_Unix/ && ln -s RuneScape.app/Contents/Resources/rsu-settings ./";
+	
+	# Tell user we are done
+	print "\n\nApplication launcher created and can be run from /Applications/RuneScape_Unix/\n";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+

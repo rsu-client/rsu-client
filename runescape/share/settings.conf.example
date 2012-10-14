@@ -1,0 +1,51 @@
+# THIS IS AN EXAMPLE FILE, THE CLIENT DOES NOT READ THIS FILE UNLESS IT
+# IS RENAMED TO settings.conf
+# THE FILE NAMED settings.conf WILL NOT BE OVERWRITTEN BY UPDATES!
+
+[Settings]
+# Change the value of this to use your own customized .prm file
+# that will not be overwritten by updates
+# If you have tweaks inside runescape.prm then rename it and put the new name here
+prmfile=runescape.prm
+
+# Choose your preferred java(if compabilitymode = 0 or false) and it works only on linux (custom path to java binary works on all unix platforms)
+# Available choices are: 6-openjdk, 7-openjdk, openjdk, default-java, /path/to/custom(or sun/oracle)/javabinary/java
+# 6-openjdk will force the client to use openjdk6
+# 7-openjdk will force the client to use openjdk7 (may cause unexpected problems since openjdk7 is not complete yet)
+# openjdk will make the client use the newest installed version of openjdk if it is available
+# default-java will choose the version of java available in $PATH or set by update-alternatives
+
+# To use a custom java binary just add the value (some distributions need to use this method because the one in the $PATH is a script file which cannot be probed)
+# /opt/jre1.7.0_04/bin/java will tell the script to use the java binary "/opt/jre1.7.0_04/bin/java" in order to launch the client
+# (this can be any path to a java BINARY, please do not point it to a script as that might cause off issues!)
+
+# NOTE: you can set your default java by running this command inside the terminal (without the quotes)
+# "sudo update-alternatives --config java"
+preferredjava=default-java
+
+# Special setting for windows support
+# default-java = probes for latest java and uses that and its libraries
+# 6 = use java 1.6.0_XX
+# 7 = use java 1.7.0_XX
+win32java.exe=default-java
+
+[Fixes]
+# Force java to use pulseaudio, this can fix several sound related
+# issues with the client (and the system if using sun/oracle java)
+# The final launch command will then be wrapped inside "padsp" so make sure that is installed
+# Set this to 1 or true to enable!
+forcepulseaudio=false
+
+# Force java to use alsa, this is much more stable than forcing pulseaudio on OpenJDK and Sun/Oracle java
+# However you must have alsa and alsa-oss installed
+# If both forcepulseaudio and forcealsa are set to true, then alsa will get priority over pulseaudio!
+# NOTE: this option only works on linux!
+forcealsa=true
+
+# Set compability to 1 or true to run the game through wine (requires java to be installed on wine)
+# Running the game through wine-java with this script gives very close to native performance (but limited java heap space)
+# and works as a workaround on some systems with bugged java+opengl support
+# causing you to not be able to switch to OpenGL mode(it will always fix certain sound issues)
+# NOTE: running the client in compability mode might not fix the OpenGL issue if you have a
+# graphic card from intel
+compabilitymode=false

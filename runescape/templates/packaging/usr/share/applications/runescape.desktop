@@ -1,0 +1,38 @@
+# HEADER! DO NOT REMOVE
+[Desktop Entry]
+Version=1.0
+
+# Application = GUI application, Terminal = Terminal application
+Type=Application
+
+# Name displayed in the menus and on shortcuts
+Name=RuneScape
+# Same as above but for KDE only
+GenericName=RuneScape
+
+# A hint about what the application is
+Comment=The RuneScape Unix Client
+
+# Which icon file to use
+Icon=/opt/runescape/share/runescape.png
+
+# Show terminal?
+Terminal=false
+
+# Executable binary file
+Exec=/opt/runescape/runescape
+
+# Menu cathegory (GTK, Development, IDE, Office, Application,
+# AudioVideo, Audio, Video, AudioVideoEditing, GNOME, Utility, 
+# TextEditor, Graphics, 2DGraphics, RasterGraphics, Emulator, System,
+# Settings, DesktopSettings, Filesystem)
+Categories=GNOME;GTK;Game;
+
+# Unity only support
+X-Ayatana-Desktop-Shortcuts=UpdateClient;
+
+[UpdateClient Shortcut Group]
+Name=Update Runescape Client
+Exec=xterm -e "/opt/runescape/update-runescape-client"
+#TargetEnvironment=Unity
+

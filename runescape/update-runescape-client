@@ -1,0 +1,481 @@
+#!/usr/bin/perl -w
+
+my $windowsurl = "http://www.runescape.com/downloads/runescape.msi";
+my $macurl = "http://www.runescape.com/downloads/runescape.dmg";
+
+# Be strict to avoid messy code
+use strict;
+
+# Use FindBin module to get script directory
+use FindBin;
+
+# Get script directory
+my $cwd = $FindBin::RealBin;
+
+# Make a variable to contain the client directory
+my $clientdir = $cwd;
+
+# Detect the current OS
+my $OS = "$^O";
+
+# Make a variable to contain the temponairly %PATH% variable
+my $win32path;
+
+# Make a variable to contain if the user ran script as root or not
+my $isroot;
+
+# Make a variable to contain the users home folder
+my $HOME;
+
+# If we are running on windows then
+if ($OS =~ /MSWin32/)
+{
+	# Replace / with \\
+	$cwd =~ s/\//\\\\/g;
+	
+	# Path variable to set in windows
+	$win32path = "set PATH=$cwd\\win32\\perl\\bin;$cwd\\win32\\gnu\\;$cwd\\win32\\7-zip\\;%PATH%";
+}
+# Else we are on unix
+else
+{
+	# Check if we are root
+	$isroot = `whoami`;
+	
+	# Get users homefolder
+	$HOME = $ENV{"HOME"};
+}
+
+
+# Make variable to contain the 7zip binary name
+my $zipbin = "7z";
+	
+# command to fetch the p7zip source
+my $fetchcommand = "wget -O";
+
+# Define the variable to wait for the user to press Enter to exit
+my $exit;
+			
+# If we are on mac osx we need to use curl
+if ($OS =~ /darwin/)
+{
+	# Curl command equalent to the wget command
+	$fetchcommand = "curl -L -o";
+}
+# Else if STATEMENT
+elsif($OS =~ /MSWin32/)
+{
+	# Set the temponairly PATH environment variable and add wget to the fetchcommand
+	$fetchcommand = "$win32path && wget -O";
+}
+
+# Check if updates requires root permission but we dont have it
+#if ($cwd =~ /^(\/opt*|\/usr\/s?bin*|\/bin*)/ && $isroot !~ /root/)
+#{
+	# if we are inside an interactive shell then
+#	if (-t STDOUT)
+#	{
+		# Run script as root
+#		system ("sudo perl \"$cwd/update-runescape-client\"");
+#	}
+#	else
+#	{
+		# run script in xterm so we can get input from user and with right permissions
+#		system ("xterm -e \"echo The client is in a location that requires && echo superuser permissions to change && sudo perl \\\"$cwd/update-runescape-client\\\"\"");
+#	}
+	# Exit once we are done
+#	exit
+#}
+
+
+# If we are inside an interactive shell then
+if (-t STDOUT)
+{
+	
+	# If this script have been installed systemwide
+	if ($cwd =~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+	{
+		# change $cwd to the system installation location
+		$cwd = "/opt/runescape";
+		
+		# change $clientdir to ~/.config/runescape
+		$clientdir = "$HOME/.config/runescape/";
+		
+		# Make the client folders
+		system "mkdir -p \"$HOME/.config/runescape/bin\" && mkdir -p \"$HOME/.config/runescape/share\"";
+	}
+
+	# run the script
+	main();
+}
+# else
+else
+{
+	# run script in xterm so we can get input from user
+	system ("xterm -e \"perl $cwd/update-runescape-client\"");
+}
+
+sub main
+{
+	# Show user a notice about jagexappletviewer.jar
+	print "Due to \"Legal Reasons\" the file jagexappletviewer.jar is not \navailable/downloadable in certain countries. For this script \nto work you must be able to download at LEAST one of the \nOfficial RuneScape Clients for extraction!\n\n";
+	
+	# Ask what type of update to run
+	print "What type of update do you want to run?\n [1] Update jagexappletviewer.jar(from Jagex) by using the\n     official Windows client, then ask to update the scripts. (default)\n\n [2] Update jagexappletviewer.jar(from Jagex) by using the\n     official MacOSX client(EXPERIMENTAL! but smaller download),\n     then ask to update the scripts.\n\n";
+	
+	# If the script is not located in /opt
+	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+	{
+		# Show the 3rd option
+		print " [3] Update the client scripts (from HikariKnight)\n\n";
+	}
+	
+	# Complete the message
+	print "Enter the number for your choice:";
+	
+	# Get user input
+	my $answer = <STDIN>;
+	
+	# If user answered 2 then run the script updater and exit
+	if ($answer =~ /^3/ && $cwd !~ /\/opt\/runescape/)
+	{
+		# Execute script updater
+		runscriptupdater();
+		
+		# Tell user the update is done
+		print "\nDone running the update process!\nPress Enter/Return to exit:";
+		
+		# Wait for user to press enter
+		$exit = <STDIN>;
+		
+		# Exit script
+		exit;
+	}
+	
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Make updating folder
+		system "mkdir \"$clientdir\\.updating\"";
+	}
+	# Else we are on unix
+	else
+	{
+		# Make updating folder
+		system "mkdir \"$clientdir/.updating\"";
+		
+		# Check if p7zip-full is installed, otherwise compile it
+		checkfor_p7zip();
+	}
+	
+	# If user entered "2" on the choices of what to update from
+	if ($answer =~ /^2/)
+	{
+		# Download and extract the jagexappletviewer from the official MacOSX client
+		updatefrommacclient();
+	}
+	# Else
+	else
+	{
+		# Download and extract the jagexappletviewer from the official windows client
+		updatefromwindowsclient();
+	}
+		
+	# Clean up based on operatingsystem
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Remove the .updating directory
+		system "cd \"$clientdir\" && rmdir /S /Q \"$clientdir\\.updating\"";
+	}
+	# Else we are on unix
+	else
+	{
+		system "cd \"$clientdir\" && rm -rf \"$clientdir/.updating/\"";
+	}
+	
+	# If the script is not located in a read only location for the user
+	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+	{
+		# Ask user if we shall update the scripts too
+		print "\nDo you want to update the RuneScape UNIX Client scripts too?\n[y/n] (default = y):";
+		
+		# Get user input
+		my $updatescripts = <STDIN>;
+		
+		# If user said yes or choose the default
+		if ($updatescripts !~ /^(n|N)/)
+		{
+			# Execute script updater
+			runscriptupdater();
+		}
+	}
+	
+	# Tell user the update is done
+	print "\nDone running the update process!\nPress Enter/Return to exit:";
+	
+	# Wait for user to press enter
+	$exit = <STDIN>;
+	
+	# Exit the script
+	exit;
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+# Read contents from a file and put it into a pointer
+sub ReadFile 
+{
+	# Gets passed data from the function call
+	my ($filename) = @_;
+
+	# Makes an array to keep the inputdata
+	my @inputdata;
+
+	# Opens the passed file, if error it dies with the message "Can't open filename"
+	open (my $FILE, "$filename") || die "Can not open $_!";
+
+	# While there is something in the file
+	while(<$FILE>)
+	{
+		# Skip problematic lines in the 7zip makefile
+		next if /^\s*\$\(MAKE\) -C CPP\/7zip\/Compress\/Rar/;
+		
+		# Push data into the inputdata array
+		push(@inputdata, $_)
+	}
+
+	# Close the file
+	close($FILE);
+
+	# Return the pointer to the datafile inputdata
+	return(\@inputdata);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub runscriptupdater
+{
+	# Make a newline so the output looks nicer
+	print "\n";
+	
+	# Run the script updater
+	if ($OS =~ /MSWin32/)
+	{
+		system "cd \"$cwd\" && $win32path && perl \"%CD%\\update-scripts\"";
+	}
+	else
+	{
+		system "\"$cwd/update-scripts\"";
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub get_p7zip
+{
+	# If we are running on freebsd we need to tell the user to install p7zip manually
+	if($OS =~ /freebsd/)
+	{
+		# Tell the user to install p7zip-full/p7zip from ports then re run this script
+		# p7zip have different makefiles for each freebsd version, the bsd ports include
+		# a freebsd prepared source unless p7zip-full is already installed by default
+		print "You are running a version of FreeBSD that comes without p7zip-full installed!\nPlease install p7zip/p7zip-full from ports,\nthen re run this script.\n\nPress ENTER/RETURN to exit:";
+		my $exit = <STDIN>;
+		exit;
+	}
+			
+	# Tell user that we did not find the 7z binary and offer to download and compile a local copy
+	print "I was unable to find the 7z binary!
+Please install the package p7zip-full from your package manager
+if you want it to be installen across your system.
+For compability reasons this script can download and compile
+p7zip-full for local usage of the client updater only!
+Doing so requires the packages gcc, make and g++.
+
+Is it ok for me to try download and compile the binary 
+for use in this and later updates?
+Answer (default = y) [y/n]:";
+	# Get users reply for the question above
+	my $installp7zip = <STDIN>;
+	
+	#If user said no then
+	if ($installp7zip =~ /(n|No)/i)
+	{
+		# Show user a final message and ask them to press ENTER/RETURN to exit
+		print "\nPlease use your package manager to install p7zip-full\nso that you can update the client.\nIf you cannot find p7zip-full then try install p7zip\nand then try run the command \"7z\".\nIf it is found then you have installed p7zip-full.\n\nPress ENTER/RETURN to exit:";
+		my $exit = <STDIN>;
+		exit;
+	}
+			
+	# Run the commands
+	system "mkdir \"$clientdir/p7zip-source\" && mkdir -p \"$clientdir/modules/7-zip/$OS/\$(uname -p)\" && $fetchcommand \"$clientdir/p7zip-source/p7zip_9.20.1_src_all.tar.bz2\" http://downloads.sourceforge.net/project/p7zip/p7zip/9.20.1/p7zip_9.20.1_src_all.tar.bz2 && cd \"$clientdir/p7zip-source/\" && tar -xvf \"$clientdir/p7zip-source/p7zip_9.20.1_src_all.tar.bz2\"";
+			
+	# Copy the correct makefile "header" to makefile.machine so it will build on our current system(p7zip default is linux)
+	# If we are on darwin/macosx
+	if ($OS =~ /darwin/)
+	{
+		# Use the 32bit makefile header, since the 64bit one lacks some libraries by default
+		system "cp \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.macosx_32bits_asm\" \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.machine\"";
+	}
+	# Else if we are on solaris (solaris comes with p7zip-full installed but still having this just incase)
+	elsif($OS =~ /solaris/)
+	{
+		# Check if we are on the sparc architecture
+		my $solarisarch = `uname -a`;
+				
+		# If we are on a sparc processor
+		if ($solarisarch =~ /sparc/)
+		{
+			# Use the sparc makefile "header"
+			system "cp \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.solaris_sparc_CC_32\" \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.machine\"";
+		}
+		# Else we are on either i386/i586/i686 or x86_64 processor
+		else
+		{
+			# Use the solaris makefile x86 header(the x86 version of solaris can run x64 code if the processor is capable of it)
+			system "cp \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.solaris_x86\" \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.machine\"";
+		}
+	}
+			
+			
+	# Now we need to "repair" the makefile and remove some stuff
+	# we cannot use (like rar support since it is not in the source)
+	# Read the makefile using ReadFile function that will skip the problematic lines
+	my $makefile = ReadFile("$clientdir/p7zip-source/p7zip_9.20.1/makefile");
+			
+	# Write the new makefile, overwriting the old one
+	#WriteFile("@$makefile", ">", "$cwd/p7zip-source/p7zip_9.20.1/makefile");
+	system "echo $makefile > \"$clientdir/p7zip-source/p7zip_9.20.1/makefile\"";
+			
+	# Compile the 7-zip source
+	system "cd \"$clientdir/p7zip-source/p7zip_9.20.1\" && make clean && make all3 && cp -v \"$clientdir/p7zip-source/p7zip_9.20.1/bin/\"* \"$clientdir/modules/7-zip/$OS/\$(uname -p)/\" && rm -rf \"$clientdir/p7zip-source/\"";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub updatefromwindowsclient
+{
+	# Download the windows client
+	system "$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl";
+	
+	# If we are on anything but windows
+	if ($OS !~ /MSWin32/)#/(darwin|freebsd|netbsd|openbsd|solaris|linux)/)
+	{
+		# Prepare the directory for p7zip (it requires the library to be
+		# in the same directory we are in unless i make a wrapper
+		# (but the .updating folder is getting removed anyway once we are done)
+		system "cd \"$clientdir/.updating/\" && ln -s \"$clientdir/7-zip/$OS/\$(uname -p)/\"* ./";
+		
+		# Check if we can extract the jagexappletviewer.jar directly
+		my $jarfile = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin l runescape.msi | grep "JagexAppletViewerJarFile*" | cut -c54-1000`;
+		# Remove newlines
+		$jarfile =~ s/(\n|\r|\r\n)//g;
+		
+		# If we did not get the jagexappletviewer.jar listed then
+		if ($jarfile !~ /JagexAppletViewerJarFile*/)
+		{
+			# Extract rslauncher.cab from runescape.msi
+			system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && sleep 3 && $zipbin e runescape.msi rslauncher.cab ";
+		
+			# Find the name of the jar file
+			$jarfile = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin l rslauncher.cab | grep "JagexAppletViewerJarFile*" | cut -c54-1000`;
+			# Remove newlines
+			$jarfile =~ s/(\n|\r|\r\n)//g;
+		
+			# Extract jagexappletviewer.jar and move it into place
+			system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e rslauncher.cab $jarfile && cp -v \"$clientdir/.updating/$jarfile\" \"$clientdir/bin/jagexappletviewer.jar\"";
+		}
+		# Else just extract the file directly
+		else
+		{
+			# Extract jagexappletviewer.jar and move it into place
+			system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e runescape.msi $jarfile";
+			system "cp -v \"$clientdir/.updating/$jarfile\" \"$clientdir/bin/jagexappletviewer.jar\"";
+		}
+	}
+	# Else we are on windows
+	else
+	{
+		# Extract the jagexappletviewer.jar and place it into the client bin folder
+		system "cd \"$cwd\\.updating\\\" && $win32path && 7z e runescape.msi JagexAppletViewerJarFile.* && ren JagexAppletViewerJarFile.* jagexappletviewer.jar && copy /Y \"$cwd\\.updating\\jagexappletviewer.jar\" \"$cwd\\bin\\jagexappletviewer.jar\"";
+	}
+	
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub updatefrommacclient
+{
+	# Download the windows client
+	system "$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl";
+	
+	# If we are on anything but windows
+	if ($OS !~ /MSWin32/)#/(darwin|freebsd|netbsd|openbsd|solaris|linux)/)
+	{
+		# Prepare the directory for p7zip (it requires the library to be
+		# in the same directory we are in unless i make a wrapper
+		# (but the .updating folder is getting removed anyway once we are done)
+		system "cd \"$clientdir/.updating/\" && ln -s \"$clientdir/modules/7-zip/$OS/\$(uname -p)/\"* ./";
+		
+		# Extract the 2.hfs filesystem from the dmg file
+		system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e runescape.dmg *.hfs";
+		
+		# Extract the hfs filesystem
+		system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e *.hfs -y";
+		
+		# Copy the jagexappletviewer into place
+		system "cp -v \"$clientdir/.updating/jagexappletviewer.jar\" \"$clientdir/bin/jagexappletviewer.jar\"";
+	}
+	# Else we are on windows
+	else
+	{
+		# Extract and move jagexappletviewer.jar to the client bin folder
+		system "cd \"$cwd\\.updating\\\" && $win32path && 7z e runescape.dmg *.hfs && 7z e *.hfs -y && copy \"$cwd\\.updating\\jagexappletviewer.jar\" \"$cwd\\bin\\jagexappletviewer.jar\"";
+	}
+	
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+
+
+sub checkfor_p7zip
+{
+	# Test for system installed 7zip
+	my $test7zsys = `7z`;
+	
+	# If we do not have 7zip, check if we have a compiled version from earlier
+	if ($test7zsys !~ /7-Zip/)
+	{
+		# Tell user that the warning is bogus
+		print "The warning above this line is just bogus so ignore it.\n\n";
+		
+		# Set a new testpath
+		my $test7z = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && 7z`;
+		
+		# If we do not have 7zip at all
+		if ($test7z !~ /7-Zip/)
+		{
+			# Download and compile p7zip-full from source
+			get_p7zip();
+		}
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+

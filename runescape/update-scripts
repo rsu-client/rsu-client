@@ -1,0 +1,145 @@
+#!/usr/bin/perl -w
+
+# Update url
+my $updateurl = "http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/update.tar.gz";
+
+# Be strict to avoid messy code
+use strict;
+
+# Use FindBin module to get script directory
+use FindBin;
+
+# Get script directory
+my $cwd = $FindBin::RealBin;
+# Detect the current OS
+my $OS = "$^O";
+
+# Make a variable to contain the temponairly %PATH% variable
+my $win32path;
+
+# Make a variable to contain if the user ran script as root or not
+my $isroot;
+
+# If we are running on windows then
+if ($OS =~ /MSWin32/)
+{
+	# Replace / with \\
+	$cwd =~ s/\//\\\\/g;
+	
+	# Path variable to set in windows
+	$win32path = "set PATH=$cwd\\modules\\win32\\perl\\bin;$cwd\\modules\\win32\\gnu\\;$cwd\\modules\\win32\\7-zip\\;%PATH%";
+}
+# Else we are on unix
+else
+{
+	# Check if we are root
+	$isroot = `whoami`;
+}
+
+# command to fetch the p7zip source
+my $fetchcommand = "wget -O";
+			
+# If we are on mac osx we need to use curl
+if ($OS =~ /darwin/)
+{
+	# Curl command equalent to the wget command
+	$fetchcommand = "curl -L -o"
+}
+# Else if STATEMENT
+elsif($OS =~ /MSWin32/)
+{
+	# Set the temponairly PATH environment variable and add wget to the fetchcommand
+	$fetchcommand = "$win32path && wget -O";
+}
+
+# Check if updates requires root permission but we dont have it
+if ($cwd =~ /^(\/usr\/[s]bin|\/bin|\/opt)/ && $isroot !~ /root/)
+{
+	# if we are inside an interactive shell then
+	if (-t STDOUT)
+	{
+		# Run script as root
+		system ("sudo perl \"$cwd/update-scripts\"");
+	}
+	else
+	{
+		# run script in xterm so we can get input from user and with right permissions
+		system ("xterm -e \"echo The client is in a location that requires && echo superuser permissions to change && sudo perl \\\"$cwd/update-scripts\\\"\"");
+	}
+	# Exit once we are done
+	exit
+}
+
+
+# If we are inside an interactive shell then
+if (-t STDOUT)
+{
+	
+	# If this script have been installed systemwide
+	if ($cwd =~ /\/usr\/bin/)
+	{
+		# change $cwd to the system installation location
+		$cwd = "/opt/runescape";
+	}
+	
+	# run the script
+	main();
+}
+# else
+else
+{
+	# run script in xterm so we can get input from user
+	system ("xterm -e \"perl $cwd/update-scripts\"");
+}
+
+sub main
+{
+	# Tell user that updating the scripts will replace changes they have done to them
+	print "Updating the RuneScape UNIX Client will replace changes\nyou have done inside the script files and runescape.prm!\nIs this OK with you? [y/n] (default = y):";
+	
+	# Get the user input
+	my $answer = <STDIN>;
+	
+	# If user said yes or choose default
+	if ($answer !~ /^(n|N)/)
+	{
+		startupdate();	
+	}
+	# Else
+	else
+	{
+		# Exit
+		exit;
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub startupdate
+{
+	# Fetch the update.tar.gz and extract it
+	if ($OS =~ /MSWin32/)
+	{
+		system "cd \"$cwd\" && $fetchcommand \"$cwd\\update.tar.gz\" $updateurl && 7z e update.tar.gz && 7z x -y update.tar && del /Q update.tar.gz && del /Q update.tar";
+	}
+	else
+	{
+		system "cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl && tar -zxvf update.tar.gz && rm update.tar.gz";
+	}
+	
+	# Show exit message
+	print "\nPress ENTER/RETURN to exit:";
+	
+	# Wait for user to press enter
+	my $exit = <STDIN>;
+	
+	# Exit script
+	exit;
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
