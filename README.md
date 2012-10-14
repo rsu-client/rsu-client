@@ -1,7 +1,4 @@
-rsu-client (bleeding-edge branch)
+rsu-client
 ==========
 
-This is the bleeding-edge/unstable branch of the 
-RuneScape Linux/Unix Client project,
-It is not recommended to use this client for anything but
-testing purposes.
+A git repository for the RuneScape Linux/Unix Client Project
