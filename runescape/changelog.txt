@@ -5,6 +5,9 @@ runescape (3.9.2) oneiric; urgency=low
   * Store information that are used by modules inside the
     $rsu_data mutator for easy transfer of info to modules
   * Git repository made on github.com!
+  * Fixed a bug where the launch command lacked some
+    output for the debug messages after the source was
+    splitted.
 
  -- HikariKnight <mu.antilag@gmail.com>  Sun, 14 Oct 2012 17:59:05 +0200
 
