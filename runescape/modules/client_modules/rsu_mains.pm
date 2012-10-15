@@ -134,12 +134,12 @@ sub unix_main
 		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n";
 				
 		# Add the library path to the java binary command
-		$rsu_data->javabin = "$javalibpath optirun ".$rsu_data->javabin;
+		$rsu_data->javabin = "$javalibpath ".$rsu_data->javabin;
 	}
 	
 	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && $javabin $osxprms ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully)
 	system "cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
