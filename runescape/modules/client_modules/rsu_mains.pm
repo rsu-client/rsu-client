@@ -134,7 +134,7 @@ sub unix_main
 		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n";
 				
 		# Add the library path to the java binary command
-		$rsu_data->javabin = "$javalibpath ".$rsu_data->javabin;
+		$rsu_data->javabin = "$javalibpath optirun ".$rsu_data->javabin;
 	}
 	
 	
