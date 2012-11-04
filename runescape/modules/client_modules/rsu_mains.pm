@@ -158,7 +158,7 @@ sub windows_main
 	my $rsu_data = shift;
 	
 	# Get the win32javabin setting which will be used as a searchpath to find jawt.dll and java.exe
-	my $win32javabin = rsu_IO::readconf("win32java.exe", "default-java");
+	my $win32javabin = rsu_IO::readconf("win32java.exe", "default-java", $rsu_data);
 	
 	# Make a variable containing the default path containing jawt.dll
 	my $javalibspath = "%CD%\\win32\\jawt";
@@ -167,7 +167,7 @@ sub windows_main
 	if ($win32javabin =~ /^(default-java|6|7|1\.6|1\.7)/)
 	{
 		# Probe for the default java used on the system
-		$win32javabin = win32_find_java($win32javabin);
+		$win32javabin = rsu_java::win32_find_java($win32javabin, $rsu_data);
 		
 		# Prepare the new native javalibs path
 		$javalibspath = $win32javabin;
