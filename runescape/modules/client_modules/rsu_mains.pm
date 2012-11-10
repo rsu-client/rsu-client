@@ -20,13 +20,14 @@ sub unix_main
 		if ($rsu_data->OS !~ /darwin/)
 		{
 			# Search for the location of the true default java binary (not the symlink)
-			my $truebinary = rsu_java::unix_find_default_java_binary($rsu_data);
-			
-			# replace $javabin with the location of the true binary
-			$rsu_data->javabin = "$truebinary";
+			$rsu_data->javabin = rsu_java::unix_find_default_java_binary($rsu_data);
 		}
-		
-				
+		# Else we are on mac
+		else
+		{
+			# Probe for Java6 and use that instead of Java7 (if Java6 exists)
+			$rsu_data->javabin = rsu_java::findjavabin($rsu_data);
+		}		
 	}
 	# Else if user have set a custom path to a java binary (most likely sun/oracle java)
 	elsif (($rsu_data->preferredjava =~ /^\//))
