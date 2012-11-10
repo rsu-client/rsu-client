@@ -1,3 +1,12 @@
+runescape (3.9.3) oneiric; urgency=low
+
+  * Made the client use Apple Java6 on OSX if it exists
+    (instead of default java)
+  * Fixed the windows_main function so that the client can run 
+    on windows again.
+
+ -- HikariKnight <mu.antilag@gmail.com>  Fri, 10 Nov 2012 13:17:05 +0200
+ 
 runescape (3.9.2) oneiric; urgency=low
 
   * Splitted the source into modules

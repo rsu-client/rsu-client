@@ -19,10 +19,20 @@ package rsu_java;
 		if ($rsu_data->OS =~ /darwin/)
 		{
 			# Print debug info
-			print "You are running darwin/MacOSX.\nI will use Apple Java Path\n\n";
+			print "You are running darwin/MacOSX.\nI will use Apple Java6 if it exists\notherwise we will use the Java from PATH\n";
 			
 			# javabin is /usr/bin/java
 			$javabin = "/usr/bin/java";
+			
+			# Check the version of java installed in the Frameworks in OSX (this is where apple dumps its java)
+			my $applejavaexist = `/System/Library/Frameworks/JavaVM.framework/Commands/java -version 2>&1 | grep "java version"`;
+			
+			# If Apple Java is version 1.6.0_* then
+			if ($applejavaexist =~ /1\.6\.0_*/)
+			{
+				# Use the Apple Java as javabin (and avoid java7 until apple actually removes java6)
+				$javabin = "/System/Library/Frameworks/JavaVM.framework/Commands/java";
+			}
 		}
 		# Else if we are on linux
 		elsif($rsu_data->OS =~ /linux/)
