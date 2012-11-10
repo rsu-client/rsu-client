@@ -25,7 +25,7 @@ package rsu_java;
 			$javabin = "/usr/bin/java";
 			
 			# Check the version of java installed in the Frameworks in OSX (this is where apple dumps its java)
-			my $applejavaexist = `/System/Library/Frameworks/JavaVM.framework/Contents/Commands/java -version 2>&1 | grep "java version"`;
+			my $applejavaexist = `/System/Library/Frameworks/JavaVM.framework/Commands/java -version 2>&1 | grep "java version"`;
 			
 			# If apple java is version 1.6.0_* then
 			if ($applejavaexist =~ /1\.6\.0_*/)
