@@ -1,3 +1,9 @@
+runescape (3.9.4) oneiric; urgency=low
+
+  * Remove the beta launcher and beta parameters file.
+
+ -- HikariKnight <mu.antilag@gmail.com>  Sat, 17 Nov 2012 16:43:37 +0200
+
 runescape (3.9.3) oneiric; urgency=low
 
   * Made the client use Apple Java6 on OSX if it exists
