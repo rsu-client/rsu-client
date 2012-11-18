@@ -1,6 +1,6 @@
 -Djava.class.path=jagexappletviewer.jar
 -Dcom.jagex.config=http://world68.runescape.com/k=3/l=$(Language:0)/jav_config.ws
--Xmx1024m
+-Xmx512m
 -Xss2m
 -Dsun.java2d.noddraw=true
 jagexappletviewer
