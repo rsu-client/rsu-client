@@ -193,6 +193,9 @@ print "\n";
 # Be strict to avoid messy code
 use strict;
 
+# Load addons
+rsu_addonloader::loadaddons($rsu_data);
+
 # Start actual process of running the client
 
 # Check if user wants to run in compability mode
@@ -242,7 +245,7 @@ sub parseargs
 	else
 	{
 		# If no parameter that matches is passed then read from settings.conf
-		my $result = rsu_IO::readconf("$arg2find", "$default", $rsu_data);
+		my $result = rsu_IO::readconf("$arg2find", "$default", "settings.conf", $rsu_data);
 		
 		# Return setting
 		return $result;
