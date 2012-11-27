@@ -59,7 +59,7 @@ sub loadaddons
 					print "Starting the moduleloader.pl for $addon\n";
 					
 					# Execute module
-					system "perl -w $clientdir/modules/addons/$addon/moduleloader.pl"
+					system "perl -w \"$clientdir/modules/addons/$addon/moduleloader.pl\""
 				}
 				# Else if addonstatus is undef (undefined)
 				elsif($addonstatus =~ /undef/)
