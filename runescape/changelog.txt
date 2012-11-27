@@ -1,3 +1,16 @@
+runescape (3.9.5) oneiric; urgency=low
+
+  * Add an addon framework (wxWidgets2.9.3)
+    NOTE: addons are linux only atm
+  * Create an addonloader
+  * Create a test/example addon (grooveshark)
+  * Create an addon launcher to run addons when needed (Addon_Launcher)
+  * Add an addons tab in the settings script which is automatically
+    generated which will let you choose which addons to autostart
+    with RuneScape.
+
+ -- HikariKnight <mu.antilag@gmail.com>  Sat, 27 Nov 2012 18:41:37 +0200
+ 
 runescape (3.9.4) oneiric; urgency=low
 
   * Remove the beta launcher and beta parameters file.

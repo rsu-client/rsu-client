@@ -14,6 +14,7 @@ package modules;
 	
 	# End of core modules, add custom modules below this line
 	
+	require rsu_addonloader;
 	
 	# End of custom modules #
 1;
