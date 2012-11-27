@@ -291,7 +291,7 @@ sub set_events
 		setScrollBars(
 			$self->FindWindow('scriptwindow'),
 			$self->FindWindow('rswindow'),
-			$self->FindWindow('cachewindow')
+			$self->FindWindow('cachewindow'),
 		);
 	}
 	
@@ -324,7 +324,11 @@ sub addmodulepage
 	$self->{modulehorizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
 	$self->{modulehorizontal}->Add(20,20,0,0);
 	$self->{modulevertical} = Wx::BoxSizer->new(wxVERTICAL);
+	$self->{addonlist} = Wx::GridSizer->new(1,2,5,5);
+	$self->{labeltop} = Wx::StaticText->new($self->{modulepage}, -1, "\nSelect the addons you want to start with RuneScape!\nSelect only addons you trust!\n", wxDefaultPosition, wxDefaultSize,);
 	$self->{modulehorizontal}->Add($self->{modulevertical}, 1, wxEXPAND, 0);
+	$self->{modulevertical}->Add($self->{labeltop},0,wxEXPAND|wxALL,0);
+	$self->{modulevertical}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
 	$self->{modulehorizontal}->Add(20,20,0,0);
 	
 	# List all modules
@@ -337,12 +341,22 @@ sub addmodulepage
 	# Read the addon list
 	my $addonconfig = main::ReadFile($clientdir."/share/addons.conf");
 	
+	# Make a counter to know when we need to increase the amount of rows in the grid
+	my $counter = 1;
+	
 	# If file does not exist
 	if ($addonconfig =~ /error reading file/)
 	{
 		# For each addon
 		foreach $addon (@addons)
 		{
+			# If $counter modulus 2 is 0
+			if ($counter %= 2)
+			{
+				# Increase the gridsizers rows by 1
+				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+			}
+			
 			# Make a checkbox
 			$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
 			EVT_CHECKBOX($self, -1, \&change_addonstatus);
@@ -354,7 +368,10 @@ sub addmodulepage
 			$self->{$addon}->SetValue(0);
 			
 			# Add checkbox to vertical sizer
-			$self->{modulevertical}->Add($self->{$addon}, 1, wxEXPAND,0);
+			$self->{addonlist}->Add($self->{$addon}, 0, wxEXPAND,0);
+			
+			# Increase counter by 1
+			$counter += 1;
 		}
 	}
 	# Else
@@ -363,6 +380,13 @@ sub addmodulepage
 		# For each addon
 		foreach $addon (@addons)
 		{
+			# If $counter modulus 2 is 0
+			if ($counter %= 2)
+			{
+				# Increase the gridsizers rows by 1
+				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+			}
+			
 			# Get the status of the addon
 			my $addonstatus = main::readconf("$addon", "undef", "addons.conf");
 			
@@ -377,7 +401,7 @@ sub addmodulepage
 				$self->{$addon}->SetValue(1);
 				
 				# Add checkbox to vertical sizer
-				$self->{modulevertical}->Add($self->{$addon}, 1, wxEXPAND,0);
+				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
 			}
 			# Else if addon status is undef(undefined)
 			elsif($addonstatus =~ /undef/)
@@ -393,7 +417,7 @@ sub addmodulepage
 				$self->{$addon}->SetValue(0);
 				
 				# Add checkbox to vertical sizer
-				$self->{modulevertical}->Add($self->{$addon}, 1, wxEXPAND,0);
+				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
 			}
 			else
 			{
@@ -405,8 +429,11 @@ sub addmodulepage
 				$self->{$addon}->SetValue(0);
 				
 				# Add checkbox to vertical sizer
-				$self->{modulevertical}->Add($self->{$addon}, 1, wxEXPAND,0);
+				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
 			}
+			
+			# Increase counter by 1
+			$counter += 1;
 		}
 	}
 	
@@ -414,6 +441,8 @@ sub addmodulepage
 	$self->{modulepage}->SetSizer($self->{modulehorizontal});
 	$self->{modulehorizontal}->Fit($self);
 	$self->Layout();
+	
+	setScrollBars($self->{modulepage});
 }
 
 #
