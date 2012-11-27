@@ -48,7 +48,7 @@ sub main
 	}
 	
 	# Run module
-	system "LD_LIBRARY_PATH=$cwd../framework/lib-$OS$arch $cwd/$modulename-$OS$arch &";
+	system "LD_LIBRARY_PATH=$cwd/../framework/lib-$OS$arch $cwd/$modulename-$OS$arch &";
 }
 
 #

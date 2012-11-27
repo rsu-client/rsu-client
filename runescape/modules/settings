@@ -347,6 +347,9 @@ sub addmodulepage
 			$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
 			EVT_CHECKBOX($self, -1, \&change_addonstatus);
 			
+			# Add addon to addons.conf but disable it
+			main::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
+			
 			# Set checkbox to unchecked
 			$self->{$addon}->SetValue(0);
 			
