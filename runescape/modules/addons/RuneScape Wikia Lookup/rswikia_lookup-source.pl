@@ -45,7 +45,7 @@ use Wx qw[:everything];
 use Wx::XRC;
 use Wx::WebView;
 # Which events shall we include
-use Wx::Event qw(EVT_BUTTON EVT_WEB_VIEW_LOADED EVT_TEXT_ENTER EVT_WEB_VIEW_NAVIGATED);
+use Wx::Event qw(EVT_BUTTON EVT_WEB_VIEW_LOADED EVT_TEXT_ENTER EVT_WEB_VIEW_NAVIGATING);
 
 use base qw(Wx::Frame);
 
@@ -140,7 +140,7 @@ sub set_events
 	
 	# Make an event trigger for the webviewer
 	EVT_WEB_VIEW_LOADED($self, -1, \&process_wiki);
-	#EVT_WEB_VIEW_NAVIGATED($self, -1, \&process_wiki);
+	#EVT_WEB_VIEW_NAVIGATING($self, -1, \&process_wiki);
 	
 	# Make a horizontal sizer
 	$self->{controlsholder} = Wx::BoxSizer->new(wxHORIZONTAL);
@@ -239,6 +239,11 @@ var Pres = document.getElementById("WikiaArticle").cloneNode(true);
 document.body.innerHTML = "";
 document.body.appendChild(Pres);
 document.body.style.background = "#cda172";
+');
+
+	if ($self->{webview}->GetPageSource() =~ /<div id="toctitle">/)
+	{
+		$self->{webview}->RunScript('
 var toc = document.getElementById("toctitle");
 toc.onclick = function() {
  var e = this.parentNode.getElementsByTagName("ul")[0];
@@ -247,6 +252,7 @@ toc.onclick = function() {
  l.childNodes[0].nodeValue = (l.childNodes[0].nodeValue == "show" ? "hide" : "show");
 }
 	');
+	}
 }
 
 #
