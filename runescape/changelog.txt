@@ -1,6 +1,6 @@
 runescape (3.9.5) oneiric; urgency=low
 
-  * Add an addon framework (wxWidgets2.9.3)
+  * Added an addon framework (wxWidgets2.9.3)
     NOTE: addons are linux only atm
   * Create an addonloader
   * Create a test/example addon (grooveshark)
@@ -8,6 +8,8 @@ runescape (3.9.5) oneiric; urgency=low
   * Add an addons tab in the settings script which is automatically
     generated which will let you choose which addons to autostart
     with RuneScape.
+  * Added a button to open the addons directory
+  * Added a RuneScape Wikia Lookup addon (although slightly unstable)
 
  -- HikariKnight <mu.antilag@gmail.com>  Sat, 27 Nov 2012 18:41:37 +0200
  
