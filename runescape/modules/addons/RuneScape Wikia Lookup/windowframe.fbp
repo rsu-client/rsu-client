@@ -45,7 +45,7 @@
             <property name="size">675,480</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass"></property>
-            <property name="title">RuneScape Wikia Lookup</property>
+            <property name="title">RuneScape Wikia Lookup (NOTE: Certain ads will crash the window!)</property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>

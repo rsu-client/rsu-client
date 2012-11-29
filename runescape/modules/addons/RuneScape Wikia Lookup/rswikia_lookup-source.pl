@@ -44,6 +44,7 @@ package wxTopLevelFrame;
 use Wx qw[:everything];
 use Wx::XRC;
 use Wx::WebView;
+use Time::HiRes qw(usleep);
 # Which events shall we include
 use Wx::Event qw(EVT_BUTTON EVT_WEB_VIEW_LOADED EVT_TEXT_ENTER EVT_WEB_VIEW_NAVIGATING);
 
@@ -149,7 +150,7 @@ sub set_events
 	$self->{gridsizer} = Wx::BoxSizer->new(wxVERTICAL);#(2,0,0,0);
 	$self->{mainsizer} = Wx::GridSizer->new(1,0,0,0);
 	
-	$self->SetSize(710,480);
+	$self->SetSize(730,480);
 	$self->SetMinSize($self->GetSize);
 	
 	# Place the widgets in the layout
@@ -231,18 +232,47 @@ sub process_wiki
 	# Get the pointers
 	my ($self,$event) = @_;
 	
+	# Incase the function is rerun by the loaded event we will just return
+	if ($self->{webview}->GetCurrentTitle() =~ /^done$/)
+	{
+		return;
+	}
+	
+	usleep(5000);
+	
 	# Run a javascript to process the page to show only the article 
 	#(the full page will however be shown until everything is loaded)
 	# The javascript used is written by Whos-Dr
-	$self->{webview}->RunScript('
+	
+	# If the page is the frontpage
+	if ($self->{webview}->GetCurrentURL() =~ /http:\/\/runescape\.wikia\.com\/wiki\/RuneScape_Wiki/)
+	{
+		# Show only the contents of the div tag with the id "WikiaArticle"
+		$self->{webview}->RunScript('
 var Pres = document.getElementById("WikiaArticle").cloneNode(true);
 document.body.innerHTML = "";
 document.body.appendChild(Pres);
 document.body.style.background = "#cda172";
-');
-
+document.title = "done";
+		');
+	}
+	# Else
+	else
+	{
+		# Show only the contents of the div tag with the id "WikiaMainContent"
+		$self->{webview}->RunScript('
+var Pres = document.getElementById("WikiaMainContent").cloneNode(true);
+document.body.innerHTML = "";
+document.body.appendChild(Pres);
+document.body.style.background = "#cda172";
+document.title = "done";
+		');
+	}
+	
+	# If the page contains a table of contents
 	if ($self->{webview}->GetPageSource() =~ /<div id="toctitle">/)
 	{
+		# Fix the table of contents show/hide function
 		$self->{webview}->RunScript('
 var toc = document.getElementById("toctitle");
 toc.onclick = function() {
