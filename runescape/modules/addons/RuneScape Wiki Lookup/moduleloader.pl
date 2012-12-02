@@ -4,7 +4,7 @@
 use strict;
 
 # Name of module
-my $modulename = "RuneScapeWikia";
+my $modulename = "RuneScapeWiki";
 
 # Use FindBin module to get script directory
 use FindBin;
