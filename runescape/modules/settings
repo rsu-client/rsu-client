@@ -326,10 +326,19 @@ sub addmodulepage
 	$self->{modulevertical} = Wx::BoxSizer->new(wxVERTICAL);
 	$self->{addonlist} = Wx::GridSizer->new(1,2,5,5);
 	$self->{labeltop} = Wx::StaticText->new($self->{modulepage}, -1, "\nSelect the addons you want to start with RuneScape!\nSelect only addons you trust!\n", wxDefaultPosition, wxDefaultSize,);
+	
+	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
+	$self->{addonsdirbutton} = Wx::Button->new($self->{modulepage}, -1, "Open Addons Folder (place extracted addons here)", wxDefaultPosition, wxDefaultSize, );
+	EVT_BUTTON($self, -1, \&open_addonsdir);
+	
+	# Add stuff to the sizers
 	$self->{modulehorizontal}->Add($self->{modulevertical}, 1, wxEXPAND, 0);
 	$self->{modulevertical}->Add($self->{labeltop},0,wxEXPAND|wxALL,0);
+	$self->{modulevertical}->Add($self->{addonsdirbutton},0,wxEXPAND|wxALL,0);
+	$self->{modulevertical}->Add(20,20,0,0);
 	$self->{modulevertical}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
 	$self->{modulehorizontal}->Add(20,20,0,0);
+	
 	
 	# List all modules
 	my $addons = `ls "$clientdir/modules/addons/" | grep -v "framework"`;
@@ -443,6 +452,19 @@ sub addmodulepage
 	$self->Layout();
 	
 	setScrollBars($self->{modulepage});
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub open_addonsdir
+{
+	# Get the pointers
+	my ($self,$event) = @_;
+	
+	# Open the addons directory
+	system "xdg-open \"$clientdir/modules/addons/\"";
 }
 
 #

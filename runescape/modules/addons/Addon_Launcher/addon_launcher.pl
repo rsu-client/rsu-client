@@ -153,6 +153,9 @@ sub set_events
 	$self->Layout;
 	# Refresh window
 	$self->Refresh;
+	
+	# Move to top left corner
+	$self->Move(1,1);
 }
 
 #
