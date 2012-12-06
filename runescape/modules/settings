@@ -329,7 +329,7 @@ sub addmodulepage
 	
 	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
 	$self->{addonsdirbutton} = Wx::Button->new($self->{modulepage}, -1, "Open Addons Folder (place extracted addons here)", wxDefaultPosition, wxDefaultSize, );
-	EVT_BUTTON($self, -1, \&open_addonsdir);
+	EVT_BUTTON($self, $self->{addonsdirbutton}, \&open_addonsdir);
 	
 	# Add stuff to the sizers
 	$self->{modulehorizontal}->Add($self->{modulevertical}, 1, wxEXPAND, 0);
