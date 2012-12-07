@@ -61,27 +61,27 @@ if ($cwd =~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
 
 # Read from the config file if the user want to run in compabilitymode/wine,
 # if nothing is found then dont use it
-my $compabilitymode = readconf("compabilitymode", "False");
+my $compabilitymode = readconf("compabilitymode", "False", "settings.conf");
 
 # Read the preferred java in the config file, if nothing is found then use default-java
-my $preferredjava = readconf("preferredjava", "default-java");
+my $preferredjava = readconf("preferredjava", "default-java", "settings.conf");
 
 # If we are running on windows then
 if ($OS =~ /MSWin32/)
 {
-	$preferredjava = readconf("win32java.exe", "default-java");
+	$preferredjava = readconf("win32java.exe", "default-java", "settings.conf");
 }
 
 # Read from the config file if the user want to force the client to use pulseaudio
 # if nothing then dont use it (incase a system does not have pulseaudio/padsp installed)
-my $forcepulseaudio = readconf("forcepulseaudio", "False");
+my $forcepulseaudio = readconf("forcepulseaudio", "False", "settings.conf");
 
 # Read from the config file if the user want to tell java to use alsa in the base for sounds
 # If nothing is found then do not use alsa and instead use the java default
-my $forcealsa = readconf("forcealsa", "False");
+my $forcealsa = readconf("forcealsa", "False", "settings.conf");
 
 # Read from the config file, the name of the prm file to use
-my $prmfile = readconf("prmfile", "runescape.prm");
+my $prmfile = readconf("prmfile", "runescape.prm", "settings.conf");
 
 # Define a text inside the script for use
 my $plist_template = << "plist_template";
@@ -139,9 +139,9 @@ package wxTopLevelFrame;
 
 use Wx qw[:everything];
 use Wx::XRC;
-use Wx::Event qw(EVT_BUTTON EVT_CHOICE EVT_NOTEBOOK_PAGE_CHANGED);
+use Wx::Event qw(EVT_BUTTON EVT_CHOICE EVT_NOTEBOOK_PAGE_CHANGED EVT_CHECKBOX);
 
-use base qw(Wx::Frame);
+use base qw(Wx::Frame Wx::ScrolledWindow);
 
 sub new
 {
@@ -266,6 +266,11 @@ sub set_events
 	$self->winemode = $self->FindWindow('winemode');
 	$self->tab_box1 = $self->FindWindow('tab_box1');
 	
+	if ($OS =~ /linux/)
+	{
+		addmodulepage($self);
+	}
+	
 	# Set default size
 	$self->SetSize(470,500);
 	$self->SetMinSize($self->GetSize);
@@ -286,7 +291,7 @@ sub set_events
 		setScrollBars(
 			$self->FindWindow('scriptwindow'),
 			$self->FindWindow('rswindow'),
-			$self->FindWindow('cachewindow')
+			$self->FindWindow('cachewindow'),
 		);
 	}
 	
@@ -303,6 +308,209 @@ sub set_events
 		$clientdir = "$HOME/.config/runescape";
 	}
 	
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub addmodulepage
+{
+	my $self = shift;
+	
+	# Make a module page manually
+	$self->{modulepage} = Wx::ScrolledWindow->new($self->{tab_box1}, -1, wxDefaultPosition, wxDefaultSize, );
+	$self->tab_box1->AddPage($self->{modulepage}, "Add-Ons");
+	$self->{modulehorizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
+	$self->{modulehorizontal}->Add(20,20,0,0);
+	$self->{modulevertical} = Wx::BoxSizer->new(wxVERTICAL);
+	$self->{addonlist} = Wx::GridSizer->new(1,2,5,5);
+	$self->{labeltop} = Wx::StaticText->new($self->{modulepage}, -1, "\nSelect the addons you want to start with RuneScape!\nSelect only addons you trust!\n", wxDefaultPosition, wxDefaultSize,);
+	
+	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
+	$self->{addonsdirbutton} = Wx::Button->new($self->{modulepage}, -1, "Open Addons Folder (place extracted addons here)", wxDefaultPosition, wxDefaultSize, );
+	EVT_BUTTON($self, $self->{addonsdirbutton}, \&open_addonsdir);
+	
+	# Add stuff to the sizers
+	$self->{modulehorizontal}->Add($self->{modulevertical}, 1, wxEXPAND, 0);
+	$self->{modulevertical}->Add($self->{labeltop},0,wxEXPAND|wxALL,0);
+	$self->{modulevertical}->Add($self->{addonsdirbutton},0,wxEXPAND|wxALL,0);
+	$self->{modulevertical}->Add(20,20,0,0);
+	$self->{modulevertical}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
+	$self->{modulehorizontal}->Add(20,20,0,0);
+	
+	
+	# List all modules
+	my $addons = `ls "$clientdir/modules/addons/" | grep -v "framework"`;
+	
+	# Split up the list into an array
+	my @addons = split (/\n/, $addons);
+	my $addon;
+	
+	# Read the addon list
+	my $addonconfig = main::ReadFile($clientdir."/share/addons.conf");
+	
+	# Make a counter to know when we need to increase the amount of rows in the grid
+	my $counter = 1;
+	
+	# If file does not exist
+	if ($addonconfig =~ /error reading file/)
+	{
+		# For each addon
+		foreach $addon (@addons)
+		{
+			# If $counter modulus 2 is 0
+			if ($counter %= 2)
+			{
+				# Increase the gridsizers rows by 1
+				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+			}
+			
+			# Make a checkbox
+			$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+			EVT_CHECKBOX($self, -1, \&change_addonstatus);
+			
+			# Add addon to addons.conf but disable it
+			main::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
+			
+			# Set checkbox to unchecked
+			$self->{$addon}->SetValue(0);
+			
+			# Add checkbox to vertical sizer
+			$self->{addonlist}->Add($self->{$addon}, 0, wxEXPAND,0);
+			
+			# Increase counter by 1
+			$counter += 1;
+		}
+	}
+	# Else
+	else
+	{
+		# For each addon
+		foreach $addon (@addons)
+		{
+			# If $counter modulus 2 is 0
+			if ($counter %= 2)
+			{
+				# Increase the gridsizers rows by 1
+				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+			}
+			
+			# Get the status of the addon
+			my $addonstatus = main::readconf("$addon", "undef", "addons.conf");
+			
+			# If addon is enabled
+			if ($addonstatus =~ /enable/i)
+			{
+				# Make a checkbox
+				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+				EVT_CHECKBOX($self, -1, \&change_addonstatus);
+				
+				# Set checkbox to checked
+				$self->{$addon}->SetValue(1);
+				
+				# Add checkbox to vertical sizer
+				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+			}
+			# Else if addon status is undef(undefined)
+			elsif($addonstatus =~ /undef/)
+			{
+				# Add addon to addons.conf but disable it
+				main::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
+				EVT_CHECKBOX($self, -1, \&change_addonstatus);
+				
+				# Make a checkbox
+				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+				
+				# Set checkbox to checked
+				$self->{$addon}->SetValue(0);
+				
+				# Add checkbox to vertical sizer
+				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+			}
+			else
+			{
+				# Make a checkbox
+				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+				EVT_CHECKBOX($self, -1, \&change_addonstatus);
+				
+				# Set checkbox to checked
+				$self->{$addon}->SetValue(0);
+				
+				# Add checkbox to vertical sizer
+				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+			}
+			
+			# Increase counter by 1
+			$counter += 1;
+		}
+	}
+	
+	
+	$self->{modulepage}->SetSizer($self->{modulehorizontal});
+	$self->{modulehorizontal}->Fit($self);
+	$self->Layout();
+	
+	setScrollBars($self->{modulepage});
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub open_addonsdir
+{
+	# Get the pointers
+	my ($self,$event) = @_;
+	
+	# Open the addons directory
+	system "xdg-open \"$clientdir/modules/addons/\"";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub change_addonstatus
+{
+	# Get pointers
+	my ($self, $event) = @_;
+	
+	# Get the name of the addon that triggered the event
+	my $addon = $event->GetEventObject()->GetLabel();
+	
+	# Get the status of the addon
+	my $addonstatus = main::readconf("$addon", "undef", "addons.conf");
+	
+	# If status is enabled
+	if ($addonstatus =~ /enable/i)
+	{
+		# Read the addons.config
+		my $addonsconfig = main::ReadFile($clientdir."/share/addons.conf");
+		
+		# Transfer contents to a variable
+		my $addonscontent = "@$addonsconfig";
+		
+		# Disable addon
+		$addonscontent =~ s/$addon=enable/$addon=disable/;
+		
+		# Write changes back to addons.config
+		main::WriteFile($addonscontent, ">", $clientdir."/share/addons.conf");
+	}
+	else
+	{
+		# Read the addons.config
+		my $addonsconfig = main::ReadFile($clientdir."/share/addons.conf");
+		
+		# Transfer contents to a variable
+		my $addonscontent = "@$addonsconfig";
+		
+		# Disable addon
+		$addonscontent =~ s/$addon=disable/$addon=enable/;
+		
+		# Write changes back to addons.config
+		main::WriteFile($addonscontent, ">", $clientdir."/share/addons.conf");
+	}
 }
 
 #
@@ -999,8 +1207,8 @@ sub saveconf_clicked
 	my $preferredjava_setting = $self->preferredjava->GetSelection;
 	my $customjava_setting = $self->customjava->GetPath;
 	my $winemode_setting = $self->winemode->GetValue;
-	my $old_win32java = main::readconf("win32java.exe", "default-java");
-	my $old_unixjava = main::readconf("preferredjava", "default-java");
+	my $old_win32java = main::readconf("win32java.exe", "default-java", "settings.conf");
+	my $old_unixjava = main::readconf("preferredjava", "default-java", "settings.conf");
 	
 	## Write prmfile setting
 	# Start writing the settings.conf
@@ -1202,10 +1410,10 @@ sub ReadFile
 sub readconf
 {
 	# Get the passed data from function call
-	my ($key, $default) = @_;
+	my ($key, $default, $conf_file) = @_;
 	
 	# Get the content from the settings file
-	my $confcontent = ReadFile("$clientdir/share/settings.conf");
+	my $confcontent = ReadFile("$clientdir/share/$conf_file");
 	
 	# If no file is found or error reading the file
 	if ($confcontent =~ /error reading file/)

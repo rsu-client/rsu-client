@@ -12,6 +12,7 @@ from one of the following repositories:
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
 * [Universal tar.gz Archive](https://dl.dropbox.com/u/11631899/opensource/Perl/unix-runescape-client.tar.gz "Universal tar.gz Archive")
 
+__RuneScape is a registred trademark of Jagex Inc.__
 
 
 About the Project
