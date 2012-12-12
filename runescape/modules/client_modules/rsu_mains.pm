@@ -6,6 +6,9 @@ require rsu_prm_filehandler;
 
 sub unix_main
 {
+	# This function requires rsu_primusrun (for use on linux optimus pcs with bumblebee+primus installed)
+	require rsu_primusrun;
+	
 	# Get the data container
 	my $rsu_data = shift;
 	
@@ -129,6 +132,26 @@ sub unix_main
 		# Add the dock icon and dock name to the variable, so that it will be used in the java execution
 		$osxprms = "-Xdock:name=\"RuneScape Unix Client\" -Xdock:icon=\"".$rsu_data->cwd."/share/runescape.icns\"";
 	}
+	# Else if we are on linux and the useprimusrun setting is enabled
+	elsif($rsu_data->useprimusrun =~ /(true|1)/i && $rsu_data->OS =~ /linux/)
+	{
+		# Run the enableprimus function and see if primusrun is available on the system
+		my $primusrun_bin = rsu_primusrun::enableprimus($rsu_data);
+		
+		# Tell user what we are doing
+		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n";
+		
+		if ($primusrun_bin !~ /^$/)
+		{
+			# Tell user what we are doing
+			print "Adding $primusrun_bin to the launch command\n";
+		}
+		
+		
+		# Add the primusrun binary and the javalibpath to the javabin
+		$rsu_data->javabin = "$javalibpath $primusrun_bin ".$rsu_data->javabin;
+	}
+	# Else
 	else
 	{
 		# Tell user what we are doing

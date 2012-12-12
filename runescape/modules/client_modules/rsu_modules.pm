@@ -15,6 +15,7 @@ package modules;
 	# End of core modules, add custom modules below this line
 	
 	require rsu_addonloader;
+	require rsu_primusrun;
 	
 	# End of custom modules #
 1;
