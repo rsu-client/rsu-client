@@ -83,6 +83,9 @@ my $forcealsa = readconf("forcealsa", "False", "settings.conf");
 # Read from the config file, the name of the prm file to use
 my $prmfile = readconf("prmfile", "runescape.prm", "settings.conf");
 
+# Read from the config file if the user have told the script to use primusrun or not if it is available
+my $useprimusrun = readconf("useprimusrun", "false", "settings.conf");
+
 # Define a text inside the script for use
 my $plist_template = << "plist_template";
 <?xml version="1.0" encoding="UTF-8"?>
@@ -168,27 +171,6 @@ sub initialize
 		qw
 		(
 			xrc_resource
-			configfilepath
-			Xms
-			Xmx
-			Xss
-			configurl
-			prms
-			classpath
-			load
-			save
-			clear_main
-			clear_beta
-			terminal_output
-			prmFile
-			preferredjava
-			customjava
-			soundsystem
-			winemode
-			saveconf
-			close2
-			tab_box1
-			scrolledWindow
 		)
 	);
 	
@@ -247,28 +229,37 @@ sub set_events
 	EVT_NOTEBOOK_PAGE_CHANGED($self, Wx::XmlResource::GetXRCID('tab_box1'), \&tab_box1_changepage);
 	
 	# Find the widgets
-	$self->classpath = $self->FindWindow('classpath');
-	$self->Xms = $self->FindWindow('Xms');
-	$self->Xmx = $self->FindWindow('Xmx');
-	$self->Xss = $self->FindWindow('Xss');
-	$self->configurl = $self->FindWindow('configurl');
-	$self->prms = $self->FindWindow('prms');
-	$self->configfilepath = $self->FindWindow('configfilepath');
-	$self->clear_main = $self->FindWindow('clear_main');
-	$self->clear_beta = $self->FindWindow('clear_beta');
-	$self->terminal_output = $self->FindWindow('terminal_output');
-	$self->prmFile = $self->FindWindow('prmFile');
-	$self->close2 = $self->FindWindow('close2');
-	$self->preferredjava = $self->FindWindow('preferredjava');
-	$self->saveconf = $self->FindWindow('saveconf');
-	$self->customjava = $self->FindWindow('customjava');
-	$self->soundsystem = $self->FindWindow('soundsystem');
-	$self->winemode = $self->FindWindow('winemode');
-	$self->tab_box1 = $self->FindWindow('tab_box1');
+	$self->{classpath} = $self->FindWindow('classpath');
+	$self->{Xms} = $self->FindWindow('Xms');
+	$self->{Xmx} = $self->FindWindow('Xmx');
+	$self->{Xss} = $self->FindWindow('Xss');
+	$self->{configurl} = $self->FindWindow('configurl');
+	$self->{prms} = $self->FindWindow('prms');
+	$self->{configfilepath} = $self->FindWindow('configfilepath');
+	$self->{clear_main} = $self->FindWindow('clear_main');
+	$self->{clear_beta} = $self->FindWindow('clear_beta');
+	$self->{terminal_output} = $self->FindWindow('terminal_output');
+	$self->{prmFile} = $self->FindWindow('prmFile');
+	$self->{close2} = $self->FindWindow('close2');
+	$self->{preferredjava} = $self->FindWindow('preferredjava');
+	$self->{saveconf} = $self->FindWindow('saveconf');
+	$self->{customjava} = $self->FindWindow('customjava');
+	$self->{soundsystem} = $self->FindWindow('soundsystem');
+	$self->{winemode} = $self->FindWindow('winemode');
+	$self->{tab_box1} = $self->FindWindow('tab_box1');
+	$self->{primusmode} = $self->FindWindow('primusmode');
 	
 	if ($OS =~ /linux/)
 	{
-		addmodulepage($self);
+		# Check whats is inside the modules folder
+		my $addonfolderexist = `ls "$clientdir/modules" | grep "addons"`;
+		
+		# If addons folder exists
+		if ($addonfolderexist =~ /^addons$/)
+		{
+			# Add the addons page
+			addmodulepage($self);
+		}
 	}
 	
 	# Set default size
@@ -299,9 +290,9 @@ sub set_events
 	if ($RSU =~ /0/)
 	{
 		# Change to the RS Settings page
-		$self->tab_box1->ChangeSelection(1);
+		$self->{tab_box1}->ChangeSelection(1);
 		# Remove the script settings page
-		$self->tab_box1->RemovePage(0);
+		$self->{tab_box1}->RemovePage(0);
 		# The $prmfile is always runescape.prm
 		$prmfile = "runescape.prm";
 		# $clientdir is always $HOME/.config/runescape
@@ -320,7 +311,7 @@ sub addmodulepage
 	
 	# Make a module page manually
 	$self->{modulepage} = Wx::ScrolledWindow->new($self->{tab_box1}, -1, wxDefaultPosition, wxDefaultSize, );
-	$self->tab_box1->AddPage($self->{modulepage}, "Add-Ons");
+	$self->{tab_box1}->AddPage($self->{modulepage}, "Add-Ons");
 	$self->{modulehorizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
 	$self->{modulehorizontal}->Add(20,20,0,0);
 	$self->{modulevertical} = Wx::BoxSizer->new(wxVERTICAL);
@@ -597,7 +588,7 @@ sub save_clicked
 	if ($RSU =~ /1/)
 	{
 		# Get the prmfile from gui
-		$settingsfile = $self->configfilepath->GetValue;
+		$settingsfile = $self->{configfilepath}->GetValue;
 	}
 	# Else
 	else
@@ -638,11 +629,11 @@ sub save_clicked
 		my $template = $plist_template;
 		
 		# Get the values for all the settings
-		my $configurl = $self->configurl->GetValue;
-		my $Xms = $self->Xms->GetValue;
-		my $Xss = $self->Xss->GetValue;
-		my $Xmx = $self->Xmx->GetValue;
-		my $prms = $self->prms->GetValue;
+		my $configurl = $self->{configurl}->GetValue;
+		my $Xms = $self->{Xms}->GetValue;
+		my $Xss = $self->{Xss}->GetValue;
+		my $Xmx = $self->{Xmx}->GetValue;
+		my $prms = $self->{prms}->GetValue;
 		
 		# Add "m" behind Xms, Xss and Xmx
 		$Xms = $Xms."m";
@@ -656,7 +647,7 @@ sub save_clicked
 		$template =~ s/\$configurl/$configurl/;
 		
 		# If a minimum memory allocation is set (must be 3 or 4 digits)
-		if ($self->Xms->GetValue =~ /\d{3,4}/)
+		if ($self->{Xms}->GetValue =~ /\d{3,4}/)
 		{
 			# Add it to the template along with the other parameters
 			$template =~ s/\$prms/-Xms$Xms -Xmx$Xmx -Xss$Xss $prms/g;
@@ -686,9 +677,9 @@ sub writeprmfile
 	my ($self, $settingsfile) = @_;
 	
 	# Get the values from the gui
-	my $Xms = $self->Xms->GetValue;
-	my $Xss = $self->Xss->GetValue;
-	my $Xmx = $self->Xmx->GetValue;
+	my $Xms = $self->{Xms}->GetValue;
+	my $Xss = $self->{Xss}->GetValue;
+	my $Xmx = $self->{Xmx}->GetValue;
 	
 	# Add "m" behind Xms, Xss and Xmx
 	$Xms = $Xms."m";
@@ -696,20 +687,20 @@ sub writeprmfile
 	$Xss = $Xss."m";
 	
 	# Write .prm file
-	main::WriteFile("-Djava.class.path=".$self->classpath->GetValue."\n", ">", "$settingsfile");
-	main::WriteFile("-Dcom.jagex.config=".$self->configurl->GetValue."\n", ">>", "$settingsfile");
+	main::WriteFile("-Djava.class.path=".$self->{classpath}->GetValue."\n", ">", "$settingsfile");
+	main::WriteFile("-Dcom.jagex.config=".$self->{configurl}->GetValue."\n", ">>", "$settingsfile");
 	main::WriteFile("-Xmx$Xmx\n", ">>", "$settingsfile");
 	main::WriteFile("-Xss$Xss\n", ">>", "$settingsfile");
 	
 	# If a minimum memory allocation is set (must be 3 or 4 digits)
-	if ($self->Xms->GetValue =~ /\d{3,4}/)
+	if ($self->{Xms}->GetValue =~ /\d{3,4}/)
 	{
 		# Write the minimum memory allocation prm
 		main::WriteFile("-Xms$Xms\n", ">>", "$settingsfile");
 	}
 	
 	# Get misc parameters
-	my $prm_content = $self->prms->GetValue;
+	my $prm_content = $self->{prms}->GetValue;
 	
 	# Remove all newlines
 	$prm_content =~ s/\ //g;
@@ -740,68 +731,77 @@ sub loadconfig
 	my ($self) = @_;
 	
 	# Set the prmfile to the gui
-	$self->prmFile->SetValue("$prmfile");
+	$self->{prmFile}->SetValue("$prmfile");
 	
 	# If forcealsa and forcepulse is enabled
-	if ($forcealsa =~ /true/i && $forcepulseaudio =~ /true/i)
+	if ($forcealsa =~ /true|1/i && $forcepulseaudio =~ /true/i)
 	{
 		# Set the options in the gui
-		$self->soundsystem->SetSelection(3);
+		$self->{soundsystem}->SetSelection(3);
 	}
 	# Else if only forcealsa is enabled
-	elsif($forcealsa =~ /true/i && $forcepulseaudio =~ /false/i)
+	elsif($forcealsa =~ /true|1/i && $forcepulseaudio =~ /false/i)
 	{
 		# Set the options in the gui
-		$self->soundsystem->SetSelection(2);
+		$self->{soundsystem}->SetSelection(2);
 	}
 	# Else if only forcepulse is enabled
-	elsif($forcepulseaudio =~ /true/i && $forcealsa =~ /false/i)
+	elsif($forcepulseaudio =~ /true|1/i && $forcealsa =~ /false/i)
 	{
 		# Set the options in the gui
-		$self->soundsystem->SetSelection(1);
+		$self->{soundsystem}->SetSelection(1);
 	}
 	# Else
 	else
 	{
 		# Let java decide
-		$self->soundsystem->SetSelection(0);
+		$self->{soundsystem}->SetSelection(0);
 	}
 	
 	# If preferredjava starts with / or X:\ where X is a letter
 	if ($preferredjava =~ /^(\/|[a-z]:)/i)
 	{
 		# Set the selection to custom-java
-		$self->preferredjava->SetSelection(3);
+		$self->{preferredjava}->SetSelection(3);
 		
 		# Enable the filepicker
-		$self->customjava->Enable(1);
+		$self->{customjava}->Enable(1);
 		
 		# Set the path to the customjava
-		$self->customjava->SetPath("$preferredjava");
+		$self->{customjava}->SetPath("$preferredjava");
 	}
 	# Else if preferredjava is 6-openjdk
 	elsif($preferredjava =~ /6-openjdk/)
 	{
 		# Set the selection to 6-openjdk
-		$self->preferredjava->SetSelection(2);
+		$self->{preferredjava}->SetSelection(2);
 	}
 	# Else if preferredjava is 7-openjdk
 	elsif($preferredjava =~ /7-openjdk/)
 	{
 		# Set the selection to 7-openjdk
-		$self->preferredjava->SetSelection(1);
+		$self->{preferredjava}->SetSelection(1);
 	}
 	else
 	{
 		# Set the selection to default-java
-		$self->preferredjava->SetSelection(0);
+		$self->{preferredjava}->SetSelection(0);
 	}
 	
 	# If compabilitymode is enabled
-	if ($compabilitymode =~ /true/i)
+	if ($compabilitymode =~ /true|1/i)
 	{
-		$self->winemode->SetValue(1);
-	}	
+		# Make the checkbox for compabilitymode checked
+		$self->{winemode}->SetValue(1);
+	}
+	
+	# If useprimusrun is enabled
+	if ($useprimusrun =~ /true|1/i)
+	{
+		# Make the checkbox for primusmode checked
+		$self->{primusmode}->SetValue(1);
+	}
+		
 }
 
 #
@@ -830,7 +830,7 @@ sub loadsettings
 	}
 	
 	# Show the user what file we are changing
-	$self->configfilepath->SetValue($settingsfile);
+	$self->{configfilepath}->SetValue($settingsfile);
 	
 	# Read the settings file
 	my $contents = main::ReadFile($settingsfile);
@@ -839,7 +839,7 @@ sub loadsettings
 	if (($OS !~ /(darwin)/ && $contents !~ /error reading file/) || ($RSU =~ /1/ && $contents !~ /error reading file/))
 	{
 		# Empty the prms list
-		$self->prms->ChangeValue("");
+		$self->{prms}->ChangeValue("");
 		
 		# Parse the prm file
 		parse_prm("@$contents", $self);
@@ -879,7 +879,7 @@ sub parse_prm
 			# Remove all letters and dashes
 			$xmx =~ s/[a-z\-]//ig;
 			# Set the value in the gui
-			$self->Xmx->SetValue($xmx);
+			$self->{Xmx}->SetValue($xmx);
 		}
 		# Else if $prm is -Xms then
 		elsif($prm =~ /^-Xms/)
@@ -889,7 +889,7 @@ sub parse_prm
 			# Remove all letters and dashes
 			$xms =~ s/[a-z\-]//ig;
 			# Set the value in the gui
-			$self->Xms->SetValue($xms);
+			$self->{Xms}->SetValue($xms);
 		}
 		# Else if $prm contains jagexappletviewer then
 		elsif($prm =~ /jagexappletviewer/i)
@@ -904,7 +904,7 @@ sub parse_prm
 			# Remove all letters and dashes
 			$xss =~ s/[a-z\-]//ig;
 			# Set the value in the gui
-			$self->Xss->SetValue($xss);
+			$self->{Xss}->SetValue($xss);
 		}
 		
 		# Else if $prm is the com.jagex.config url then
@@ -914,7 +914,7 @@ sub parse_prm
 			my @configurl = split /config=/, $prm;
 			
 			# Set the value in the gui
-			$self->configurl->SetValue($configurl[1]);
+			$self->{configurl}->SetValue($configurl[1]);
 		}
 		# Else if $prm contains nothing useful
 		elsif($prm =~ /^(|\n|\r|\r\n|\n\r)$/)
@@ -924,7 +924,7 @@ sub parse_prm
 		else
 		{
 			# Set the value in the gui
-			$self->prms->AppendText("$prm\n");
+			$self->{prms}->AppendText("$prm\n");
 		}
 	}
 	
@@ -965,7 +965,7 @@ sub parse_plist
 			$prm =~ s/(\s*<string>|<\/string>)//g;
 			
 			# Set the value in the gui
-			$self->configurl->SetValue("$prm");
+			$self->{configurl}->SetValue("$prm");
 		}
 		# Else if the current line contains sun.java2d.nodraw
 		elsif($parameters[$counter] =~ /<key>sun\.java2d\.nodraw<\/key>/)
@@ -979,7 +979,7 @@ sub parse_plist
 			$parameters[$counter] =~ s/(\s*<key>|<\/key>)//g;
 			
 			# Set the value in the gui
-			$self->prms->AppendText("-D$parameters[$counter]=$prm\n");
+			$self->{prms}->AppendText("-D$parameters[$counter]=$prm\n");
 		}
 		# Else if the current line contains VMOptions.i386
 		elsif($parameters[$counter] =~ /VMOptions\.i386/)
@@ -1004,7 +1004,7 @@ sub parse_plist
 					# Remove all letters and dashes
 					$xmx =~ s/[a-z\-]//ig;
 					# Set the value in the gui
-					$self->Xmx->SetValue($xmx);
+					$self->{Xmx}->SetValue($xmx);
 				}
 				# Else if $prm is -Xms then
 				elsif($prm_item =~ /^-Xms/)
@@ -1014,7 +1014,7 @@ sub parse_plist
 					# Remove all letters and dashes
 					$xms =~ s/[a-z\-]//ig;
 					# Set the value in the gui
-					$self->Xms->SetValue($xms);
+					$self->{Xms}->SetValue($xms);
 				}
 				# Else if $prm contains jagexappletviewer then
 				elsif($prm_item =~ /jagexappletviewer/i)
@@ -1029,12 +1029,12 @@ sub parse_plist
 					# Remove all letters and dashes
 					$xss =~ s/[a-z\-]//ig;
 					# Set the value in the gui
-					$self->Xss->SetValue($xss);
+					$self->{Xss}->SetValue($xss);
 				}
 				else
 				{
 					# Set the value in the gui
-					$self->prms->AppendText("$prm_item\n");
+					$self->{prms}->AppendText("$prm_item\n");
 				}
 				
 			}
@@ -1067,31 +1067,31 @@ sub delete_maincache
 		
 		# Delete the cache
 		$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE" 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE" 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		$output = `del /F /S /Q "$HOME\\.jagex_cache_32" 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		$output = `del /F /S /Q "$HOMEDRIVE\\.jagex_cache_32" 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		$output = `del /F /S /Q "$ENV{WINDIR}\\.jagex_cache_32" 2>&1`;
-		$self->terminal_output->AppendText("$output"."Operation Finished\n");
+		$self->{terminal_output}->AppendText("$output"."Operation Finished\n");
 	}
 	# Else we are on UNIX
 	else
 	{
 		# Delete the cache
 		$output = `rm -r -v $HOME/jagexcache/runescape/LIVE 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		$output = `rm -r -v $HOME/.jagex_cache_32 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
 			$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE 2>&1`;
-			$self->terminal_output->AppendText("$output");
+			$self->{terminal_output}->AppendText("$output");
 		}
 	}
 	
@@ -1121,23 +1121,23 @@ sub delete_betacache
 		
 		# Delete the cache
 		$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE_BETA" 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE_BETA" 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 	}
 	# Else we are on UNIX
 	else
 	{
 		# Delete the cache
 		$output = `rm -r -v $HOME/jagexcache/runescape/LIVE_BETA 2>&1`;
-		$self->terminal_output->AppendText("$output");
+		$self->{terminal_output}->AppendText("$output");
 		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
 			$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE_BETA 2>&1`;
-			$self->terminal_output->AppendText("$output");
+			$self->{terminal_output}->AppendText("$output");
 		}
 	}
 }
@@ -1154,16 +1154,16 @@ sub set_tooltips
 	#Wx::MessageBox("What's minimum heap?", "", wxOK,$self);
 	
 	# Set tooltips with info about the settings
-	$self->Xms->SetToolTip("The minimum heap allocation is the minimum\namount of RAM Java is allowed to allocate for it's own use.\nIf the field is empty, the setting will be ignored.");
-	$self->Xmx->SetToolTip("The maximum heap allocation is the maximum\namount of ram Java is allowed to allocate for it's own use.\nIt is recommended to have this set to 512mb (up to 1024mb)\nbut not above 50% of your available RAM to fix black/white screen issues and client crashes(self closing).");
-	$self->Xss->SetToolTip("The stack is a restricted data structure where only a small number of operations are performed.\nIf the stack is too small it might result in an Error_Game_Crash message.\nHowever a corrupt(or lack of access to) jagexcache can cause an identical issue!");
-	$self->classpath->SetToolTip("The classpath is the name and location of the .jar file\nwhich is the actual client, the classpath is ALWAYS jagexappletviewer.jar");
-	$self->configurl->SetToolTip("The config url is where the client loads it's external settings,\nit's also the config url that decides which world you will\nbe logged into when you first login to the game.\nBy default this is the world closest to your location, however if you replace \"www\" with world7\nit would make you always use world7 as your default world.");
-	$self->prms->SetToolTip("The Misc Settings is a special field where you can enter advanced\njava parameters, it is mostly used to fix new issues or add non standard client settings.\nIn short you can alter the java execution here and tweak\nthe client to work best on your computer.\n\nFor a full list of settings you can add here just google for \"Java HotSpot VM Options\"");
-	$self->soundsystem->SetToolTip("In some cases Java will be unable to play sounds properly on\nunix(randomly disappearing sound effects), forcing java to\nplay sounds through alsa(recommended for linux) or\npulseaudio(recommended for other unixes) will fix these\nsound issues.");
-	$self->prmFile->SetToolTip("Here you can assign a custom parameter file to the script, this\nis nice to do if you do not want to change or mess up your\ndefault parameter file, or you want to create a custom one for\na certain situation.\nNOTE: If the new file do not exist, it will use the previous file as a template!");
-	$self->customjava->SetToolTip("If you set preferred java to custom-java, you will be\nable to use this to tell the script to use a custom java\nbinary/executable. This will let you run the game\nthrough oracle java or openjdk at will or let you run the game\nthrough 32bit java on 64bit platforms");
-	$self->configfilepath->SetToolTip("A copy/paste-able location of the currently used parameter file.\nThis is provided incase you need it for something.");
+	$self->{Xms}->SetToolTip("The minimum heap allocation is the minimum\namount of RAM Java is allowed to allocate for it's own use.\nIf the field is empty, the setting will be ignored.");
+	$self->{Xmx}->SetToolTip("The maximum heap allocation is the maximum\namount of ram Java is allowed to allocate for it's own use.\nIt is recommended to have this set to 512mb (up to 1024mb)\nbut not above 50% of your available RAM to fix black/white screen issues and client crashes(self closing).");
+	$self->{Xss}->SetToolTip("The stack is a restricted data structure where only a small number of operations are performed.\nIf the stack is too small it might result in an Error_Game_Crash message.\nHowever a corrupt(or lack of access to) jagexcache can cause an identical issue!");
+	$self->{classpath}->SetToolTip("The classpath is the name and location of the .jar file\nwhich is the actual client, the classpath is ALWAYS jagexappletviewer.jar");
+	$self->{configurl}->SetToolTip("The config url is where the client loads it's external settings,\nit's also the config url that decides which world you will\nbe logged into when you first login to the game.\nBy default this is the world closest to your location, however if you replace \"www\" with world7\nit would make you always use world7 as your default world.");
+	$self->{prms}->SetToolTip("The Misc Settings is a special field where you can enter advanced\njava parameters, it is mostly used to fix new issues or add non standard client settings.\nIn short you can alter the java execution here and tweak\nthe client to work best on your computer.\n\nFor a full list of settings you can add here just google for \"Java HotSpot VM Options\"");
+	$self->{soundsystem}->SetToolTip("In some cases Java will be unable to play sounds properly on\nunix(randomly disappearing sound effects), forcing java to\nplay sounds through alsa(recommended for linux) or\npulseaudio(recommended for other unixes) will fix these\nsound issues.");
+	$self->{prmFile}->SetToolTip("Here you can assign a custom parameter file to the script, this\nis nice to do if you do not want to change or mess up your\ndefault parameter file, or you want to create a custom one for\na certain situation.\nNOTE: If the new file do not exist, it will use the previous file as a template!");
+	$self->{customjava}->SetToolTip("If you set preferred java to custom-java, you will be\nable to use this to tell the script to use a custom java\nbinary/executable. This will let you run the game\nthrough oracle java or openjdk at will or let you run the game\nthrough 32bit java on 64bit platforms");
+	$self->{configfilepath}->SetToolTip("A copy/paste-able location of the currently used parameter file.\nThis is provided incase you need it for something.");
 }
 
 #
@@ -1176,19 +1176,19 @@ sub preferredjava_changed
 	my ($self, $event) = @_;
 	
 	# If preferredjava is set to custom-java
-	if ($self->preferredjava->GetCurrentSelection =~ 3)
+	if ($self->{preferredjava}->GetCurrentSelection =~ 3)
 	{
 		# Enable the filepicker
-		$self->customjava->Enable(1);
+		$self->{customjava}->Enable(1);
 	}
 	# Else
 	else
 	{
 		# Make sure the filepicker is disabled
-		$self->customjava->Enable(0);
+		$self->{customjava}->Enable(0);
 		
 		# Set the filepicker value to nothing
-		$self->customjava->SetPath('');
+		$self->{customjava}->SetPath('');
 	}
 }
 
@@ -1202,13 +1202,17 @@ sub saveconf_clicked
 	my ($self, $event) = @_;
 	
 	# Get the values from the gui
-	my $prmfile_setting = $self->prmFile->GetValue;
-	my $soundsystem_setting = $self->soundsystem->GetSelection;
-	my $preferredjava_setting = $self->preferredjava->GetSelection;
-	my $customjava_setting = $self->customjava->GetPath;
-	my $winemode_setting = $self->winemode->GetValue;
+	my $prmfile_setting = $self->{prmFile}->GetValue;
+	my $soundsystem_setting = $self->{soundsystem}->GetSelection;
+	my $preferredjava_setting = $self->{preferredjava}->GetSelection;
+	my $customjava_setting = $self->{customjava}->GetPath;
+	my $winemode_setting = $self->{winemode}->GetValue;
+	my $primusmode_setting = $self->{primusmode}->GetValue;
 	my $old_win32java = main::readconf("win32java.exe", "default-java", "settings.conf");
 	my $old_unixjava = main::readconf("preferredjava", "default-java", "settings.conf");
+	
+	# Prepare a message that will be shown once all settings are saved
+	my $savemessage = "Configurations Saved!";
 	
 	## Write prmfile setting
 	# Start writing the settings.conf
@@ -1300,8 +1304,24 @@ sub saveconf_clicked
 		main::WriteFile("compabilitymode=false\n", ">>", "$clientdir/share/settings.conf");
 	}
 	
+	## Write primusmode setting
+	# If primusmode is checked/enabled
+	if ($primusmode_setting =~ /1/)
+	{
+		# Write useprimusrun=true to settings.conf
+		main::WriteFile("useprimusrun=true\n", ">>", "$clientdir/share/settings.conf");
+		
+		$savemessage = "$savemessage\n\nWarning!: Do not disable your Nvidia Card with\n\"bbswitch\" while runescape runs through primusrun!";
+	}
+	# Else
+	else
+	{
+		# Write useprimusrun=false to settings.conf
+		main::WriteFile("useprimusrun=false\n", ">>", "$clientdir/share/settings.conf");
+	}
+	
 	# Display a messagebox to notify that the function is done
-	Wx::MessageBox("Configurations Saved!", "Configurations Saved!", wxOK,$self);
+	Wx::MessageBox("$savemessage", "Configurations Saved!", wxOK,$self);
 }
 
 #
@@ -1313,7 +1333,7 @@ sub tab_box1_changepage
 	my ($self, $event) = @_;
 	
 	# Set $prmfile to the one typed into the script settings
-	$prmfile = $self->prmFile->GetValue;
+	$prmfile = $self->{prmFile}->GetValue;
 	
 	loadsettings($self);
 }

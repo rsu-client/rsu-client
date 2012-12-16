@@ -49,3 +49,12 @@ forcealsa=true
 # NOTE: running the client in compability mode might not fix the OpenGL issue if you have a
 # graphic card from intel
 compabilitymode=false
+
+# Set useprimusrun to 1 or true to make the runescape script
+# launch java with primusrun which will make java use the Nvidia graphic card
+# on nvidia optimus computers with linux installed
+# this requires that bumblebee and primus is installed
+# If this is set to true and the script cannot find primusrun it will
+# ignore the setting.
+# for more info check http://www.webupd8.org/2012/11/primus-better-performance-and-less.html
+useprimusrun=false
