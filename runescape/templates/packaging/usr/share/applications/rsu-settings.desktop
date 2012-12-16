@@ -27,4 +27,3 @@ Exec=rsu-settings
 # TextEditor, Graphics, 2DGraphics, RasterGraphics, Emulator, System,
 # Settings, DesktopSettings, Filesystem)
 Categories=GNOME;GTK;Game;
-Name[en_US]=rsu-settings.desktop
