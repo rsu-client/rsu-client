@@ -251,7 +251,15 @@ sub set_events
 	
 	if ($OS =~ /linux/)
 	{
-		addmodulepage($self);
+		# Check whats is inside the modules folder
+		my $addonfolderexist = `ls "$clientdir/modules" | grep "addons"`;
+		
+		# If addons folder exists
+		if ($addonfolderexist =~ /^addons$/)
+		{
+			# Add the addons page
+			addmodulepage($self);
+		}
 	}
 	
 	# Set default size

@@ -196,8 +196,16 @@ print "\n";
 # Be strict to avoid messy code
 use strict;
 
-# Load addons
-rsu_addonloader::loadaddons($rsu_data);
+# Check what folders exists in $clientdir/modules
+my $clientdir = $rsu_data->clientdir;
+my $addonsfoldercheck = `ls "$clientdir/modules" | grep "addons"`;
+
+# If the addons folder exists
+if ($addonsfoldercheck =~ /^addons$/)
+{
+	# Load addons
+	rsu_addonloader::loadaddons($rsu_data);
+}
 
 # Start actual process of running the client
 
