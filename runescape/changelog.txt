@@ -1,5 +1,8 @@
 runescape (3.9.6) oneiric; urgency=low
 
+  * Launchpad now automatically builds deb packages from the git
+    repository, please check future changelogs at
+    https://github.com/HikariKnight/rsu-client/blob/master/runescape/changelog.txt
   * Added support for Nvidia Optimus Linux computers using
     bumblebee+primusrun. For more info check out
     http://webupd8.org/2012/11/primus-better-performance-and-less.html
