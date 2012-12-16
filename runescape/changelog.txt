@@ -1,3 +1,16 @@
+runescape (3.9.6) oneiric; urgency=low
+
+  * Added support for Nvidia Optimus Linux computers using
+    bumblebee+primusrun. For more info check out
+    http://webupd8.org/2012/11/primus-better-performance-and-less.html
+  * Made the addons tab in the settings gui not appear if the addons
+    folder do not exist in $clientdir/modules
+    or .config/runescape/modules for system installed clients.
+  * Made the runescape script not run the loadaddons function if
+    the addons folder do not exist.
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Sun, 16 Dec 2012 14:24:00 +0200
+
 runescape (3.9.5) oneiric; urgency=low
 
   * Added an addon framework (wxWidgets2.9.3)
