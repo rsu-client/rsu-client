@@ -2,6 +2,7 @@
 
 my $windowsurl = "http://www.runescape.com/downloads/runescape.msi";
 my $macurl = "http://www.runescape.com/downloads/runescape.dmg";
+my $updateurl = "http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/update.tar.gz";
 
 # Be strict to avoid messy code
 use strict;
@@ -263,15 +264,7 @@ sub runscriptupdater
 	# Make a newline so the output looks nicer
 	print "\n";
 	
-	# Run the script updater
-	if ($OS =~ /MSWin32/)
-	{
-		system "cd \"$cwd\" && $win32path && perl \"%CD%\\update-scripts\"";
-	}
-	else
-	{
-		system "\"$cwd/update-scripts\"";
-	}
+	startupdate();
 }
 
 #
@@ -479,3 +472,24 @@ sub checkfor_p7zip
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub startupdate
+{
+	# Fetch the update.tar.gz and extract it
+	if ($OS =~ /MSWin32/)
+	{
+		system "cd \"$cwd\" && $fetchcommand \"$cwd\\update.tar.gz\" $updateurl && 7z e update.tar.gz && 7z x -y update.tar && del /Q update.tar.gz && del /Q update.tar";
+	}
+	else
+	{
+		system "cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl && tar -zxvf update.tar.gz && rm update.tar.gz";
+	}
+	
+	# Show exit message
+	print "\nPress ENTER/RETURN to exit:";
+	
+	# Wait for user to press enter
+	my $exit = <STDIN>;
+	
+	# Exit script
+	exit;
+}
