@@ -14,6 +14,13 @@ my $RSU = 1;
 # Name of our xrc gui resource file
 my $xrc_gui_file = "rsu-settings_gui.xrc";
 
+# If this script is loaded through PAR
+if("@ARGV" =~ /--usedpar=true/)
+{
+	# Add the location of the xrc file
+	$xrc_gui_file = "modules/$xrc_gui_file";
+}
+
 # Autoflush outputs from terminal/cmd
 $|=1;
 
