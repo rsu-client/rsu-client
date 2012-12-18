@@ -1,3 +1,10 @@
+runescape (3.9.7) oneiric; urgency=low
+
+  * Removed the need to redistribute perl manually on windows
+    in order to make the client work.
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Sun, 18 Dec 2012 22:12:38 +0200
+
 runescape (3.9.6) oneiric; urgency=low
 
   * Launchpad now automatically builds deb packages from the git
