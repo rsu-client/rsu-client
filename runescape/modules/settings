@@ -283,24 +283,12 @@ sub set_events
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);
 	
-	# If we are on windows
-	if ($OS =~ /MSWin32/)
-	{
-		# Set scrollbar properties on these widgets
-		setScrollBars(
-			$self->FindWindow('scrolledWindow')
-		);
-	}
-	# Else
-	else
-	{
-		# Set scrollbar properties on these widgets
-		setScrollBars(
-			$self->FindWindow('scriptwindow'),
-			$self->FindWindow('rswindow'),
-			$self->FindWindow('cachewindow'),
-		);
-	}
+	# Set scrollbar properties on these widgets
+	setScrollBars(
+		$self->FindWindow('scriptwindow'),
+		$self->FindWindow('rswindow'),
+		$self->FindWindow('cachewindow'),
+	);
 	
 	# If RSU mode is disabled
 	if ($RSU =~ /0/)
