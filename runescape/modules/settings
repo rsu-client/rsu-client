@@ -270,7 +270,16 @@ sub set_events
 	}
 	
 	# Set default size
-	$self->SetSize(470,500);
+	$self->SetSize(490,520);
+	
+	# If we are on Mac OSX use 490x600 instead due to widget borders being thicker
+	if ($OS =~ /darwin/)
+	{
+		# Set default size
+		$self->SetSize(490,600);
+	}
+	
+	# Make sure the window cannot be resized
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);
 	
