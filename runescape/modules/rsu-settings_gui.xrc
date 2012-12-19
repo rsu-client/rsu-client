@@ -19,7 +19,7 @@
 							<object class="wxScrolledWindow" name="scriptwindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<object class="wxFlexGridSizer">
-									<rows>5</rows>
+									<rows>6</rows>
 									<cols>1</cols>
 									<vgap>0</vgap>
 									<hgap>0</hgap>
