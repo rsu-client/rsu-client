@@ -2,6 +2,13 @@ runescape (3.9.7) oneiric; urgency=low
 
   * Removed the need to redistribute perl manually on windows
     in order to make the client work.
+  * Rewrote rsu-settings to work with the new PAR packaged
+    scripts.
+  * Removed the need to bundle an external version of perl
+    on darwin/MacOSX just to get wxWidgets to work on that
+    platform, this new method uses PAR to make a self contained
+    loader that will include the necessary components to run
+    wxperl with wxWidgets (saving hundreds of megabytes!).
     
  -- HikariKnight <mu.antilag@gmail.com>  Sun, 18 Dec 2012 22:12:38 +0200
 

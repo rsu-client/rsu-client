@@ -14,7 +14,7 @@
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "3.9.6";
+my $scriptversion = "3.9.7";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";

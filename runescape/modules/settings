@@ -14,18 +14,21 @@ my $RSU = 1;
 # Name of our xrc gui resource file
 my $xrc_gui_file = "rsu-settings_gui.xrc";
 
-# If this script is loaded through PAR
+
+# Get script directory
+my $cwd = $FindBin::RealBin;
+
+# If this script is loaded through PAR on windows
 if("@ARGV" =~ /--usedpar=true/)
-{
-	# Add the location of the xrc file
-	$xrc_gui_file = "modules/$xrc_gui_file";
+{	
+	# Change the $cwd to point to the modules folder
+	$cwd = "$cwd/modules";
 }
+
 
 # Autoflush outputs from terminal/cmd
 $|=1;
 
-# Get script directory
-my $cwd = $FindBin::RealBin;
 # Get script filename
 my $scriptname = $FindBin::Script;
 # Detect the current OS
@@ -272,23 +275,35 @@ sub set_events
 	# Set default size
 	$self->SetSize(490,520);
 	
-	# If we are on Mac OSX use 490x600 instead due to widget borders being thicker
+	# If we are on Mac OSX use 500x600 instead due to widget borders being thicker
 	if ($OS =~ /darwin/)
 	{
 		# Set default size
-		$self->SetSize(490,600);
+		$self->SetSize(500,600);
 	}
 	
 	# Make sure the window cannot be resized
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);
 	
-	# Set scrollbar properties on these widgets
-	setScrollBars(
-		$self->FindWindow('scriptwindow'),
-		$self->FindWindow('rswindow'),
-		$self->FindWindow('cachewindow'),
-	);
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Set scrollbar properties on these widgets
+		setScrollBars(
+			$self->FindWindow('scrolledWindow')
+		);
+	}
+	# Else
+	else
+	{
+		# Set scrollbar properties on these widgets
+		setScrollBars(
+			$self->FindWindow('scriptwindow'),
+			$self->FindWindow('rswindow'),
+			$self->FindWindow('cachewindow'),
+		);
+	}
 	
 	# If RSU mode is disabled
 	if ($RSU =~ /0/)
