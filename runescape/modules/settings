@@ -14,11 +14,21 @@ my $RSU = 1;
 # Name of our xrc gui resource file
 my $xrc_gui_file = "rsu-settings_gui.xrc";
 
-# Autoflush outputs from terminal/cmd
-$|=1;
 
 # Get script directory
 my $cwd = $FindBin::RealBin;
+
+# If this script is loaded through PAR on windows
+if("@ARGV" =~ /--usedpar=true/)
+{	
+	# Change the $cwd to point to the modules folder
+	$cwd = "$cwd/modules";
+}
+
+
+# Autoflush outputs from terminal/cmd
+$|=1;
+
 # Get script filename
 my $scriptname = $FindBin::Script;
 # Detect the current OS
@@ -263,7 +273,16 @@ sub set_events
 	}
 	
 	# Set default size
-	$self->SetSize(470,500);
+	$self->SetSize(490,520);
+	
+	# If we are on Mac OSX use 500x600 instead due to widget borders being thicker
+	if ($OS =~ /darwin/)
+	{
+		# Set default size
+		$self->SetSize(500,600);
+	}
+	
+	# Make sure the window cannot be resized
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);
 	

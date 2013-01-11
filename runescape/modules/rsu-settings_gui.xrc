@@ -2,12 +2,10 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxFrame" name="mainwindow">
 		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
-		<size>454,619</size>
+		<size>463,647</size>
 		<title>RuneScape Config Editor</title>
-		<aui_managed>0</aui_managed>
-		<object class="wxScrolledWindow" name="scrolledWindow">
-			<style>wxHSCROLL|wxVSCROLL</style>
-			<scrollrate>5,5</scrollrate>
+		<object class="wxPanel" name="m_panel1">
+			<style>wxTAB_TRAVERSAL</style>
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
@@ -20,9 +18,8 @@
 							<selected>1</selected>
 							<object class="wxScrolledWindow" name="scriptwindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
-								<scrollrate>5,5</scrollrate>
 								<object class="wxFlexGridSizer">
-									<rows>5</rows>
+									<rows>6</rows>
 									<cols>1</cols>
 									<vgap>0</vgap>
 									<hgap>0</hgap>
@@ -52,7 +49,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText91">
 															<label>Parameter File: </label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -70,7 +66,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText11">
 															<label>Preferred Java to use: </label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -110,7 +105,7 @@
 										<object class="wxRadioBox" name="soundsystem">
 											<style>wxRA_SPECIFY_COLS</style>
 											<label>Tell Java which sound system to use</label>
-											<selection>1</selection>
+											<selection>0</selection>
 											<content>
 												<item>Let Java decide by itself</item>
 												<item>PulseAudio (All Unixes)</item>
@@ -133,7 +128,7 @@
 												<border>5</border>
 												<object class="wxCheckBox" name="primusmode">
 													<style>wxALIGN_RIGHT</style>
-													<label>Tell the script to launch java with primusrun if it\nis available on the system to increase game\nperformance.</label>
+													<label>Tell the script to use primusrun if it is available</label>
 													<checked>0</checked>
 												</object>
 											</object>
@@ -141,7 +136,15 @@
 												<option>0</option>
 												<flag>wxALL</flag>
 												<border>5</border>
-												<object class="wxHyperlinkCtrl" name="primusrunlink">
+												<object class="wxStaticText" name="m_staticText112">
+													<label>Using primusrun will let RuneScape be able to access\nOpenGL Display Mode while the game uses the\nNvidia graphic card instead of the Intel Graphic\ncard to increase game performance.</label>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxHyperlinkCtrl" name="m_hyperlink1">
 													<label>Click here for more information about primusrun</label>
 													<url>http://www.webupd8.org/2012/11/primus-better-performance-and-less.html</url>
 													<style>wxHL_DEFAULT_STYLE</style>
@@ -172,7 +175,6 @@
 												<border>5</border>
 												<object class="wxStaticText" name="m_staticText111">
 													<label>Running the game through wine will let you play RuneScape\non some Unix platforms that are not supported natively by\nthis script or on platforms that Java no longer supports.\nREQUIRES THAT WINE IS COMPILED WITH OPENGL SUPPORT!</label>
-													<wrap>-1</wrap>
 												</object>
 											</object>
 										</object>
@@ -228,7 +230,6 @@
 							<selected>0</selected>
 							<object class="wxScrolledWindow" name="rswindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
-								<scrollrate>5,5</scrollrate>
 								<object class="wxFlexGridSizer">
 									<rows>5</rows>
 									<cols>1</cols>
@@ -270,7 +271,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText3">
 															<label>Minimum Java Heap Allocation(MB):</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
@@ -296,7 +296,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText6">
 															<label>Maximum Java Heap Allocation(MB):</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
@@ -322,7 +321,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText71">
 															<label>Java Stack Size(MB):</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
@@ -370,7 +368,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText7">
 															<label>ClassPath:</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -389,7 +386,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText10">
 															<label>Config URL:</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -478,7 +474,6 @@
 							<selected>0</selected>
 							<object class="wxScrolledWindow" name="cachewindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
-								<scrollrate>5,5</scrollrate>
 								<object class="wxBoxSizer">
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">
@@ -505,7 +500,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText9">
 															<label>Clear the cache and turn RuneScape&apos;s\nsettings back to default:</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
@@ -551,7 +545,6 @@
 														<border>5</border>
 														<object class="wxStaticText" name="m_staticText101">
 															<label>Clear the BETA cache and turn \nRuneScape&apos;s settings back to default:</label>
-															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
