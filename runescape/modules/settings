@@ -273,7 +273,7 @@ sub set_events
 	}
 	
 	# Set default size
-	$self->SetSize(490,520);
+	$self->SetSize(500,520);
 	
 	# If we are on Mac OSX use 500x600 instead due to widget borders being thicker
 	if ($OS =~ /darwin/)
