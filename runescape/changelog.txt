@@ -9,6 +9,9 @@ runescape (3.9.7) oneiric; urgency=low
     platform, this new method uses PAR to make a self contained
     loader that will include the necessary components to run
     wxperl with wxWidgets (saving hundreds of megabytes!).
+  * Made a Launcher for the client, meaning less cluttered
+    application menus for users. It is an optional module from 
+    https://github.com/HikariKnight/rsu-launcher
     
  -- HikariKnight <mu.antilag@gmail.com>  Sun, 18 Dec 2012 22:12:38 +0200
 
