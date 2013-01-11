@@ -14,7 +14,7 @@
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "3.9.6";
+my $scriptversion = "3.9.7";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -196,15 +196,19 @@ print "\n";
 # Be strict to avoid messy code
 use strict;
 
-# Check what folders exists in $clientdir/modules
-my $clientdir = $rsu_data->clientdir;
-my $addonsfoldercheck = `ls "$clientdir/modules" | grep "addons"`;
-
-# If the addons folder exists
-if ($addonsfoldercheck =~ /^addons$/)
+# If we are not on windows
+if ($rsu_data !~ /MSWin32/)
 {
-	# Load addons
-	rsu_addonloader::loadaddons($rsu_data);
+	# Check what folders exists in $clientdir/modules
+	my $clientdir = $rsu_data->clientdir;
+	my $addonsfoldercheck = `ls "$clientdir/modules" | grep "addons"`;
+
+	# If the addons folder exists
+	if ($addonsfoldercheck =~ /^addons$/)
+	{
+		# Load addons
+		rsu_addonloader::loadaddons($rsu_data);
+	}
 }
 
 # Start actual process of running the client
@@ -276,7 +280,7 @@ sub checkforcleanup
 		$cwd =~ s/\//\\/g;
 		
 		# Path variable to set in windows
-		my $win32path = "set PATH=$cwd\\win32\\perl\\bin;$cwd\\win32\\gnu\\;$cwd\\win32\\7-zip\\;%PATH%";
+		#my $win32path = "set PATH=$cwd\\win32\\perl\\bin;$cwd\\win32\\gnu\\;$cwd\\win32\\7-zip\\;%PATH%";
 		
 		# Get directory listing
 		my $checkforscript = `dir \"$cwd\"`;
@@ -288,7 +292,8 @@ sub checkforcleanup
 			#system "$cwd\\Download-Windows-Files.exe";
 			
 			# Run the cleanupscript then delete it then show a notice to the user
-			system "$win32path && perl \"".$rsu_data->cwd."\\cleanupscript.pl\" && del \"".$rsu_data->cwd."\\cleanupscript.pl\" && perl -e \"use Wx qw[:everything]; Wx::MessageBox('The scripts were recently updated. Please press OK and run Download-Windows-Files.exe to make sure the modules are up to date.', 'Recently Updated!', wxOK,undef);";
+			#system "$win32path && perl \"".$rsu_data->cwd."\\cleanupscript.pl\" && del \"".$rsu_data->cwd."\\cleanupscript.pl\" && perl -e \"use Wx qw[:everything]; Wx::MessageBox('The scripts were recently updated. Please press OK and run Download-Windows-Files.exe to make sure the modules are up to date.', 'Recently Updated!', wxOK,undef);";
+			require "$cwd/cleanupscript.pl";
 			
 			exit;
 		}
