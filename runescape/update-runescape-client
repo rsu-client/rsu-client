@@ -445,7 +445,7 @@ sub updatefromwindowsclient
 	else
 	{
 		# Download the mac client and show the user a zenity dialog while the file is being downloaded
-		rsu_zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl", "Downloading jagexappletviewer.jar \(From Windows client\)", "Downloading and updating the jagexappletviewer.jar.", "");
+		rsu_zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl", "Downloading jagexappletviewer.jar", "Downloading and updating the jagexappletviewer.jar\nBy extracting it from the Official Windows Client.", "");
 	}
 	
 	# If we are on anything but windows
@@ -508,7 +508,7 @@ sub updatefrommacclient
 	else
 	{
 		# Download the mac client and show the user a zenity dialog while the file is being downloaded
-		rsu_zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl", "Downloading jagexappletviewer.jar \(From Mac client\)", "Downloading and updating the jagexappletviewer.jar.", "");
+		rsu_zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl", "Downloading jagexappletviewer.jar", "Downloading and updating the jagexappletviewer.jar\nBy extracting it from the Official Mac Client.", "");
 	}
 	
 	# If we are on anything but windows
