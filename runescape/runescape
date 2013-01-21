@@ -14,7 +14,7 @@
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "3.9.7";
+my $scriptversion = "3.9.8";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -178,7 +178,10 @@ $rsu_data->prmfile = parseargs("prmfile", "runescape.prm");
 $rsu_data->useprimusrun = parseargs("useprimusrun", "false");
 
 # Define fallbackprms incase we cannot read share/runescape.prm
-$rsu_data->fallbackprms = "jagexappletviewer.jar -Dsun.java2d.noddraw=true -Dcom.jagex.config=http://www.runescape.com/k=3/l=\$(Language:0)/jav_config.ws -Xss2m -Xmx512m -XX:CompileThreshold=1500 -Xincgc -XX:+UseConcMarkSweepGC -XX:+UseParNewGC jagexappletviewer ";
+$rsu_data->fallbackprms = "jagexappletviewer.jar -Dsun.java2d.noddraw=true -Dcom.jagex.config=http://www.runescape.com/k=3/l=\$(Language:0)/jav_config.ws -Xss2m -Xmx512m jagexappletviewer ";
+
+# garbage collection prms (useful for "ancient" systems)
+# -XX:CompileThreshold=1500 -Xincgc -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
 
 ########################################################################
 #DO NOT EDIT THE CODE BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
