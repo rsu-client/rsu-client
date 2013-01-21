@@ -55,11 +55,11 @@ sub zenity_dl
 		# Show a zenity window with a progressbar that shows the progress of the download
 		system "$cmd 2>&1 | tee /dev/stderr | sed -u \"s/^ *[0-9]*K[ .]*\\([0-9]*%\\).*/\\1/\" | zenity --title=\"$title\"  --text=\"$text\" --progress --no-cancel --auto-close 2>/dev/null $extracmd";
 	}
-	# Else it is curl or unknown
+	# Else it is curl or unknown (running zenity download dialog with pulsating progressbar)
 	else
 	{
 		# Show a zenity window with a pulsing progressbar (since curl is not nice when it comes to zenity progressbars) while the scripts are updating
-		system "$cmd | zenity --title=\"$title\" --progress --text=\"$text\n\nUsing curl\(or similar\) to do the download.\nPlease wait... The window will close when the process is done.\" --pulsate --auto-kill --auto-close $extracmd";
+		system "$cmd 2>&1 | tee /dev/stderr | zenity --title=\"$title\" --progress --text=\"$text\n\nUsing curl\(or similar\) to do the download.\nPlease wait... The window will close when the process is done.\" --pulsate --auto-kill --auto-close 2>/dev/null $extracmd";
 	}
 }
 
