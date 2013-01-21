@@ -59,7 +59,7 @@ sub zenity_dl
 	else
 	{
 		# Show a zenity window with a pulsing progressbar (since curl is not nice when it comes to zenity progressbars) while the scripts are updating
-		system "$cmd 2>&1 | tee /dev/stderr | zenity --title=\"$title\" --progress --text=\"$text\n\nUsing curl\(or similar\) to do the download.\nPlease wait... The window will close when the process is done.\" --pulsate --no-cancel --auto-close 2>/dev/null $extracmd";
+		system "$cmd 2>&1 | tee /dev/stderr | zenity --title=\"$title\" --progress --text=\"$text\n\nUsing curl \(or similar\) to do the download.\nThe window will close when the process is done.\nPlease wait...\" --pulsate --no-cancel --auto-close 2>/dev/null $extracmd";
 	}
 }
 
