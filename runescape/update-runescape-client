@@ -293,8 +293,12 @@ sub main
 	# Tell user the update is done
 	print "\nDone running the update process!\nPress Enter/Return to exit:";
 	
-	# Wait for user to press enter
-	$exit = <STDIN>;
+	# If zenity is not installed
+	if ($usezenity =~ /0/)
+	{
+		# Wait for user to press enter
+		$exit = <STDIN>;
+	}
 	
 	# Exit the script
 	exit;
