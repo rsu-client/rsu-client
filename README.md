@@ -68,3 +68,4 @@ Developers, Contributors and people that have helped the project
 * chroot - _force pulseaudio_
 * Ethoxyethaan - _original bash script for launching the jagexappletviewer.jar on Linux_
 * Jmb71 - _findjavalib regex_
+* [Fallen_Unia](https://github.com/Unia) - Zenity support in the Updater
