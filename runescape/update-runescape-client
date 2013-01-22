@@ -290,14 +290,22 @@ sub main
 		}
 	}
 	
-	# Tell user the update is done
-	print "\nDone running the update process!\nPress Enter/Return to exit:";
+	# Make a done message
+	my $donemessage = "Done running the update process!";
 	
 	# If zenity is not installed
 	if ($usezenity =~ /0/)
 	{
+		# Tell user the update is done
+		print "\n$donemessage\nPress Enter/Return to exit:";
+		
 		# Wait for user to press enter
 		$exit = <STDIN>;
+	}
+	else
+	{
+		# Tell the user that the update is done
+		rsu_zenity::zenity_info("Update Done!", "$donemessage\nYou should now have the latest version of the jagexappletviewer.jar!");
 	}
 	
 	# Exit the script
