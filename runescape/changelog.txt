@@ -12,6 +12,7 @@ runescape (3.9.8) oneiric; urgency=low
   * Removed the option to launch the EoC beta from the local install
   * Added rsu-settings to the rightclick meny for runescape.desktop
     (Unity only)
+  * Added perl based launchers instead of autoit based ones for windows
     
  -- HikariKnight <mu.antilag@gmail.com>  Mon, 21 Jan 2013 14:01:38 +0200
 
