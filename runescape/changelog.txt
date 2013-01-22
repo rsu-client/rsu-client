@@ -1,3 +1,21 @@
+runescape (3.9.8) oneiric; urgency=low
+
+  * Added support for using curl instead of wget
+    (meaning either can be a dependency instead of the other)
+  * Added support for using zenity in the update-runescape-client
+    script, making the script more userfriendly thanks to Fallen Unia
+  * Removed garbage collection parameters from the fallback parameters
+    in the runescape script, however they are available in a comment
+    below "$fallbackprms =" incase you need them.
+  * update-runescape-client will now use zenity over xterm,
+    however it will fallback to xterm if zenity is not installed.
+  * Removed the option to launch the EoC beta from the local install
+  * Added rsu-settings to the rightclick meny for runescape.desktop
+    (Unity only)
+  * Added perl based launchers instead of autoit based ones for windows
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Mon, 21 Jan 2013 14:01:38 +0200
+
 runescape (3.9.7) oneiric; urgency=low
 
   * Removed the need to redistribute perl manually on windows

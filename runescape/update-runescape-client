@@ -1,4 +1,10 @@
 #!/usr/bin/perl -w
+#################################
+#   Contributors in this file   #
+#################################
+# HikariKnight - Main developer #
+# Fallen Unia - Zenity support  #
+#################################
 
 my $windowsurl = "http://www.runescape.com/downloads/runescape.msi";
 my $macurl = "http://www.runescape.com/downloads/runescape.dmg";
@@ -12,6 +18,11 @@ use FindBin;
 
 # Get script directory
 my $cwd = $FindBin::RealBin;
+
+# Include perl modules in ./modules/client_modules/extra
+use lib $FindBin::RealBin."/modules/client_modules/extra";
+# Require rsu_zenity so we can make dialog windows if zenity is installed
+require rsu_zenity;
 
 # Make a variable to contain the client directory
 my $clientdir = $cwd;
@@ -69,28 +80,24 @@ elsif($OS =~ /MSWin32/)
 	# Set the temponairly PATH environment variable and add wget to the fetchcommand
 	$fetchcommand = "$win32path && wget -O";
 }
+# Else if /usr/bin contains wget
+elsif(`ls /usr/bin | grep wget` =~  /wget/)
+{
+	# Use wget command to fetch files
+	$fetchcommand = "wget -O";
+}
+# Else if /usr/bin contains curl
+elsif(`ls /usr/bin | grep curl` =~  /curl/)
+{
+	# Curl command equalent to the wget command to fetch files
+	$fetchcommand = "curl -L -o";
+}
 
-# Check if updates requires root permission but we dont have it
-#if ($cwd =~ /^(\/opt*|\/usr\/s?bin*|\/bin*)/ && $isroot !~ /root/)
-#{
-	# if we are inside an interactive shell then
-#	if (-t STDOUT)
-#	{
-		# Run script as root
-#		system ("sudo perl \"$cwd/update-runescape-client\"");
-#	}
-#	else
-#	{
-		# run script in xterm so we can get input from user and with right permissions
-#		system ("xterm -e \"echo The client is in a location that requires && echo superuser permissions to change && sudo perl \\\"$cwd/update-runescape-client\\\"\"");
-#	}
-	# Exit once we are done
-#	exit
-#}
-
+# Make a variable to control if we are going to use zenity or not
+my $usezenity = rsu_zenity::checkfor_zenity();
 
 # If we are inside an interactive shell then
-if (-t STDOUT)
+if (-t STDOUT || $usezenity =~ /1/)
 {
 	
 	# If this script have been installed systemwide
@@ -118,24 +125,72 @@ else
 
 sub main
 {
-	# Show user a notice about jagexappletviewer.jar
-	print "Due to \"Legal Reasons\" the file jagexappletviewer.jar is not \navailable/downloadable in certain countries. For this script \nto work you must be able to download at LEAST one of the \nOfficial RuneScape Clients for extraction!\n\n";
+	# Place the main message in a variable
+	my $updatetext = "Due to Legal Reasons the file jagexappletviewer.jar is not \navailable/downloadable in certain countries. For this script \nto work you must be able to download at LEAST one of the \nOfficial RuneScape Clients for extraction!\n\n";
 	
-	# Ask what type of update to run
-	print "What type of update do you want to run?\n [1] Update jagexappletviewer.jar(from Jagex) by using the\n     official Windows client, then ask to update the scripts. (default)\n\n [2] Update jagexappletviewer.jar(from Jagex) by using the\n     official MacOSX client(EXPERIMENTAL! but smaller download),\n     then ask to update the scripts.\n\n";
+	# Make a variable to contain the answers
+	my $answer;
 	
-	# If the script is not located in /opt
-	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+	# If zenity is not installed, print all text to the console
+	if ($usezenity =~ /0/)
 	{
-		# Show the 3rd option
-		print " [3] Update the client scripts (from HikariKnight)\n\n";
+		# Show the updatetext
+		print $updatetext;
+		
+		# Ask what type of update to run
+		print "What type of update do you want to run?\n [1] Update jagexappletviewer.jar(from Jagex) by using the\n     official Windows client, then ask to update the scripts. (default)\n\n [2] Update jagexappletviewer.jar(from Jagex) by using the\n     official MacOSX client(EXPERIMENTAL! but smaller download),\n     then ask to update the scripts.\n\n";
+		
+		# If the script is not located in /opt
+		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+		{
+			# Show the 3rd option
+			print " [3] Update the rsu-client scripts (from HikariKnight)\n\n";
+		}
+		
+		# Complete the message
+		print "Enter the number for your choice:";
+		
+		# Get user input
+		$answer = <STDIN>;
+	}
+	# Else use zenity
+	else
+	{
+		# Make a variable to contain the update script option for zenity
+		my $updatescriptoption;
+		
+		# If the script is not located in /opt
+		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+		{
+			# Show the 3rd option
+			$updatescriptoption = 'FALSE "Update the rsu-client scripts (from HikariKnight)"';
+		}
+		
+		# Display the message and options though zenity
+		$answer = rsu_zenity::zenity_radiolist("Information", "$updatetext\n\nWhat type of update do you want to run?", "TRUE \"Update the jagexappletviewer.jar \(Extract from Windows client\)\" 0 \"Update the jagexappletviewer.jar \(Extract from Mac client\)\" $updatescriptoption");
+		
+		# If user choose update from jagexappletviewer.jar from the windows client
+		if ($answer =~ /Windows client/)
+		{
+			$answer = "1";
+		}
+		# Else if user choose update from jagexappletviewer.jar from the mac client
+		elsif($answer =~ /Mac client/)
+		{
+			$answer = "2";
+		}
+		# Else if user choose update the rsu-client scripts
+		elsif($answer =~ /rsu-client scripts/)
+		{
+			$answer = "3";
+		}
+		# Else cancel was clicked
+		else
+		{
+			exit;
+		}
 	}
 	
-	# Complete the message
-	print "Enter the number for your choice:";
-	
-	# Get user input
-	my $answer = <STDIN>;
 	
 	# If user answered 2 then run the script updater and exit
 	if ($answer =~ /^3/ && $cwd !~ /\/opt\/runescape/)
@@ -143,11 +198,22 @@ sub main
 		# Execute script updater
 		runscriptupdater();
 		
-		# Tell user the update is done
-		print "\nDone running the update process!\nPress Enter/Return to exit:";
+		# Make a done message
+		my $donemessage = "Done running the update process!";
 		
-		# Wait for user to press enter
-		$exit = <STDIN>;
+		if ($usezenity =~ /0/)
+		{
+			# Tell user the update is done
+			print "\n$donemessage\nPress Enter/Return to exit:";
+			
+			# Wait for user to press enter
+			$exit = <STDIN>;
+		}
+		else
+		{
+			# Tell the user that the update is done
+			rsu_zenity::zenity_info("Update Done!", "$donemessage\nYou should now have the latest version of RSU-Client installed!");
+		}
 		
 		# Exit script
 		exit;
@@ -198,11 +264,23 @@ sub main
 	# If the script is not located in a read only location for the user
 	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
 	{
-		# Ask user if we shall update the scripts too
-		print "\nDo you want to update the RuneScape UNIX Client scripts too?\n[y/n] (default = y):";
+		# Make a variable to hold the users answer
+		my $updatescripts = "n";
 		
-		# Get user input
-		my $updatescripts = <STDIN>;
+		if ($usezenity =~ /0/)
+		{
+			# Ask user if we shall update the scripts too
+			print "\nDo you want to update the RuneScape UNIX Client scripts too?\n[y/n] (default = y):";
+			
+			# Get user input
+			$updatescripts = <STDIN>;
+		}
+		# Else zenity is installed
+		else
+		{
+			# Display a question asking the user if they want to update the scripts too (displaying a question in zenity makes it use the return code as output meaning system will be able to get it)
+			$updatescripts = rsu_zenity::zenity_question("Update Scripts Too?", "Do you want to update the RuneScape UNIX Client scripts too?");
+		}
 		
 		# If user said yes or choose the default
 		if ($updatescripts !~ /^(n|N)/)
@@ -212,11 +290,23 @@ sub main
 		}
 	}
 	
-	# Tell user the update is done
-	print "\nDone running the update process!\nPress Enter/Return to exit:";
+	# Make a done message
+	my $donemessage = "Done running the update process!";
 	
-	# Wait for user to press enter
-	$exit = <STDIN>;
+	# If zenity is not installed
+	if ($usezenity =~ /0/)
+	{
+		# Tell user the update is done
+		print "\n$donemessage\nPress Enter/Return to exit:";
+		
+		# Wait for user to press enter
+		$exit = <STDIN>;
+	}
+	else
+	{
+		# Tell the user that the update is done
+		rsu_zenity::zenity_info("Update Done!", "$donemessage\nYou should now have the latest version of the jagexappletviewer.jar!");
+	}
 	
 	# Exit the script
 	exit;
@@ -357,8 +447,18 @@ Answer (default = y) [y/n]:";
 
 sub updatefromwindowsclient
 {
-	# Download the windows client
-	system "$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl";
+	# If zenity is not installed
+	if ($usezenity =~ /0/)
+	{
+		# Download the windows client
+		system "$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl";
+	}
+	# Else zenity is installed
+	else
+	{
+		# Download the mac client and show the user a zenity dialog while the file is being downloaded
+		rsu_zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl", "Downloading jagexappletviewer.jar", "Downloading and updating the jagexappletviewer.jar\nBy extracting it from the Official Windows Client.", "");
+	}
 	
 	# If we are on anything but windows
 	if ($OS !~ /MSWin32/)#/(darwin|freebsd|netbsd|openbsd|solaris|linux)/)
@@ -410,8 +510,18 @@ sub updatefromwindowsclient
 
 sub updatefrommacclient
 {
-	# Download the windows client
-	system "$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl";
+	# If zenity is not installed
+	if ($usezenity =~ /0/)
+	{
+		# Download the Mac client
+		system "$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl";
+	}
+	# Else zenity is installed
+	else
+	{
+		# Download the mac client and show the user a zenity dialog while the file is being downloaded
+		rsu_zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl", "Downloading jagexappletviewer.jar", "Downloading and updating the jagexappletviewer.jar\nBy extracting it from the Official Mac Client.", "");
+	}
 	
 	# If we are on anything but windows
 	if ($OS !~ /MSWin32/)#/(darwin|freebsd|netbsd|openbsd|solaris|linux)/)
@@ -450,11 +560,14 @@ sub checkfor_p7zip
 	# Test for system installed 7zip
 	my $test7zsys = `7z`;
 	
+	# Disable warnings for now to avoid a warning message if the 7z command returned nothing
+	no warnings;
+	
 	# If we do not have 7zip, check if we have a compiled version from earlier
 	if ($test7zsys !~ /7-Zip/)
 	{
 		# Tell user that the warning is bogus
-		print "The warning above this line is just bogus so ignore it.\n\n";
+		print "\n\n";
 		
 		# Set a new testpath
 		my $test7z = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && 7z`;
@@ -462,10 +575,25 @@ sub checkfor_p7zip
 		# If we do not have 7zip at all
 		if ($test7z !~ /7-Zip/)
 		{
-			# Download and compile p7zip-full from source
-			get_p7zip();
+			# If zenity is not installed
+			if ($usezenity =~ /0/)
+			{
+				# Download and compile p7zip-full from source
+				get_p7zip();
+			}
+			# Else zenity is installed
+			else
+			{
+				# Since it will be hard to effectively show the compile process in zenity
+				# We will just tell the user to install p7zip themselves
+				rsu_zenity::zenity_error("No p7zip found.", "I was unable to find the p7zip binary\\!\nPlease install the p7zip binary and re-run this script to continue.\n\n--Install Commands--\nUbuntu/Debian/Mint: sudo apt-get install p7zip-full\nFedora: su -c \\\"yum install p7zip-plugins\\\"\nArch-Linux: pacman -Syu p7zip");
+				exit;
+			}
 		}
 	}
+	
+	# Enable warnings again
+	use warnings;
 }
 
 #
@@ -481,15 +609,31 @@ sub startupdate
 	}
 	else
 	{
-		system "cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl && tar -zxvf update.tar.gz && rm update.tar.gz";
+		# If zenity is not installed
+		if ($usezenity =~ /0/)
+		{
+			# Download the update and extract the files
+			system "cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl && tar -zxvf update.tar.gz && rm update.tar.gz";
+			
+			# Show exit message
+			print "\nPress ENTER/RETURN to exit:";
+	
+			# Wait for user to press enter
+			my $exit = <STDIN>;
+		}
+		# Else zenity is installed
+		else
+		{
+			# Download the update.tar.gz and show a zenity window for the user while the update process is running
+			rsu_zenity::zenity_dl("cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl", "Updating the RSU-Client", "Downloading and updating the RSU-Client scripts.", "&& tar -zxvf update.tar.gz && rm update.tar.gz");
+		}
 	}
-	
-	# Show exit message
-	print "\nPress ENTER/RETURN to exit:";
-	
-	# Wait for user to press enter
-	my $exit = <STDIN>;
 	
 	# Exit script
 	exit;
 }
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
