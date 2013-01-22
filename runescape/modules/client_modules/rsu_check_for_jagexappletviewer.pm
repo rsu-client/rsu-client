@@ -33,7 +33,19 @@ package rsu_cfjav;
 		# If jagexappletviewer.jar do not exist then
 		if ($jarcheckresult !~ /jagexappletviewer.jar/)
 		{
-			require "$cwd/update-runescape-client";
+			# If we are on windows
+			if ($rsu_data->OS =~ /MSWin32/)
+			{
+				# Start the update-runescape-client.exe inside a new cmd window
+				system "start cmd /c \"$cwd/update-runescape-client.exe\"";
+			}
+			# Else we are on unix
+			else
+			{
+				# Run the update-runescape-client inside this script process
+				require "$cwd/update-runescape-client";
+			}
+			
 			# Make a variable containing the path to the update script
 			#my $updatescript = "\"$cwd/update-runescape-client\"";
 			
