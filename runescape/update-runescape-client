@@ -83,13 +83,13 @@ elsif($OS =~ /MSWin32/)
 # Else if /usr/bin contains wget
 elsif(`ls /usr/bin | grep wget` =~  /wget/)
 {
-	# Curl command equalent to the wget command
+	# Use wget command to fetch files
 	$fetchcommand = "wget -O";
 }
 # Else if /usr/bin contains curl
 elsif(`ls /usr/bin | grep curl` =~  /curl/)
 {
-	# Curl command equalent to the wget command
+	# Curl command equalent to the wget command to fetch files
 	$fetchcommand = "curl -L -o";
 }
 
@@ -290,11 +290,23 @@ sub main
 		}
 	}
 	
-	# Tell user the update is done
-	print "\nDone running the update process!\nPress Enter/Return to exit:";
+	# Make a done message
+	my $donemessage = "Done running the update process!";
 	
-	# Wait for user to press enter
-	$exit = <STDIN>;
+	# If zenity is not installed
+	if ($usezenity =~ /0/)
+	{
+		# Tell user the update is done
+		print "\n$donemessage\nPress Enter/Return to exit:";
+		
+		# Wait for user to press enter
+		$exit = <STDIN>;
+	}
+	else
+	{
+		# Tell the user that the update is done
+		rsu_zenity::zenity_info("Update Done!", "$donemessage\nYou should now have the latest version of the jagexappletviewer.jar!");
+	}
 	
 	# Exit the script
 	exit;

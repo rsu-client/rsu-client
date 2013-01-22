@@ -285,25 +285,13 @@ sub set_events
 	# Make sure the window cannot be resized
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);
-	
-	# If we are on windows
-	if ($OS =~ /MSWin32/)
-	{
-		# Set scrollbar properties on these widgets
-		setScrollBars(
-			$self->FindWindow('scrolledWindow')
-		);
-	}
-	# Else
-	else
-	{
-		# Set scrollbar properties on these widgets
-		setScrollBars(
+
+	# Set scrollbar properties on these widgets
+	setScrollBars(
 			$self->FindWindow('scriptwindow'),
 			$self->FindWindow('rswindow'),
 			$self->FindWindow('cachewindow'),
-		);
-	}
+	);
 	
 	# If RSU mode is disabled
 	if ($RSU =~ /0/)
@@ -1085,32 +1073,45 @@ sub delete_maincache
 		my $WINDIR = $ENV{"WINDIR"};
 		
 		# Delete the cache
-		$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE" 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
-		$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE" 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
-		$output = `del /F /S /Q "$HOME\\.jagex_cache_32" 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
-		$output = `del /F /S /Q "$HOMEDRIVE\\.jagex_cache_32" 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
-		$output = `del /F /S /Q "$ENV{WINDIR}\\.jagex_cache_32" 2>&1`;
-		$self->{terminal_output}->AppendText("$output"."Operation Finished\n");
+		remove_dir($self, "$HOME\\jagexcache\\runescape\\LIVE", 1);
+		remove_dir($self, "$HOME\\jagexcache1\\runescape\\LIVE", 1);
+		remove_dir($self, "$HOME\\.jagex_cache_32", 1);
+		remove_dir($self, "$HOMEDRIVE\\.jagex_cache_32", 1);
+		remove_dir($self, "$ENV{WINDIR}\\.jagex_cache_32", 1);
+		
+		## Old code, kept incase test fails
+		#$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
+		#$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
+		#$output = `del /F /S /Q "$HOME\\.jagex_cache_32" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
+		#$output = `del /F /S /Q "$HOMEDRIVE\\.jagex_cache_32" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
+		#$output = `del /F /S /Q "$ENV{WINDIR}\\.jagex_cache_32" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output"."Operation Finished\n");
+		
 	}
 	# Else we are on UNIX
 	else
 	{
 		# Delete the cache
-		$output = `rm -r -v $HOME/jagexcache/runescape/LIVE 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
-		$output = `rm -r -v $HOME/.jagex_cache_32 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
+		remove_dir($self, "$HOME/jagexcache/runescape/LIVE", 1);
+		remove_dir($self, "$HOME/.jagex_cache_32", 1);
+		
+		#$output = `rm -r -v $HOME/jagexcache/runescape/LIVE 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
+		#$output = `rm -r -v $HOME/.jagex_cache_32 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
 		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
-			$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE 2>&1`;
-			$self->{terminal_output}->AppendText("$output");
+			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE", 1);
+			
+			#$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE 2>&1`;
+			#$self->{terminal_output}->AppendText("$output");
 		}
 	}
 	
@@ -1139,24 +1140,31 @@ sub delete_betacache
 		$WINDIR =~ s/\//\\/g;
 		
 		# Delete the cache
-		$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE_BETA" 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
-		$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE_BETA" 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
+		remove_dir($self, "$HOME\\jagexcache\\runescape\\LIVE_BETA", 1);
+		remove_dir($self, "$HOME\\jagexcache1\\runescape\\LIVE_BETA", 1);
+		
+		#$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE_BETA" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
+		#$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE_BETA" 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
 	}
 	# Else we are on UNIX
 	else
 	{
 		# Delete the cache
-		$output = `rm -r -v $HOME/jagexcache/runescape/LIVE_BETA 2>&1`;
-		$self->{terminal_output}->AppendText("$output");
+		remove_dir($self, "$HOME/jagexcache/runescape/LIVE_BETA", 1);
+		
+		#$output = `rm -r -v $HOME/jagexcache/runescape/LIVE_BETA 2>&1`;
+		#$self->{terminal_output}->AppendText("$output");
 		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
-			$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE_BETA 2>&1`;
-			$self->{terminal_output}->AppendText("$output");
+			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE_BETA", 1);
+			
+			#$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE_BETA 2>&1`;
+			#$self->{terminal_output}->AppendText("$output");
 		}
 	}
 }
@@ -1355,6 +1363,49 @@ sub tab_box1_changepage
 	$prmfile = $self->{prmFile}->GetValue;
 	
 	loadsettings($self);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub remove_dir
+{
+	# Get pointers
+	my ($self, $location, $giveoutput) = @_;
+	
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Delete all files in $location and pipe all output to the OUTPUT handle
+		open  (OUTPUT, "del /F /S /Q \"$location\" 2>&1 |");
+	}
+	# Else we are on unix
+	else
+	{
+		# Remove all files in $location and pipe all output to the OUTPUT handle
+		open  (OUTPUT, "rm -r -v \"$location\" 2>&1 |");
+	}
+	
+	# While OUTPUT still contains somethin
+	while (<OUTPUT>)
+	{
+		# If user asked to give output
+		if ($giveoutput =~ /1/)
+		{
+			# Append output to the terminal_output widget
+			$self->{terminal_output}->AppendText("$_");
+		}
+	}
+	# Close the handle
+	close(OUTPUT);
+	
+	# If user asked to give output
+	if ($giveoutput =~ /1/)
+	{
+		# Append output to the terminal_output widget
+		$self->{terminal_output}->AppendText("Operation finished\n");
+	}
 }
 
 #
