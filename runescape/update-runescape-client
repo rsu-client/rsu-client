@@ -83,13 +83,13 @@ elsif($OS =~ /MSWin32/)
 # Else if /usr/bin contains wget
 elsif(`ls /usr/bin | grep wget` =~  /wget/)
 {
-	# Curl command equalent to the wget command
+	# Use wget command to fetch files
 	$fetchcommand = "wget -O";
 }
 # Else if /usr/bin contains curl
 elsif(`ls /usr/bin | grep curl` =~  /curl/)
 {
-	# Curl command equalent to the wget command
+	# Curl command equalent to the wget command to fetch files
 	$fetchcommand = "curl -L -o";
 }
 
