@@ -18,14 +18,6 @@ my $xrc_gui_file = "rsu-settings_gui.xrc";
 # Get script directory
 my $cwd = $FindBin::RealBin;
 
-# If this script is loaded through PAR on windows
-if("@ARGV" =~ /--usedpar=true/)
-{	
-	# Change the $cwd to point to the modules folder
-	$cwd = "$cwd/modules";
-}
-
-
 # Autoflush outputs from terminal/cmd
 $|=1;
 
@@ -33,6 +25,20 @@ $|=1;
 my $scriptname = $FindBin::Script;
 # Detect the current OS
 my $OS = "$^O";
+
+# If this script is loaded on windows with the --usedpar=true parameter
+if($OS =~ /MSWin32/ && "@ARGV" =~ /--usedpar=true/)
+{	
+	# Change the $cwd to point to the modules folder
+	$cwd = "$cwd/modules";
+}
+# Else if we are on any other platform and --usedpar=true is passed
+elsif($OS !~ /MSWin32/ && "@ARGV" =~ /--usedpar=true/)
+{
+	# Change the $cwd to point to the clients modules folder
+	$cwd = "$cwd/../../";
+}
+
 
 # Make a variable to contain the client directory
 my $clientdir = "$cwd/..";
