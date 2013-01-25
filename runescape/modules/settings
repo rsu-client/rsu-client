@@ -6,6 +6,9 @@ use strict;
 # Use FindBin module to get script directory
 use FindBin;
 
+# Use the Cwd module to translate relative paths and symlinks to the real path
+use Cwd;
+
 # Tell if this is the settings editor that i sent to jagex or
 # used in the the RSU client (the difference is that 0 makes it read
 # the official clients parameter files)
@@ -826,8 +829,8 @@ sub loadsettings
 	# Get the pointers to the widgets
 	my $self = shift;
 	
-	# Make a variable for the settingsfile
-	my $settingsfile = "$clientdir/share/$prmfile";
+	# Make a variable for the settingsfile (use the Cwd::abs_path function to show the direct path)
+	my $settingsfile = Cwd::abs_path("$clientdir/share/$prmfile");
 	
 	# If we are on windows and not in RSU mode
 	if ($OS =~ /MSWin32/ && $RSU =~ /0/)
