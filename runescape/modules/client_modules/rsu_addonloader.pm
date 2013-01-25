@@ -14,68 +14,124 @@ sub loadaddons
 	
 	print "Loading addons\n";
 	
-	if ("$OS" =~ /linux/)
+	# Open the addons directory
+	opendir(my $addondirs, "$clientdir/modules/addons/");
+	
+	# While there is still content in the folder
+	while (readdir $addondirs)
 	{
-		# Transfer clientdir to a variable we can use
-		my $clientdir = $rsu_data->clientdir;
+		# If the current content is either named universal or the same as $OS
+		if (($_ =~ /^universal$/ && -d "$clientdir/modules/addons/$_") || ($_ =~ /^$OS$/ && -d "$clientdir/modules/addons/$_"))
+		{
+			# Display addons from the detected addons directory
+			load_enabled_addons($rsu_data, "$clientdir/modules/addons/$_");
+		}
+	}
+	
+	# Close the directory to free memory
+	closedir($addondirs);
+}
+
+sub load_enabled_addons
+{
+	# Get the passed variables
+	my ($rsu_data, $addondir) = @_;
+	
+	# Transfer rsu_data mutators to variables we can use
+	my $OS = $rsu_data->OS;
+	my $clientdir = $rsu_data->clientdir;
+	my $cwd = $rsu_data->cwd;
+	
+	# Read the addon list
+	my $addonconfig = rsu_IO::ReadFile($clientdir."/share/addons.conf");
+	
+	# If file does not exist
+	if ($addonconfig =~ /error reading file/)
+	{
+		# Tell what we are doing
+		print "No addons.conf found, i will generate one with\nall addons disabled!\n\n";
+	}
+	# Else
+	else
+	{
+		# Tell what we are doing
+		print "addons.conf found!\nParsing addon list.\n\n";
+	}
+	
+	# Open the directory containing addons
+	opendir(my $addons, $addondir);
+	
+	# While there is still content in the folder
+	while (readdir $addons)
+	{
+		# Go to next if the current content is a relative directory (. or ..) or if the folder is named framework
+		next if $_ =~ /^(\.|\.\.|framework)$/;
 		
-		# List all modules
-		my $addons = `ls "$clientdir/modules/addons/" | grep -v "framework"`;
-		
-		# Split up the list into an array
-		my @addons = split (/\n/, $addons);
-		my $addon;
-		
-		# Read the addon list
-		my $addonconfig = rsu_IO::ReadFile($clientdir."/share/addons.conf");
+		# Move the current folder to a variable so we can reuse it several times (as $_ gets overwritten during this while loop)
+		my $addon = $_;
+		print "$addon\n\n\n\n\n\n\n";
 		
 		# If file does not exist
 		if ($addonconfig =~ /error reading file/)
 		{
-			# Tell what we are doing
-			print "No addons.conf found, i will generate one with\nall addons disabled!\n\n";
-			
-			# Loop through the list of addons and generate the file
-			foreach $addon (@addons)
-			{
-				# Add modules to config
-				rsu_IO::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
-			}
+			# Add modules to config
+			rsu_IO::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
 		}
 		else
-		{
-			# Tell what we are doing
-			print "addons.conf found!\nParsing addon list.\n\n";
+		{			
+			# Get the status of the addon
+			my $addonstatus = rsu_IO::readconf("$addon", "undef", "addons.conf", $rsu_data);
 			
-			foreach $addon (@addons)
+			# If addon is enabled
+			if ($addonstatus =~ /enable/i)
 			{
-				# Get the status of the addon
-				my $addonstatus = rsu_IO::readconf("$addon", "undef", "addons.conf", $rsu_data);
+				# Tell what we are doing
+				print "Starting the moduleloader.pl for $addon\n";
 				
-				# If addon is enabled
-				if ($addonstatus =~ /enable/i)
+				# If we are on windows
+				if ($OS =~ /MSWin32/)
 				{
-					# Tell what we are doing
-					print "Starting the moduleloader.pl for $addon\n";
-					
-					# Execute module
-					system "perl -w \"$clientdir/modules/addons/$addon/moduleloader.pl\""
+					# If this is an windows only addon
+					if ($addondir !~ /\/universal\//)
+					{
+						# Execute module
+						system (1,"$cwd/rsu-launcher.exe --script=\"modules/addons/$OS/$addon/moduleloader.pl\"");
+					}
+					# Else this is an universal addon
+					else
+					{
+						# Execute module
+						system (1,"$cwd/rsu-launcher.exe --script=\"modules/addons/universal/$addon/moduleloader.pl\"");
+					}
 				}
-				# Else if addonstatus is undef (undefined)
-				elsif($addonstatus =~ /undef/)
+				# Else we are on either darwin/mac or linux which both have perl
+				else
 				{
-					# Add addon to addons.conf but disable it
-					rsu_IO::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
+					# If this is an addon only for the current platform
+					if ($addondir !~ /\/universal\//)
+					{
+						# Execute module
+						system "perl -w \"$clientdir/modules/addons/$OS/$addon/moduleloader.pl\"";
+					}
+					# Else this is an universal addon
+					else
+					{
+						# Execute module
+						system "perl -w \"$clientdir/modules/addons/universal/$addon/moduleloader.pl\"";
+					}
 				}
 				
-				
+			}
+			# Else if addonstatus is undef (undefined)
+			elsif($addonstatus =~ /undef/)
+			{
+				# Add addon to addons.conf but disable it
+				rsu_IO::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
 			}
 			
 			# Print an empty line for tidyness
 			print "\n";
 		}
-		
-		
 	}
 }
 
