@@ -69,7 +69,6 @@ sub load_enabled_addons
 		
 		# Move the current folder to a variable so we can reuse it several times (as $_ gets overwritten during this while loop)
 		my $addon = $_;
-		print "$addon\n\n\n\n\n\n\n";
 		
 		# If file does not exist
 		if ($addonconfig =~ /error reading file/)

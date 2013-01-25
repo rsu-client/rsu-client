@@ -199,18 +199,24 @@ print "\n";
 # Be strict to avoid messy code
 use strict;
 
-# If we are not on windows
-if ($rsu_data !~ /MSWin32/)
+# If we are on a platform which can use addons
+if ($rsu_data->OS =~ /(MSWin32|linux|darwin)/)
 {
 	# Check what folders exists in $clientdir/modules
 	my $clientdir = $rsu_data->clientdir;
-	my $addonsfoldercheck = `ls "$clientdir/modules" | grep "addons"`;
-
-	# If the addons folder exists
-	if ($addonsfoldercheck =~ /^addons$/)
+	
+	# Open the modules directory
+	opendir(my $checkforaddons, "$clientdir/modules");
+	
+	# While there is still content in the folder
+	while (readdir $checkforaddons)
 	{
-		# Load addons
-		rsu_addonloader::loadaddons($rsu_data);
+		# If current content is the addons folder
+		if ($_ =~ /^addons$/ && -d $_)
+		{
+			# Load addons
+			rsu_addonloader::loadaddons($rsu_data);
+		}
 	}
 }
 
