@@ -268,17 +268,24 @@ sub set_events
 	$self->{tab_box1} = $self->FindWindow('tab_box1');
 	$self->{primusmode} = $self->FindWindow('primusmode');
 	
-	if ($OS =~ /linux/)
+	if ($OS =~ /(linux|darwin|MSWin32)/)
 	{
 		# Check whats is inside the modules folder
-		my $addonfolderexist = `ls "$clientdir/modules" | grep "addons"`;
+		opendir(my $modulefolders, "$clientdir/modules") || die "Incomplete client structure! You must reinstall the rsu-client!";
 		
-		# If addons folder exists
-		if ($addonfolderexist =~ /^addons$/)
+		# While there is still content inside the folder
+		while (readdir $modulefolders)
 		{
-			# Add the addons page
-			addmodulepage($self);
+			# If the current content is the addons folder
+			if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
+			{
+				# Add the addons/module page
+				addmodulepage($self);
+			}
 		}
+		
+		# Close the directory to free up memory
+		closedir($modulefolders);
 	}
 	
 	# Set default size
@@ -346,13 +353,35 @@ sub addmodulepage
 	$self->{modulevertical}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
 	$self->{modulehorizontal}->Add(20,20,0,0);
 	
+	# Open the addons directory
+	opendir(my $addons, "$clientdir/modules/addons/");
 	
-	# List all modules
-	my $addons = `ls "$clientdir/modules/addons/" | grep -v "framework"`;
+	# While there is still contents in the directory
+	while (readdir $addons)
+	{
+		# If the current content is either named universal or the same as $OS
+		if (($_ =~ /^universal$/ && -d "$clientdir/modules/addons/$_") || ($_ =~ /^$OS$/ && -d "$clientdir/modules/addons/$_"))
+		{
+			# Display addons from the detected addons directory
+			displayaddons($self,"$clientdir/modules/addons/$_");
+		}
+	}
 	
-	# Split up the list into an array
-	my @addons = split (/\n/, $addons);
-	my $addon;
+	# Close the addons directory to free memory
+	closedir($addons);
+	
+	# Make sure the layout is displayed properly
+	$self->{modulepage}->SetSizer($self->{modulehorizontal});
+	$self->{modulehorizontal}->Fit($self);
+	$self->Layout();
+	
+	# Add scrollbars if neccessary
+	setScrollBars($self->{modulepage});
+}
+
+sub displayaddons
+{	
+	my ($self, $addonsdir) = @_;
 	
 	# Read the addon list
 	my $addonconfig = main::ReadFile($clientdir."/share/addons.conf");
@@ -360,13 +389,22 @@ sub addmodulepage
 	# Make a counter to know when we need to increase the amount of rows in the grid
 	my $counter = 1;
 	
-	# If file does not exist
-	if ($addonconfig =~ /error reading file/)
+	# Open the addons directory
+	opendir(my $addons_handle, $addonsdir);
+	
+	# While there is still content in the addons directory
+	while (readdir $addons_handle)
 	{
-		# For each addon
-		foreach $addon (@addons)
+		# Go to next if the current content is a relative directory (. or ..) or if the folder is named framework
+		next if $_ =~ /^(\.|\.\.|framework)$/;
+		
+		# Move the current folder to a variable so we can reuse it several times (as $_ gets overwritten during this while loop)
+		my $addon = $_;
+		
+		# If file does not exist
+		if ($addonconfig =~ /error reading file/)
 		{
-			# If $counter modulus 2 is 0
+			# If $counter modulus 2 is 0 (translation: every 2nd)
 			if ($counter %= 2)
 			{
 				# Increase the gridsizers rows by 1
@@ -374,7 +412,7 @@ sub addmodulepage
 			}
 			
 			# Make a checkbox
-			$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+			$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$_", wxDefaultPosition, wxDefaultSize, );
 			EVT_CHECKBOX($self, -1, \&change_addonstatus);
 			
 			# Add addon to addons.conf but disable it
@@ -385,16 +423,9 @@ sub addmodulepage
 			
 			# Add checkbox to vertical sizer
 			$self->{addonlist}->Add($self->{$addon}, 0, wxEXPAND,0);
-			
-			# Increase counter by 1
-			$counter += 1;
 		}
-	}
-	# Else
-	else
-	{
-		# For each addon
-		foreach $addon (@addons)
+		# Else
+		else
 		{
 			# If $counter modulus 2 is 0
 			if ($counter %= 2)
@@ -417,7 +448,7 @@ sub addmodulepage
 				$self->{$addon}->SetValue(1);
 				
 				# Add checkbox to vertical sizer
-				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+				$self->{addonlist}->Add($self->{$_}, 1, wxEXPAND,0);
 			}
 			# Else if addon status is undef(undefined)
 			elsif($addonstatus =~ /undef/)
@@ -447,18 +478,14 @@ sub addmodulepage
 				# Add checkbox to vertical sizer
 				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
 			}
-			
-			# Increase counter by 1
-			$counter += 1;
 		}
+		
+		# Increase counter by 1
+		$counter += 1;
 	}
 	
-	
-	$self->{modulepage}->SetSizer($self->{modulehorizontal});
-	$self->{modulehorizontal}->Fit($self);
-	$self->Layout();
-	
-	setScrollBars($self->{modulepage});
+	# Close the addons directory to free memory
+	closedir($addons_handle);
 }
 
 #
@@ -470,8 +497,30 @@ sub open_addonsdir
 	# Get the pointers
 	my ($self,$event) = @_;
 	
-	# Open the addons directory
-	system "xdg-open \"$clientdir/modules/addons/\"";
+	# Put the path to the addons directory into a variable
+	my $addonsdir = "$clientdir/modules/addons";
+	
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Replace all / with \
+		$addonsdir =~ s/\//\\/g;
+		
+		# Open the addons directory
+		system (1,"explorer.exe \"addonsdir\"");
+	}
+	# Else if we are on darwin/mac
+	elsif($OS =~ /darwin/)
+	{
+		# Open the addons directory
+		system "open \"$addonsdir/\"";
+	}
+	# Else
+	else
+	{
+		# Open the addons directory
+		system "xdg-open \"$addonsdir/\"";
+	}
 }
 
 #
