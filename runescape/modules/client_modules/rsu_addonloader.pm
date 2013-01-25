@@ -21,7 +21,7 @@ sub loadaddons
 	while (readdir $addondirs)
 	{
 		# If the current content is either named universal or the same as $OS
-		if (($_ =~ /^universal$/ && -d "$clientdir/modules/addons/$_") || ($_ =~ /^$OS$/ && -d "$clientdir/modules/addons/$_"))
+		if ($_ =~ /^(universal|$OS)$/ && -d "$clientdir/modules/addons/$_")
 		{
 			# Display addons from the detected addons directory
 			load_enabled_addons($rsu_data, "$clientdir/modules/addons/$_");
@@ -55,7 +55,7 @@ sub load_enabled_addons
 	else
 	{
 		# Tell what we are doing
-		print "addons.conf found!\nParsing addon list.\n\n";
+		print "addons.conf found!\nParsing addon list.\n";
 	}
 	
 	# Open the directory containing addons
@@ -78,11 +78,8 @@ sub load_enabled_addons
 		}
 		else
 		{			
-			# Get the status of the addon
-			my $addonstatus = rsu_IO::readconf("$addon", "undef", "addons.conf", $rsu_data);
-			
 			# If addon is enabled
-			if ($addonstatus =~ /enable/i)
+			if ("@$addonconfig" =~ /$addon=enable/i)
 			{
 				# Tell what we are doing
 				print "Starting the moduleloader.pl for $addon\n";
@@ -91,23 +88,23 @@ sub load_enabled_addons
 				if ($OS =~ /MSWin32/)
 				{
 					# If this is an windows only addon
-					if ($addondir !~ /\/universal\//)
+					if ($addondir !~ /\/universal/)
 					{
 						# Execute module
-						system (1,"$cwd/rsu-launcher.exe --script=\"modules/addons/$OS/$addon/moduleloader.pl\"");
+						system (1,"$cwd/rsu-launcher.exe --showcmd=true --script=\"modules/addons/$OS/$addon/moduleloader.pl\"");
 					}
 					# Else this is an universal addon
 					else
 					{
 						# Execute module
-						system (1,"$cwd/rsu-launcher.exe --script=\"modules/addons/universal/$addon/moduleloader.pl\"");
+						system (1,"$cwd/rsu-launcher.exe --showcmd=true --script=\"modules/addons/universal/$addon/moduleloader.pl\"");
 					}
 				}
 				# Else we are on either darwin/mac or linux which both have perl
 				else
 				{
 					# If this is an addon only for the current platform
-					if ($addondir !~ /\/universal\//)
+					if ($addondir !~ /\/universal/)
 					{
 						# Execute module
 						system "perl -w \"$clientdir/modules/addons/$OS/$addon/moduleloader.pl\"";
@@ -127,11 +124,11 @@ sub load_enabled_addons
 				# Add addon to addons.conf but disable it
 				rsu_IO::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
 			}
-			
-			# Print an empty line for tidyness
-			print "\n";
 		}
 	}
+	
+	# Print an empty line for tidyness
+	print "\n";
 }
 
 #

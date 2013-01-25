@@ -39,7 +39,7 @@ if($OS =~ /MSWin32/ && "@ARGV" =~ /--usedpar=true/)
 elsif($OS !~ /MSWin32/ && "@ARGV" =~ /--usedpar=true/)
 {
 	# Change the $cwd to point to the clients modules folder
-	$cwd = "$cwd/../../";
+	$cwd = "$cwd/../..";
 }
 
 
@@ -406,87 +406,91 @@ sub displayaddons
 		# Move the current folder to a variable so we can reuse it several times (as $_ gets overwritten during this while loop)
 		my $addon = $_;
 		
-		# If file does not exist
-		if ($addonconfig =~ /error reading file/)
+		# If the addon name is a directory
+		if (-d "$addonsdir/$addon")
 		{
-			# If $counter modulus 2 is 0 (translation: every 2nd)
-			if ($counter %= 2)
+			# If file does not exist
+			if ($addonconfig =~ /error reading file/)
 			{
-				# Increase the gridsizers rows by 1
-				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
-			}
-			
-			# Make a checkbox
-			$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$_", wxDefaultPosition, wxDefaultSize, );
-			EVT_CHECKBOX($self, -1, \&change_addonstatus);
-			
-			# Add addon to addons.conf but disable it
-			main::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
-			
-			# Set checkbox to unchecked
-			$self->{$addon}->SetValue(0);
-			
-			# Add checkbox to vertical sizer
-			$self->{addonlist}->Add($self->{$addon}, 0, wxEXPAND,0);
-		}
-		# Else
-		else
-		{
-			# If $counter modulus 2 is 0
-			if ($counter %= 2)
-			{
-				# Increase the gridsizers rows by 1
-				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
-			}
-			
-			# Get the status of the addon
-			my $addonstatus = main::readconf("$addon", "undef", "addons.conf");
-			
-			# If addon is enabled
-			if ($addonstatus =~ /enable/i)
-			{
+				# If $counter modulus 2 is 0 (translation: every 2nd)
+				if ($counter %= 2)
+				{
+					# Increase the gridsizers rows by 1
+					$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+				}
+				
 				# Make a checkbox
-				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$_", wxDefaultPosition, wxDefaultSize, );
 				EVT_CHECKBOX($self, -1, \&change_addonstatus);
 				
-				# Set checkbox to checked
-				$self->{$addon}->SetValue(1);
-				
-				# Add checkbox to vertical sizer
-				$self->{addonlist}->Add($self->{$_}, 1, wxEXPAND,0);
-			}
-			# Else if addon status is undef(undefined)
-			elsif($addonstatus =~ /undef/)
-			{
 				# Add addon to addons.conf but disable it
 				main::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
-				EVT_CHECKBOX($self, -1, \&change_addonstatus);
 				
-				# Make a checkbox
-				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
-				
-				# Set checkbox to checked
+				# Set checkbox to unchecked
 				$self->{$addon}->SetValue(0);
 				
 				# Add checkbox to vertical sizer
-				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+				$self->{addonlist}->Add($self->{$addon}, 0, wxEXPAND,0);
 			}
+			# Else
 			else
 			{
-				# Make a checkbox
-				$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
-				EVT_CHECKBOX($self, -1, \&change_addonstatus);
+				# If $counter modulus 2 is 0
+				if ($counter %= 2)
+				{
+					# Increase the gridsizers rows by 1
+					$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+				}
 				
-				# Set checkbox to checked
-				$self->{$addon}->SetValue(0);
+				# Get the status of the addon
+				my $addonstatus = main::readconf("$addon", "undef", "addons.conf");
 				
-				# Add checkbox to vertical sizer
-				$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+				# If addon is enabled
+				if ("@$addonconfig" =~ /$addon=enable/i)
+				{
+					# Make a checkbox
+					$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+					EVT_CHECKBOX($self, -1, \&change_addonstatus);
+					
+					# Set checkbox to checked
+					$self->{$addon}->SetValue(1);
+					
+					# Add checkbox to vertical sizer
+					$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+				}
+				# Else if addon status is undef(undefined)
+				elsif("@$addonconfig" =~ /undef/)
+				{
+					# Add addon to addons.conf but disable it
+					main::WriteFile("$addon=disable\n", ">>", $clientdir."/share/addons.conf");
+					EVT_CHECKBOX($self, -1, \&change_addonstatus);
+					
+					# Make a checkbox
+					$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+					
+					# Set checkbox to checked
+					$self->{$addon}->SetValue(0);
+					
+					# Add checkbox to vertical sizer
+					$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+				}
+				else
+				{
+					# Make a checkbox
+					$self->{$addon} = Wx::CheckBox->new($self->{modulepage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+					EVT_CHECKBOX($self, -1, \&change_addonstatus);
+					
+					# Set checkbox to checked
+					$self->{$addon}->SetValue(0);
+					
+					# Add checkbox to vertical sizer
+					$self->{addonlist}->Add($self->{$addon}, 1, wxEXPAND,0);
+				}
 			}
+			
+			# Increase counter by 1
+			$counter += 1;
 		}
-		
-		# Increase counter by 1
-		$counter += 1;
 	}
 	
 	# Close the addons directory to free memory

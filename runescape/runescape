@@ -212,7 +212,7 @@ if ($rsu_data->OS =~ /(MSWin32|linux|darwin)/)
 	while (readdir $checkforaddons)
 	{
 		# If current content is the addons folder
-		if ($_ =~ /^addons$/ && -d $_)
+		if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
 		{
 			# Load addons
 			rsu_addonloader::loadaddons($rsu_data);
