@@ -562,6 +562,12 @@ sub change_addonstatus
 		# Write changes back to addons.config
 		main::WriteFile($addonscontent, ">", $clientdir."/share/addons.conf");
 	}
+	# Else if status is undef
+	elsif($addonstatus =~ /undef/)
+	{
+		# Write enable the addon in addons.config
+		main::WriteFile("$addon=enable\n", ">>", $clientdir."/share/addons.conf");
+	}
 	else
 	{
 		# Read the addons.config
