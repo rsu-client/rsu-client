@@ -68,13 +68,13 @@ Answer with yes or no (default = yes):";
 	if ($OS =~ /MSWin32/)
 	{
 		# Run the rsu-settings.exe file which is the rsu-settings loader(wxperl loader) for windows
-		system "$cwd/rsu-settings.exe";
+		system "\"$cwd/rsu-launcher.exe\" --script=modules/settings --showcmd=true --usedpar=true &";
 	}
 	# Else if we are on darwin/MacOSX
 	elsif($OS =~ /darwin/)
 	{
 		# Run the rsu-settings_mac loader(wxperl loader) and point to the location of wxWidgets libraries
-		system "DYLD_LIBRARY_PATH=$cwd/modules/$OS/lib64/ $cwd/modules/rsu-settings_$OS";
+		system "\"$cwd/modules/rsu-launcher\" --script=modules/settings";
 	}
 	# Else
 	else
