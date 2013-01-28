@@ -269,25 +269,25 @@ sub set_events
 	$self->{primusmode} = $self->FindWindow('primusmode');
 	
 	# If we are on linux, darwin/mac or windows (which supports addons)
-	if ($OS =~ /(linux|darwin|MSWin32)/)
-	{
-		# Check whats is inside the modules folder
-		opendir(my $modulefolders, "$clientdir/modules") || die "Incomplete client structure! You must reinstall the rsu-client!";
+	#if ($OS =~ /(linux|darwin|MSWin32)/)
+	#{
+		## Check whats is inside the modules folder
+		#opendir(my $modulefolders, "$clientdir/modules") || die "Incomplete client structure! You must reinstall the rsu-client!";
 		
-		# While there is still content inside the folder
-		while (readdir $modulefolders)
-		{
-			# If the current content is the addons folder
-			if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
-			{
-				# Add the addons/module page
-				addmodulepage($self);
-			}
-		}
+		## While there is still content inside the folder
+		#while (readdir $modulefolders)
+		#{
+			## If the current content is the addons folder
+			#if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
+			#{
+				## Add the addons/module page
+				#addmodulepage($self);
+			#}
+		#}
 		
-		# Close the directory to free up memory
-		closedir($modulefolders);
-	}
+		## Close the directory to free up memory
+		#closedir($modulefolders);
+	#}
 	
 	# Set default size
 	$self->SetSize(500,520);

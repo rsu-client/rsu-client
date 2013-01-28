@@ -200,25 +200,25 @@ print "\n";
 use strict;
 
 # If we are on a platform which can use addons
-if ($rsu_data->OS =~ /(MSWin32|linux|darwin)/)
-{
-	# Check what folders exists in $clientdir/modules
-	my $clientdir = $rsu_data->clientdir;
+#if ($rsu_data->OS =~ /(MSWin32|linux|darwin)/)
+#{
+	## Check what folders exists in $clientdir/modules
+	#my $clientdir = $rsu_data->clientdir;
 	
-	# Open the modules directory
-	opendir(my $checkforaddons, "$clientdir/modules");
+	## Open the modules directory
+	#opendir(my $checkforaddons, "$clientdir/modules");
 	
-	# While there is still content in the folder
-	while (readdir $checkforaddons)
-	{
-		# If current content is the addons folder
-		if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
-		{
-			# Load addons
-			rsu_addonloader::loadaddons($rsu_data);
-		}
-	}
-}
+	## While there is still content in the folder
+	#while (readdir $checkforaddons)
+	#{
+		## If current content is the addons folder
+		#if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
+		#{
+			## Load addons
+			#rsu_addonloader::loadaddons($rsu_data);
+		#}
+	#}
+#}
 
 # Start actual process of running the client
 
