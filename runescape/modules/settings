@@ -290,13 +290,13 @@ sub set_events
 	#}
 	
 	# Set default size
-	$self->SetSize(500,520);
+	$self->SetSize(510,520);
 	
 	# If we are on Mac OSX use 500x600 instead due to widget borders being thicker
 	if ($OS =~ /darwin/)
 	{
 		# Set default size
-		$self->SetSize(500,600);
+		$self->SetSize(510,600);
 	}
 	
 	# Make sure the window cannot be resized
@@ -594,8 +594,8 @@ sub setScrollBars
 	my @scrolledWindows = @_;
 	
 	# Set scroll properties
-	my $pixelsPerUnitX = 5; 
-    my $pixelsPerUnitY = 5; 
+	my $pixelsPerUnitX = 10; 
+    my $pixelsPerUnitY = 10; 
     my $noUnitsX = 100; 
     my $noUnitsY = 100; 
 	
