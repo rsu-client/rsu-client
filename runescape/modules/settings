@@ -63,14 +63,8 @@ else
 }
 
 # If this script have been installed systemwide
-if ($cwd =~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
-{
-	# change $cwd to the system installation location
-	$cwd = "/opt/runescape";
-	
-	# Edit the path for the xrc file a bit
-	$xrc_gui_file = "modules/$xrc_gui_file";
-	
+if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
+{	
 	# Change $clientdir to ~/.config/runescape
 	$clientdir = "$HOME/.config/runescape/";
 		
@@ -594,9 +588,9 @@ sub setScrollBars
 	my @scrolledWindows = @_;
 	
 	# Set scroll properties
-	my $pixelsPerUnitX = 10; 
+	my $pixelsPerUnitX = 0; 
     my $pixelsPerUnitY = 10; 
-    my $noUnitsX = 100; 
+    my $noUnitsX = 0; 
     my $noUnitsY = 100; 
 	
 	# For each widget to make scrollable

@@ -105,7 +105,7 @@ VERBOSE MODES (warning!: outputs alot of text):
 }
 
 # If this script have been installed systemwide
-if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 {
 	# Print debug info
 	print "The script is running from a system path!\n".$rsu_data->HOME."/.config/runescape will be used as client folder instead!\n\n";
