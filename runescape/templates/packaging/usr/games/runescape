@@ -24,7 +24,7 @@ while(readdir $opt)
 		# Run the script the user is calling
 		system "/opt/runescape/".$FindBin::Script." @ARGV";
 	}
-	elsif ($dir =~ /^extras\.ubuntu\.com$/ && -d "/opt/extras.ubuntu.com")
+	elsif ($dir =~ /^extras\.ubuntu\.com$/ && -d "/opt/extras.ubuntu.com/runescape")
 	{
 		# Tell what we are doing
 		print "Executing\n/opt/extras.ubuntu.com/runescape/".$FindBin::Script." @ARGV\n";
