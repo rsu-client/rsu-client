@@ -28,3 +28,5 @@ Exec=/opt/runescape/update-runescape-client
 # Settings, DesktopSettings, Filesystem)
 Categories=GNOME;GTK;Game;
 
+# Display the menu entry
+NoDisplay=false
