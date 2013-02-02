@@ -28,6 +28,9 @@ Exec=/opt/runescape/runescape
 # Settings, DesktopSettings, Filesystem)
 Categories=GNOME;GTK;Game;
 
+# Display the menu entry
+NoDisplay=false
+
 # Unity only support
 X-Ayatana-Desktop-Shortcuts=UpdateClient;
 
