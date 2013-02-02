@@ -36,15 +36,15 @@ sub main
 	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
 	{
 		# Display a message prompting the user to download an archive file containing the rsu-settings_mac loader(self contained minimal wxperl) and the wxWidgets libraries.
-		print "The rsu-settings requires extra libraries on MacOSX
+		print "The rsu-launcher requires extra libraries on MacOSX
 (because apple broke their own in 10.5 and up)
 So i have packaged a custom loader with a working version of wxWidgets
 for use by this script to save you 1 - 2 hours of your life
 compiling it yourself.
 
 NOTE: If you want the sourcecode for the loader,
-go to $cwd/modules
-and add .zip behind the \"rsu-settings_$OS\" and extract the archive.
+go to $cwd/modules/$OS/rsu-launcher/rsu-launcher-$OS
+and add .zip behind the \"rsu-launcher-$OS\" and extract the archive.
 
 Is it ok for me to download these libraries into the client directory?
 Answer with yes or no (default = yes):";
@@ -68,13 +68,13 @@ Answer with yes or no (default = yes):";
 	if ($OS =~ /MSWin32/)
 	{
 		# Run the rsu-settings.exe file which is the rsu-settings loader(wxperl loader) for windows
-		system "$cwd/rsu-settings.exe";
+		system "\"$cwd/rsu-launcher.exe\" --script=modules/settings --showcmd=true --usedpar=true &";
 	}
 	# Else if we are on darwin/MacOSX
 	elsif($OS =~ /darwin/)
 	{
 		# Run the rsu-settings_mac loader(wxperl loader) and point to the location of wxWidgets libraries
-		system "DYLD_LIBRARY_PATH=$cwd/modules/$OS/lib64/ $cwd/modules/rsu-settings_$OS";
+		system "\"$cwd/rsu-launcher\" --script=modules/settings --usedpar=true";
 	}
 	# Else
 	else

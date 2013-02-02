@@ -13,13 +13,16 @@ my $homedir = $ENV{"HOME"};
 # Detect the current OS
 my $OS = "$^O";
 
-# Kill script if we run on MacOSX or Windows, since this script is
-# made for unix platforms like linux, bsd and solaris (with exception of mac)
+# Kill script if we run Windows, since this script is
+# made for unix platforms like linux, mac, bsd and solaris
 die "Installing desktop icons works only on Linux, BSD, MacOSX and Solaris platforms
 I suggest you download the runescape client for your platform if you
 want it in the StartMenu.\n"
 if $OS =~ /(MSWin32)/;
 # End of the unsupported platform check
+
+# URL for the maclibs download
+my $maclib_url = "https://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/modules/darwin.tar.gz";
 
 # Check if we are root 
 my $isroot = `whoami`; 
@@ -125,6 +128,47 @@ sub install_desktop_files
 
 sub make_osx_app
 {
+	# Make a variable to contain the directory list
+	my $maclibs;
+	
+	if ($OS =~ /darwin/)
+	{
+		# Get a list of files in the client directory
+		$maclibs = `ls "$cwd/modules"`;
+	}
+	
+	# If we are running on darwin/MacOSX and the darwin folder does not exist
+	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
+	{
+		# Display a message prompting the user to download an archive file containing the rsu-settings_mac loader(self contained minimal wxperl) and the wxWidgets libraries.
+		print "The rsu-launcher requires extra libraries on MacOSX
+(because apple broke their own in 10.5 and up)
+So i have packaged a custom loader with a working version of wxWidgets
+for use by this script to save you 1 - 2 hours of your life
+compiling it yourself.
+
+NOTE: If you want the sourcecode for the loader,
+go to $cwd/modules/$OS/rsu-launcher/rsu-launcher-$OS
+and add .zip behind the \"rsu-launcher-$OS\" and extract the archive.
+
+Is it ok for me to download these libraries into the client directory?
+Answer with yes or no (default = yes):";
+
+		# Wait for users answer
+		my $answer = <STDIN>;
+		
+		# If the user answers no
+		if ($answer =~ /(no|n)/i)
+		{
+			# Exit the script
+			exit;
+		}
+		else
+		{
+			fetchmaclibs();
+		}
+	}
+	
 	# Tell user what we are doing
 	print "Making application directory.\n";
 	
@@ -147,7 +191,7 @@ sub make_osx_app
 	print "\nMaking symlinks to the runescape script and RSU icon\n";
 	
 	# Make symlinks to the RSU icon and the runescape script
-	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s runescape script && ln -s share/runescape.icns runescape.icns";
+	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s rsu-launcher script && ln -s share/runescape.icns runescape.icns";
 	
 	# Tell user what we are doing
 	print "\nCreating a symlink to Resource folder so that the client files are easily accessable.\n";
@@ -169,3 +213,12 @@ sub make_osx_app
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub fetchmaclibs
+{
+	# Download the perl bundle containing the libraries and extract the archive inside the modules folder
+	system "cd \"$cwd/modules\" && curl -o \"$cwd/modules/darwin.tar.gz\" $maclib_url && tar -zxvf \"$cwd/modules/darwin.tar.gz\" && rm \"$cwd/modules/darwin.tar.gz\"";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
