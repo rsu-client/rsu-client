@@ -14,7 +14,7 @@
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "3.9.8";
+my $scriptversion = "3.9.9";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -105,7 +105,7 @@ VERBOSE MODES (warning!: outputs alot of text):
 }
 
 # If this script have been installed systemwide
-if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 {
 	# Print debug info
 	print "The script is running from a system path!\n".$rsu_data->HOME."/.config/runescape will be used as client folder instead!\n\n";
@@ -199,20 +199,26 @@ print "\n";
 # Be strict to avoid messy code
 use strict;
 
-# If we are not on windows
-if ($rsu_data !~ /MSWin32/)
-{
-	# Check what folders exists in $clientdir/modules
-	my $clientdir = $rsu_data->clientdir;
-	my $addonsfoldercheck = `ls "$clientdir/modules" | grep "addons"`;
-
-	# If the addons folder exists
-	if ($addonsfoldercheck =~ /^addons$/)
-	{
-		# Load addons
-		rsu_addonloader::loadaddons($rsu_data);
-	}
-}
+# If we are on a platform which can use addons
+#if ($rsu_data->OS =~ /(MSWin32|linux|darwin)/)
+#{
+	## Check what folders exists in $clientdir/modules
+	#my $clientdir = $rsu_data->clientdir;
+	
+	## Open the modules directory
+	#opendir(my $checkforaddons, "$clientdir/modules");
+	
+	## While there is still content in the folder
+	#while (readdir $checkforaddons)
+	#{
+		## If current content is the addons folder
+		#if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
+		#{
+			## Load addons
+			#rsu_addonloader::loadaddons($rsu_data);
+		#}
+	#}
+#}
 
 # Start actual process of running the client
 

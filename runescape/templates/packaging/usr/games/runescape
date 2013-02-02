@@ -1,2 +1,35 @@
-#!/bin/sh
-/opt/runescape/runescape $@
+#!/usr/bin/perl -w
+
+# Use the FindBin module so we can get the scriptname
+use FindBin;
+
+# Open the /opt directory
+opendir(my $opt, "/opt");
+
+# While there is unprocessed contents in /opt
+while(readdir $opt)
+{
+	# If the current folder is not runescape or extras.ubuntu.com then go to next loop
+	next if $_ !~ /^(runescape|extras.ubuntu.com)$/;
+	
+	# Put $_ to a variable so we dont lose it
+	my $dir = $_;
+	
+	# If the runescape folder is found
+	if ($dir =~ /^runescape$/ && -d "/opt/runescape")
+	{
+		# Tell what we are doing
+		print "Executing\n/opt/runescape/".$FindBin::Script." @ARGV\n";
+		
+		# Run the script the user is calling
+		system "/opt/runescape/".$FindBin::Script." @ARGV";
+	}
+	elsif ($dir =~ /^extras\.ubuntu\.com$/ && -d "/opt/extras.ubuntu.com/runescape")
+	{
+		# Tell what we are doing
+		print "Executing\n/opt/extras.ubuntu.com/runescape/".$FindBin::Script." @ARGV\n";
+		
+		# Run the script the user is calling
+		system "/opt/extras.ubuntu.com/runescape/".$FindBin::Script." @ARGV";
+	}	
+}

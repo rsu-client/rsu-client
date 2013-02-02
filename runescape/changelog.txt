@@ -1,3 +1,20 @@
+runescape (3.9.9) oneiric; urgency=low
+
+  * Added support for addons in the rsu-launcher and the rsu-client
+    The functionality is disabled by default, to enable it.
+    simply make a folder named "addons" inside the rsu-client's modules
+    folder (if the client is installed from a repository then make
+    the folder inside "~/.config/runescape/modules" instead)
+  * Fixed several bugs in the rsu-launcher
+  * Wrote a proper moduleloader.pl system
+  * Made it possible for the rsu-launcher to launch perl script
+    inside its own minimalistic wxperl environment, therefore saving
+    space across platforms and make it possible to load perl scripts
+    using wxwidgets2.9, without the libraries themselves.
+  * Added support for running from /opt/extras.ubuntu.com
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Mon, 28 Jan 2013 09:18:10 +0200
+
 runescape (3.9.8) oneiric; urgency=low
 
   * Added support for using curl instead of wget

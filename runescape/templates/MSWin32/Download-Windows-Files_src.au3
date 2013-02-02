@@ -55,4 +55,4 @@ FileDelete(@ScriptDir & "\win32.7z")
 sleep(10)
 
 ; Run the client
-Run(@ScriptDir & "\RuneScape.exe")
+Run(@ScriptDir & "\rsu-launcher.exe")

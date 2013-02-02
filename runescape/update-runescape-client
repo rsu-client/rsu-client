@@ -101,11 +101,8 @@ if (-t STDOUT || $usezenity =~ /1/)
 {
 	
 	# If this script have been installed systemwide
-	if ($cwd =~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+	if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	{
-		# change $cwd to the system installation location
-		$cwd = "/opt/runescape";
-		
 		# change $clientdir to ~/.config/runescape
 		$clientdir = "$HOME/.config/runescape/";
 		
@@ -141,7 +138,7 @@ sub main
 		print "What type of update do you want to run?\n [1] Update jagexappletviewer.jar(from Jagex) by using the\n     official Windows client, then ask to update the scripts. (default)\n\n [2] Update jagexappletviewer.jar(from Jagex) by using the\n     official MacOSX client(EXPERIMENTAL! but smaller download),\n     then ask to update the scripts.\n\n";
 		
 		# If the script is not located in /opt
-		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 		{
 			# Show the 3rd option
 			print " [3] Update the rsu-client scripts (from HikariKnight)\n\n";
@@ -160,7 +157,7 @@ sub main
 		my $updatescriptoption;
 		
 		# If the script is not located in /opt
-		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 		{
 			# Show the 3rd option
 			$updatescriptoption = 'FALSE "Update the rsu-client scripts (from HikariKnight)"';
@@ -262,7 +259,7 @@ sub main
 	}
 	
 	# If the script is not located in a read only location for the user
-	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/runescape|\/usr\/local\/s?bin)/)
+	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	{
 		# Make a variable to hold the users answer
 		my $updatescripts = "n";
