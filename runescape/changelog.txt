@@ -11,6 +11,7 @@ runescape (3.9.9) oneiric; urgency=low
     inside its own minimalistic wxperl environment, therefore saving
     space across platforms and make it possible to load perl scripts
     using wxwidgets2.9, without the libraries themselves.
+  * Added support for running from /opt/extras.ubuntu.com
     
  -- HikariKnight <mu.antilag@gmail.com>  Mon, 28 Jan 2013 09:18:10 +0200
 
