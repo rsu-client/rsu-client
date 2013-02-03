@@ -24,12 +24,12 @@ while(readdir $opt)
 		# Run the script the user is calling
 		system "/opt/runescape/".$FindBin::Script." @ARGV";
 	}
-	elsif ($dir =~ /^extras\.ubuntu\.com$/ && -d "/opt/extras.ubuntu.com/runescape")
+	elsif ($dir =~ /^extras\.ubuntu\.com$/ && -d "/opt/extras.ubuntu.com/rsu-client")
 	{
 		# Tell what we are doing
-		print "Executing\n/opt/extras.ubuntu.com/runescape/".$FindBin::Script." @ARGV\n";
+		print "Executing\n/opt/extras.ubuntu.com/rsu-client/".$FindBin::Script." @ARGV\n";
 		
 		# Run the script the user is calling
-		system "/opt/extras.ubuntu.com/runescape/".$FindBin::Script." @ARGV";
+		system "/opt/extras.ubuntu.com/rsu-client/".$FindBin::Script." @ARGV";
 	}	
 }
