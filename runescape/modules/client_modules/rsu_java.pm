@@ -148,7 +148,7 @@ package rsu_java;
 		if ($rsu_data->OS =~ /(linux|freebsd)/)
 		{
 			# Ask where the java executable is
-			$whereisjava = `whereis java | sed s/java:\\ // | sed s/\\ .*//`;
+			$whereisjava = `whereis java | sed "s/java:\\ //" | sed "s/\\ .*//"`;
 		}
 		# Else if we are on solaris
 		elsif($rsu_data->OS =~ /(solaris)/)
