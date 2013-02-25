@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 
-#!/usr/bin/perl -w
-
 # Be strict to avoid messy code
 use strict;
 
