@@ -1,4 +1,0 @@
-Place jawt.dll inside this directory.
-Please use the jawt.dll from the windows client
-This is needed for the compability mode that runs the client
-through wine or to run the RSU client on windows!

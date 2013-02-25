@@ -1,2 +1,0 @@
-This is where errorlogs appear if java crashes.
-this is also the location where jagexappletviewer.jar will be placed
