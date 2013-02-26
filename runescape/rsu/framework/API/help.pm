@@ -5,7 +5,6 @@ my $cwd = getcwd;
 
 # Change directory to the API
 chdir("$cwd/rsu/framework/API");
-
 # Update the $cwd
 $cwd  = getcwd;
 

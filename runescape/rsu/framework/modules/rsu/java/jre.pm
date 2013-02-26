@@ -261,7 +261,7 @@ java_not_binary_message
 			system "rm /tmp/java_notice.txt";
 			
 			# Read the preferred java in the config file, if nothing is found then say JAVA NOT SET
-			$newjavapath = rsu::file::IO::readconf("preferredjava", "JAVA NOT SET");		
+			$newjavapath = rsu::file::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);		
 		}
 		else
 		{
@@ -275,7 +275,7 @@ java_not_binary_message
 			system "rm /tmp/java_notice.txt";
 			
 			# Read the preferred java in the config file, if nothing is found then say JAVA NOT SET
-			$newjavapath = rsu::file::IO::readconf("preferredjava", "JAVA NOT SET");
+			$newjavapath = rsu::file::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);
 		}
 		
 		# If java is still not set

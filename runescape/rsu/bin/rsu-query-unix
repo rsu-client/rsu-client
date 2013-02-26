@@ -1,0 +1,67 @@
+#!/usr/bin/perl -w
+
+# Use FindBin module to get script directory
+use FindBin;
+use Cwd;
+
+# Get the $scriptdir
+my $scriptdir = $FindBin::RealBin;
+
+# Get the $cwd
+my $cwd = getcwd;
+
+# Load the required Wx modules
+eval "use Wx::Perl::Packager";
+eval "use Wx qw[:everything]"; print STDERR "Wx module not found, API calls using WxWidgets will not work\n" if $@;
+eval "use Wx::XRC";
+eval "use Wx::WebView"; print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@;
+
+# Use LWP::Simple module to get website content (crossplatform)
+use LWP::Simple;
+
+# Include the byte encryption so that the script will work on all localizations of windows or other systems
+# Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
+use Encode::Byte;
+
+# Include the module for extracting archives
+use Archive::Extract;
+
+# If we are on windows
+if ("$^O" =~ /MSWin32/)
+{
+	# Make sure some windows modules gets included
+	eval "use Win32::API";
+	eval "use File::DosGlob";
+	eval "use Tie::Scalar";
+	eval "use Win32::FileOp";
+	
+	# Hide the commandline windows
+	eval "use Win32::GUI()";
+	
+	# If the arguments passed do not contain --showcmd=true
+	if ("$ARGV[-1]" =~ /(-|--)showcmd=false/)
+	{
+		# Get the handle for the perl window
+		my $loader_cmdwindow = Win32::GUI::GetPerlWindow();
+		# Hide the cmd window
+		Win32::GUI::Hide($loader_cmdwindow);
+	}
+	# Else
+	else
+	{
+		# Remove --showcmd=false or -showcmd=true from the arguments array
+		s/(-|--)showcmd=true(\s)//g for @ARGV;
+	}
+}
+# Else
+else
+{
+	# Move to parent directory
+	chdir("$scriptdir/..");
+	
+	# Update $cwd
+	$cwd = getcwd;
+}
+
+# "Chainload" the apiquery.pm
+require "$cwd/apiquery.pm";

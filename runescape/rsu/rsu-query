@@ -3,47 +3,162 @@
 # Be strict to avoid messy code
 use strict;
 
+# Include the byte encryption so that the script will work on all localizations of windows or other systems
+# Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
+use Encode::Byte;
+
+# Include the module for extracting archives
+use Archive::Extract;
+
+# Include Config module for checking system values
+use Config;
+
 # Use FindBin module to get script directory
 use FindBin;
 
-# Use custom libs
-use lib $FindBin::RealBin."/framework/API";
-use lib $FindBin::RealBin."/framework/modules";
-
-# use Cwd to get current working directory
-use Cwd;
-our $cwd = getcwd;
-
 # Get script directory
-our $scriptdir = $FindBin::RealBin;
+my $cwd = $FindBin::RealBin;
 # Get script filename
-our $scriptname = $FindBin::Script;
+my $scriptname = $FindBin::Script;
 # Detect the current OS
-our $OS = "$^O";
+my $OS = "$^O";
+
+# URL for the maclibs download
+my $maclib_url = "https://dl.dropbox.com/u/11631899/opensource/Perl/rsu-api/bin/darwin.tar.gz";
 	
 # run the script
 main();
 
 sub main
 {
-	# Change dir to the parent directory
-	chdir("$scriptdir/..");
+	# Get the architecture
+	my $arch = $Config{archname};
 	
-	# Get the call for the api
-	my $apicall = $ARGV[0];
-	# Convert to perl module call
-	$apicall =~ s/\./::/g;
+	# If we are on 64bit
+	if ($arch =~ /(x86_64|amd64)/ && $OS =~ /linux/)
+	{
+		# Use x86_64 as architecture
+		$arch = "x86_64";
+	}
+	# Else if we are on 32bit
+	elsif($arch =~ /i\d{1,1}86/ && $OS =~ /linux/)
+	{
+		# Use i386 as architecture
+		$arch = "i386";
+	}
+	# Else we are on an architecture that does not support the launcher
+	else
+	{
+		# Run in fallback mode
+		fallbackmode();
+		
+		# Exit once we are done so we dont trigger the launcher
+		exit;
+	}
 	
-	# Remove $ARGV[0]
-	s/$ARGV[0]//g for @ARGV;
-	
-	# Try to run the module and warn if execution failed
-	eval "use $apicall"; warn if $@;
-	
-	# Exit script
-	exit;
+	# If we are on Linux
+	if($OS =~ /linux/)
+	{
+		if ("@ARGV" eq '')
+		{
+			# Launch the universal script for the launcher
+			system "$cwd/bin/rsu-query-linux-$arch client.launch.launcher";
+		}
+		else
+		{
+			# Launch the launcher for the correct architecture
+			system "$cwd/bin/rsu-query-linux-$arch @ARGV";
+		}
+	}
+	# Else if we are on darwin/osx
+	elsif($OS =~ /darwin/)
+	{
+		# Run a check to see if the mac libraries are installed
+		checkformaclibs();
+		
+		# Launch the launcher for mac osx
+		system "$cwd/bin/rsu-query-darwin @ARGV";
+	}
+	# Else
+	else
+	{
+		# Run in fallback mode
+		fallbackmode();
+	}
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
+
+sub fetchmaclibs
+{
+	# Download the perl bundle containing the libraries and extract the archive inside the modules folder
+	system "cd \"$cwd/modules\" && curl -o \"$cwd/modules/darwin.tar.gz\" $maclib_url && tar -zxvf \"$cwd/modules/darwin.tar.gz\" && rm \"$cwd/modules/darwin.tar.gz\"";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub checkformaclibs
+{
+	# Make a variable to contain the directory list
+	my $maclibs;
+	
+	if ($OS =~ /darwin/)
+	{
+		# Get a list of files in the client directory
+		$maclibs = `ls "$cwd/modules"`;
+	}
+	
+	# If we are running on darwin/MacOSX and the darwin folder does not exist
+	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
+	{
+		# Display a message prompting the user to download an archive file containing the rsu-settings_mac loader(self contained minimal wxperl) and the wxWidgets libraries.
+		print "The rsu-launcher requires extra libraries on MacOSX
+(because apple broke their own in 10.5 and up)
+So i have packaged a custom loader with a working version of wxWidgets
+for use by this script to save you 1 - 2 hours of your life
+compiling it yourself.
+
+NOTE: If you want the sourcecode for the loader,
+go to $cwd/modules/$OS/rsu-launcher/rsu-launcher-$OS
+and add .zip behind the \"rsu-launcher-$OS\" and extract the archive.
+
+Is it ok for me to download these libraries into the client directory?
+Answer with yes or no (default = yes):";
+
+		# Wait for users answer
+		my $answer = <STDIN>;
+		
+		# If the user answers no
+		if ($answer =~ /(no|n)/i)
+		{
+			# Exit the script
+			exit;
+		}
+		else
+		{
+			fetchmaclibs();
+		}
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub fallbackmode
+{
+	# Print to STDERR that we are running on an unknown system
+	print STDERR "WARNING: Running in fallback mode!\nrsu-queries will use the system perl so some API calls\nmay not work until you install certain modules\n";
+		
+	# Install the menu icons and launch runescape
+	system "$cwd/bin/rsu-query-unix @ARGV";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+

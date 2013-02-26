@@ -290,7 +290,7 @@ sub parseargs
 	else
 	{
 		# If no parameter that matches is passed then read from settings.conf
-		my $result = rsu::file::IO::readconf("$arg2find", "$default", "settings.conf", $rsu_data);
+		my $result = rsu::file::IO::readconf("$arg2find", "$default", "settings.conf", $rsu_data->clientdir);
 		
 		# Return setting
 		return $result;

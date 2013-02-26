@@ -6,19 +6,23 @@ package client::settings::language;
 		require rsu::file::IO;
 		
 		# Get the data container
-		my $rsu_data = shift;
+		my ($HOME) = @_;
 		
-		# Print debug info
-		print "Checking your client language setting(if any)\nTrying to read file\n".$rsu_data->HOME."/jagexappletviewer.preferences\n\n";
+		# If we were not called from the API
+		if ("$ARGV[0]" !~ /get.client.language/)
+		{
+			# Print debug info
+			print "Checking your client language setting(if any)\nTrying to read file\n".$HOME."/jagexappletviewer.preferences\n\n";
+		}
 		
 		# Make a variable to contain the contents of $HOME/jagexappletviewer.preferences
-		my $lang = rsu::file::IO::ReadFile($rsu_data->HOME."/jagexappletviewer.preferences");
+		my $lang = rsu::file::IO::ReadFile($HOME."/jagexappletviewer.preferences");
 		
 		# If there is an error with the file
 		if ($lang =~ /error reading file/)
 		{
 			# Print debug info
-			print "Unable to read jagexappletviewer.preferences file, defaulting to Language=0 (English).\n";
+			print STDERR "Unable to read jagexappletviewer.preferences file, defaulting to Language=0 (English).\n";
 			
 			# Default to english
 			$lang = "Language=0";
@@ -29,12 +33,20 @@ package client::settings::language;
 			# Make the pointer into a string so we can work with it
 			$lang = "@$lang";
 			
-			# Print debug info
-			print "File read and this is the content i found!\n######## File Start ########\n\n$lang\n######## File End ########\n\n";
+			# If we were not called from the API
+			if ("$ARGV[0]" !~ /get.client.language/)
+			{
+				# Print debug info
+				print "File read and this is the content i found!\n######## File Start ########\n\n$lang\n######## File End ########\n\n";
+			}
 		}
 		
-		# Print debug info
-		print "I will now parse the contents from the\njagexappletviewer.preferences file so it can be used.\n";
+		# If we were not called from the API
+		if ("$ARGV[0]" !~ /get.client.language/)
+		{
+			# Print debug info
+			print "I will now parse the contents from the\njagexappletviewer.preferences file so it can be used.\n";
+		}
 		
 		# Replace newlines and get only the Language number out of the string
 		$lang =~ s/(Language\=|\n|\r|\r\n|Member\=|yes|no|\s+)//g;
