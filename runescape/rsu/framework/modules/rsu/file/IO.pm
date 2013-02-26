@@ -81,7 +81,7 @@ sub readconf
 	foreach(@settings)
 	{
 		# If the line starts with the $key
-		if ($settings[$counter] =~ /^($key)=/)
+		if ($settings[$counter] =~ /($key)=/)
 		{
 			# If $default is not undef which is used by API calls
 			if ($default !~ /^undef$/)
