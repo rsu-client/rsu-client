@@ -23,7 +23,7 @@ else
 }
 
 # If the first parameter is help
-if ("$ARGV[1]" =~ /^help$/)
+if ("@ARGV" =~ /\s+help(|\s+)/)
 {
 	print "API call to fetch the runescape client language preference
 Syntaxes:

@@ -61,13 +61,65 @@ sub main
 	{
 		if ("@ARGV" eq '')
 		{
+			# Open the bin directory
+			opendir(my $bindir, "$cwd/bin");
+			
+			# Make a variable to see if binary launched
+			my $binlaunched = 0;
+			
+			# While there is stuff we havent checked
+			while (readdir $bindir)
+			{
+				# Next if not rsu-query-linux-$arch
+				next if $_ !~ /^rsu-query-linux-$arch$/;
+				
+				# Launch the binary
+				system "$cwd/bin/rsu-query-linux-$arch client.launch.launcher";
+				
+				# Set binlaunched to 1
+				$binlaunched = 1;
+			}
+			
+			# If binlaunched is 0
+			if ($binlaunched =~ /^0$/)
+			{
+				# Add the client launcher api call to the parameters
+				push(@ARGV, "client.launch.launcher");
+				
+				# Launch the fallback mode
+				fallbackmode();
+			}
+			
 			# Launch the universal script for the launcher
-			system "$cwd/bin/rsu-query-linux-$arch client.launch.launcher";
+			system "";
 		}
 		else
 		{
-			# Launch the launcher for the correct architecture
-			system "$cwd/bin/rsu-query-linux-$arch @ARGV";
+			# Open the bin directory
+			opendir(my $bindir, "$cwd/bin");
+			
+			# Make a variable to see if binary launched
+			my $binlaunched = 0;
+			
+			# While there is stuff we havent checked
+			while (readdir $bindir)
+			{
+				# Next if not rsu-query-linux-$arch
+				next if $_ !~ /^rsu-query-linux-$arch$/;
+				
+				# Launch the binary
+				system "$cwd/bin/rsu-query-linux-$arch @ARGV";
+				
+				# Set binlaunched to 1
+				$binlaunched = 1;
+			}
+			
+			# If binlaunched is 0
+			if ($binlaunched =~ /^0$/)
+			{
+				# Launch the fallback mode
+				fallbackmode();
+			}
 		}
 	}
 	# Else if we are on darwin/osx
