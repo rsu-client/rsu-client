@@ -14,6 +14,9 @@ our $cwd = getcwd;
 use lib getcwd."/framework/API";
 use lib getcwd."/framework/modules";
 
+# Use the perl5lib (containing raw perl modules copied from cpan)
+use lib getcwd."/framework/Perl5lib";
+
 # Get script directory
 our $scriptdir = $FindBin::RealBin;
 # Get script filename
