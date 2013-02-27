@@ -1,7 +1,7 @@
 package get::rsu::setting;
 
 # Use the file IO
-use rsu::file::IO;
+use rsu::files::IO;
 
 # Use the module for Cwd
 use Cwd;
@@ -43,7 +43,7 @@ Purpose:
 elsif("$ARGV[2]" =~ /^listkeys$/)
 {
 	# Get the list of the config content
-	my $list = rsu::file::IO::getcontent($cwd, $ARGV[1]);
+	my $list = rsu::files::IO::getcontent($cwd, $ARGV[1]);
 	
 	# Remove everything between = and newlines
 	$list =~ s/=(.+)\n/\n/g;
@@ -55,7 +55,7 @@ elsif("$ARGV[2]" =~ /^listkeys$/)
 elsif("$ARGV[2]" =~ /^content$/)
 {
 	# Get the list of the config content
-	my $list = rsu::file::IO::getcontent($cwd, $ARGV[1]);
+	my $list = rsu::files::IO::getcontent("$cwd/share", $ARGV[1]);
 	
 	# Print the contents of the file
 	print "$list";
@@ -64,7 +64,7 @@ elsif("$ARGV[2]" =~ /^content$/)
 else
 {	
 	# Read the config file
-	my $value = rsu::file::IO::readconf($ARGV[2], "undef", $ARGV[1], $cwd);
+	my $value = rsu::files::IO::readconf($ARGV[2], "undef", $ARGV[1], $cwd);
 	
 	# Print the value of the key
 	print "$value\n";

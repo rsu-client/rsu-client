@@ -35,7 +35,7 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "3.9.9";
+my $scriptversion = "4.0.0";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -47,7 +47,7 @@ my $cwd = getcwd;
 
 # Include perl modules in ./modules/client_modules
 #use lib $FindBin::RealBin."/modules/client_modules";
-require client::init; #rsu_modules;
+require client::init;
 
 # Create a variable to store mutators inside for use as
 # transport of information through module functions
@@ -290,7 +290,7 @@ sub parseargs
 	else
 	{
 		# If no parameter that matches is passed then read from settings.conf
-		my $result = rsu::file::IO::readconf("$arg2find", "$default", "settings.conf", $rsu_data->clientdir);
+		my $result = rsu::files::IO::readconf("$arg2find", "$default", "settings.conf", $rsu_data->clientdir);
 		
 		# Return setting
 		return $result;

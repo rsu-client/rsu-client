@@ -3,7 +3,7 @@ package client::settings::prm;
 	sub parseprmfile
 	{
 		# This module depends on rsu_IO.pm
-		require rsu::file::IO;
+		require rsu::files::IO;
 		
 		# Get the data container
 		my $rsu_data = shift;
@@ -12,7 +12,7 @@ package client::settings::prm;
 		print "Reading .prm file ".$rsu_data->clientdir."/share/".$rsu_data->prmfile."\n";
 		
 		# Read the runescape parameters file and send pointer to $prms
-		my $prms = rsu::file::IO::ReadFile($rsu_data->clientdir."/share/".$rsu_data->prmfile."");
+		my $prms = rsu::files::IO::ReadFile($rsu_data->clientdir."/share/".$rsu_data->prmfile."");
 		
 		# If there is an error reading the file
 		if ($prms =~ /error reading file/)

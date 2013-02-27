@@ -175,14 +175,14 @@ sub unix_main
 
 sub windows_main
 {
-	# This function depends on rsu::file::IO.pm
-	require rsu::file::IO;
+	# This function depends on rsu::files::IO.pm
+	require rsu::files::IO;
 	
 	# Get the data container
 	my $rsu_data = shift;
 	
 	# Get the win32javabin setting which will be used as a searchpath to find jawt.dll and java.exe
-	my $win32javabin = rsu::file::IO::readconf("win32java.exe", "default-java", "settings.conf", $rsu_data->clientdir);
+	my $win32javabin = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf", $rsu_data->clientdir);
 	
 	# Make a variable containing the default path containing jawt.dll
 	my $javalibspath = "%CD%\\win32\\jawt";

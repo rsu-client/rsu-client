@@ -1,7 +1,7 @@
 package set::rsu::setting;
 
 # Use the file IO
-use rsu::file::IO;
+use rsu::files::IO;
 
 # Use the module for Cwd
 use Cwd;
@@ -33,13 +33,13 @@ Purpose:
 else
 {	
 	# Read the content of the config file
-	my $content = rsu::file::IO::getcontent($cwd, "share/$ARGV[1]");
+	my $content = rsu::files::IO::getcontent("$cwd/share", "$ARGV[1]");
 	
 	# If nothing returned or the key is not found
 	if ($content =~ /^\n$/ || $content !~ /$ARGV[2]=(.+)\n/)
 	{
 		# Write a new file
-		rsu::file::IO::WriteFile("$ARGV[2]=$ARGV[3]", ">>", "$cwd/share/$ARGV[1]");
+		rsu::files::IO::WriteFile("$ARGV[2]=$ARGV[3]", ">>", "$cwd/share/$ARGV[1]");
 	}
 	# Else
 	else
@@ -51,7 +51,7 @@ else
 		$content =~ s/\n$//;
 		
 		# Write the contents back to the file
-		rsu::file::IO::WriteFile($content, ">", "$cwd/share/$ARGV[1]");
+		rsu::files::IO::WriteFile($content, ">", "$cwd/share/$ARGV[1]");
 	}
 }
 

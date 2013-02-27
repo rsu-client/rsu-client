@@ -249,7 +249,7 @@ java_not_binary_message
 		if (-t STDOUT)
 		{
 			# Write the java notice to a file
-			rsu::file::IO::WriteFile($java_not_bin, ">", "/tmp/java_notice.txt");
+			rsu::files::IO::WriteFile($java_not_bin, ">", "/tmp/java_notice.txt");
 			
 			# Display the message
 			print $java_not_bin;
@@ -261,12 +261,12 @@ java_not_binary_message
 			system "rm /tmp/java_notice.txt";
 			
 			# Read the preferred java in the config file, if nothing is found then say JAVA NOT SET
-			$newjavapath = rsu::file::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);		
+			$newjavapath = rsu::files::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);		
 		}
 		else
 		{
 			# Write the java notice to a file
-			rsu::file::IO::WriteFile($java_not_bin, ">", "/tmp/java_notice.txt");
+			rsu::files::IO::WriteFile($java_not_bin, ">", "/tmp/java_notice.txt");
 			
 			# run script in xterm so we can get input from user and with right permissions
 			system "xterm -e \"cat /tmp/java_notice.txt && read i\"";
@@ -275,7 +275,7 @@ java_not_binary_message
 			system "rm /tmp/java_notice.txt";
 			
 			# Read the preferred java in the config file, if nothing is found then say JAVA NOT SET
-			$newjavapath = rsu::file::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);
+			$newjavapath = rsu::files::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);
 		}
 		
 		# If java is still not set

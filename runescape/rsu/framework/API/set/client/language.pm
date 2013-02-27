@@ -4,7 +4,7 @@ package set::client::language;
 use client::settings::language;
 
 # Use the file IO module
-use rsu::file::IO;
+use rsu::files::IO;
 
 # Get the OS we are running on
 my $OS = "$^O";
@@ -53,13 +53,13 @@ Purpose:
 else
 {
 	# Read the content of the config file
-	my $content = rsu::file::IO::getcontent($HOME, "jagexappletviewer.preferences");
+	my $content = rsu::files::IO::getcontent($HOME, "jagexappletviewer.preferences");
 	
 	# If nothing returned or the key is not found
 	if ($content =~ /^\n$/ || $content !~ /Language=(.+)\n/)
 	{
 		# Write a new file
-		rsu::file::IO::WriteFile("Language=$ARGV[1]", ">>", "$HOME/jagexappletviewer.preferences");
+		rsu::files::IO::WriteFile("Language=$ARGV[1]", ">>", "$HOME/jagexappletviewer.preferences");
 	}
 	# Else
 	else
@@ -71,7 +71,7 @@ else
 		$content =~ s/\n$//;
 		
 		# Write the contents back to the file
-		rsu::file::IO::WriteFile($content, ">", "$HOME/jagexappletviewer.preferences");
+		rsu::files::IO::WriteFile($content, ">", "$HOME/jagexappletviewer.preferences");
 	}
 }
 

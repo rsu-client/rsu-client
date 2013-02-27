@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxFrame" name="mainwindow">
+		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+		<size>463,647</size>
+		<title>RuneScape Config Editor</title>
+		<object class="wxPanel" name="m_panel1">
+			<style>wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxEXPAND | wxALL</flag>
+					<border>0</border>
+					<object class="wxNotebook" name="tab_box1">
+						<object class="notebookpage">
+							<label>Script Settings</label>
+							<selected>1</selected>
+							<object class="wxScrolledWindow" name="scriptwindow">
+								<style>wxHSCROLL|wxVSCROLL</style>
+								<object class="wxFlexGridSizer">
+									<rows>6</rows>
+									<cols>1</cols>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+									<growablecols>0</growablecols>
+									<growablerows>3</growablerows>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Java (All platforms)</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>2</rows>
+													<cols>2</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>0</growablecols>
+													<growablerows></growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText91">
+															<label>Parameter File: </label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxTextCtrl" name="prmFile">
+															<value></value>
+															<maxlength>0</maxlength>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText11">
+															<label>Preferred Java to use: </label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxChoice" name="preferredjava">
+															<selection>0</selection>
+															<content>
+																<item>default-java</item>
+																<item>7-openjdk (/usr/lib/jvm)</item>
+																<item>6-openjdk (/usr/lib/jvm)</item>
+																<item>custom-java</item>
+															</content>
+														</object>
+													</object>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFilePickerCtrl" name="customjava">
+													<value></value>
+													<message>Select a file</message>
+													<wildcard>Java binary (java,java-bin,java.exe)|java;java-bin;java.exe</wildcard>
+													<style>wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL</style>
+													<enabled>0</enabled>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxRadioBox" name="soundsystem">
+											<style>wxRA_SPECIFY_COLS</style>
+											<label>Tell Java which sound system to use</label>
+											<selection>0</selection>
+											<content>
+												<item>Let Java decide by itself</item>
+												<item>PulseAudio (All Unixes)</item>
+												<item>ALSA (Linux Only)</item>
+												<item>ALSA(Linux)+Pulse(Other)</item>
+											</content>
+											<dimension>2</dimension>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Nvidia Optimus / Bumblebee</label>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxCheckBox" name="primusmode">
+													<style>wxALIGN_RIGHT</style>
+													<label>Tell the script to use primusrun if it is available</label>
+													<checked>0</checked>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxStaticText" name="m_staticText112">
+													<label>Using primusrun will let RuneScape be able to access\nOpenGL Display Mode while the game uses the\nNvidia graphic card instead of the Intel Graphic\ncard to increase game performance.</label>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxHyperlinkCtrl" name="m_hyperlink1">
+													<label>Click here for more information about primusrun</label>
+													<url>http://www.webupd8.org/2012/11/primus-better-performance-and-less.html</url>
+													<style>wxHL_DEFAULT_STYLE</style>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Compability</label>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxCheckBox" name="winemode">
+													<style>wxALIGN_RIGHT</style>
+													<label>Tell the script to launch the client through WINE.</label>
+													<checked>0</checked>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxStaticText" name="m_staticText111">
+													<label>Running the game through wine will let you play RuneScape\non some Unix platforms that are not supported natively by\nthis script or on platforms that Java no longer supports.\nREQUIRES THAT WINE IS COMPILED WITH OPENGL SUPPORT!</label>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="spacer">
+										<option>1</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<size>0,0</size>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxFlexGridSizer">
+											<rows>1</rows>
+											<cols>3</cols>
+											<vgap>0</vgap>
+											<hgap>0</hgap>
+											<growablecols>0</growablecols>
+											<growablerows></growablerows>
+											<object class="spacer">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<size>0,0</size>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxButton" name="saveconf">
+													<label>Save Script Settings</label>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxButton" name="close2">
+													<label>Close</label>
+													<default>0</default>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="notebookpage">
+							<label>Client Settings</label>
+							<selected>0</selected>
+							<object class="wxScrolledWindow" name="rswindow">
+								<style>wxHSCROLL|wxVSCROLL</style>
+								<object class="wxFlexGridSizer">
+									<rows>5</rows>
+									<cols>1</cols>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+									<growablecols>0</growablecols>
+									<growablerows>3</growablerows>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxTextCtrl" name="configfilepath">
+											<style>wxTE_DONTWRAP</style>
+											<value>~/.config/runescape/share/runescape.prm</value>
+											<maxlength>0</maxlength>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Java Settings</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>3</rows>
+													<cols>3</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>1,0</growablecols>
+													<growablerows>1,0</growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText3">
+															<label>Minimum Java Heap Allocation(MB):</label>
+														</object>
+													</object>
+													<object class="spacer">
+														<option>5</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>50,0</size>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxSpinCtrl" name="Xms">
+															<style>wxSP_ARROW_KEYS</style>
+															<value>0</value>
+															<min>0</min>
+															<max>4096</max>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText6">
+															<label>Maximum Java Heap Allocation(MB):</label>
+														</object>
+													</object>
+													<object class="spacer">
+														<option>5</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>50,0</size>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxSpinCtrl" name="Xmx">
+															<style>wxSP_ARROW_KEYS</style>
+															<value>512</value>
+															<min>256</min>
+															<max>4096</max>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText71">
+															<label>Java Stack Size(MB):</label>
+														</object>
+													</object>
+													<object class="spacer">
+														<option>1</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>0,0</size>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxSpinCtrl" name="Xss">
+															<style>wxSP_ARROW_KEYS</style>
+															<value>1</value>
+															<min>1</min>
+															<max>5</max>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>RuneScape Settings</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>2</rows>
+													<cols>2</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>1</growablecols>
+													<growablerows></growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText7">
+															<label>ClassPath:</label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxTextCtrl" name="classpath">
+															<enabled>0</enabled>
+															<value>jagexappletviewer.jar</value>
+															<maxlength>0</maxlength>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText10">
+															<label>Config URL:</label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxTextCtrl" name="configurl">
+															<tooltip>it works</tooltip>
+															<value></value>
+															<maxlength>0</maxlength>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Misc Settings (1 line per setting)</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>1</rows>
+													<cols>1</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>0</growablecols>
+													<growablerows>0</growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_BOTTOM|wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxTextCtrl" name="prms">
+															<style>wxTE_MULTILINE</style>
+															<value></value>
+															<maxlength>0</maxlength>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxHORIZONTAL</orient>
+											<object class="spacer">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<size>0,0</size>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxButton" name="save">
+													<label>Save</label>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxButton" name="close">
+													<label>Close</label>
+													<default>0</default>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="notebookpage">
+							<label>JagexCache</label>
+							<selected>0</selected>
+							<object class="wxScrolledWindow" name="cachewindow">
+								<style>wxHSCROLL|wxVSCROLL</style>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Main Cache</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>1</rows>
+													<cols>3</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>1</growablecols>
+													<growablerows></growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText9">
+															<label>Clear the cache and turn RuneScape&apos;s\nsettings back to default:</label>
+														</object>
+													</object>
+													<object class="spacer">
+														<option>1</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>20,0</size>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_RIGHT|wxALL</flag>
+														<border>5</border>
+														<object class="wxButton" name="clear_main">
+															<label>Clear Main Cache</label>
+															<default>0</default>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>BETA Cache</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>1</rows>
+													<cols>3</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>1</growablecols>
+													<growablerows></growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_staticText101">
+															<label>Clear the BETA cache and turn \nRuneScape&apos;s settings back to default:</label>
+														</object>
+													</object>
+													<object class="spacer">
+														<option>1</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>13,0</size>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxButton" name="clear_beta">
+															<label>Clear BETA Cache</label>
+															<default>0</default>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>3</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Console Output</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxGridSizer">
+													<rows>1</rows>
+													<cols>1</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxTextCtrl" name="terminal_output">
+															<style>wxTE_MULTILINE</style>
+															<value></value>
+															<maxlength>0</maxlength>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
