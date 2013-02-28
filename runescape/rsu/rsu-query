@@ -56,6 +56,16 @@ sub main
 		exit;
 	}
 	
+	# If we are not on windows and --unixquery was passed
+	if ($OS !~ /MSWin32/ && "@ARGV" =~ /--unixquery/)
+	{
+		# Run in fallback mode
+		fallbackmode();
+		
+		# Exit once we are done so we dont trigger the launcher
+		exit;
+	}
+	
 	# If we are on Linux
 	if($OS =~ /linux/)
 	{
@@ -204,7 +214,7 @@ Answer with yes or no (default = yes):";
 sub fallbackmode
 {
 	# Print to STDERR that we are running on an unknown system
-	print STDERR "WARNING: Running in fallback mode!\nrsu-queries will use the system perl so some API calls\nmay not work until you install certain modules\n";
+	print STDERR "WARNING: Running in fallback mode!\nrsu-queries will use the system perl so some API calls\nmay not work until you install certain modules\n" if "@ARGV" !~ /--unixquery/;
 		
 	# Install the menu icons and launch runescape
 	system "$cwd/bin/rsu-query-unix @ARGV";

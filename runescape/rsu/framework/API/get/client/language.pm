@@ -22,7 +22,7 @@ else
 	$HOME = $ENV{"HOME"};
 }
 
-# If the first parameter is help
+# If help is passed as a parameter
 if ("@ARGV" =~ /\s+help(|\s+)/)
 {
 	print "API call to fetch the runescape client language preference

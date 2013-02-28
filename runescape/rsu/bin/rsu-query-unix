@@ -12,9 +12,9 @@ my $cwd = getcwd;
 
 # Load the required Wx modules
 eval "use Wx::Perl::Packager";
-eval "use Wx qw[:everything]"; print STDERR "Wx module not found, API calls using WxWidgets will not work\n" if $@;
+eval "use Wx qw[:everything]"; print STDERR "Wx module not found, API calls using WxWidgets will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
 eval "use Wx::XRC";
-eval "use Wx::WebView"; print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@;
+eval "use Wx::WebView"; print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
 
 # Use LWP::Simple module to get website content (crossplatform)
 use LWP::Simple;
