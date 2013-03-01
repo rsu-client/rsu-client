@@ -28,7 +28,7 @@ else
 	my $OS = "$^O";
 
 	# Load the API for getting the clientdir
-	use rsu::files::clientdir;
+	require rsu::files::clientdir;
 
 	# Get the clientdir
 	my $clientdir = rsu::files::clientdir::getclientdir();

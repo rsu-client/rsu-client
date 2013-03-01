@@ -55,10 +55,10 @@ my $rsu_data = {};
 bless $rsu_data;
 
 # Create mutators and add them to the variable
-$rsu_data->create_mutator(qw(version OS cwd clientdir javabin javaversion HOME args verboseprms compabilitymode preferredjava forcepulseaudio forcealsa prmfile useprimusrun fallbackprms));
+$rsu_data->create_mutator(qw(version OS cwd clientdir javabin javaversion HOME args verboseprms compabilitymode preferredjava forcepulseaudio forcealsa prmfile useprimusrun));
 
 # Add clientdir data to the data container
-$rsu_data->clientdir = $cwd;
+$rsu_data->clientdir = rsu::files::clientdir::getclientdir();
 # Add cwd data to the data container
 $rsu_data->cwd = $cwd;
 # Add scriptversion to the data container
@@ -71,19 +71,8 @@ $rsu_data->OS = "$^O";
 
 checkforcleanup();
 
-# If we are on windows
-if ($rsu_data->OS =~ /MSWin32/)
-{
-	# Get the environment variable for USERPROFILE
-	$rsu_data->HOME = $ENV{"USERPROFILE"};
-	# Replace all backslashes with forward slashes
-	$rsu_data->HOME =~ s/\\/\//g;
-}
-# Else we are on UNIX
-else
-{
-	$rsu_data->HOME = $ENV{"HOME"};
-}
+# Get the users HOME/userprofile directory
+$rsu_data->HOME = client::env::home();
 
 # Make a variable to contain the location of the homefolder for use later in the script
 my $HOME = $rsu_data->HOME;
@@ -131,9 +120,6 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	# Print debug info
 	print "The script is running from a system path!\n".$rsu_data->HOME."/.config/runescape will be used as client folder instead!\n\n";
 		
-	# Change clientdir to ~/.config/runescape
-	$rsu_data->clientdir = $rsu_data->HOME."/.config/runescape/";
-		
 	# Make the client folders
 	system "mkdir -p \"".$rsu_data->HOME."/.config/runescape/bin\" && mkdir -p \"".$rsu_data->HOME."/.config/runescape/share\"";
 		
@@ -151,6 +137,12 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	{
 		# Copy the example file to clientdir as runescape.prm
 		system "cp -v \"".$rsu_data->cwd."/share/runescape.prm.example\" \"".$rsu_data->clientdir."/share/runescape.prm\"";
+	}
+	# If oldschool.prm do not exist
+	if ($prmfile_exists !~ /oldschool.prm/)
+	{
+		# Copy the oldschool.prm file to clientdir
+		system "cp -v \"".$rsu_data->cwd."/share/oldschool.prm\" \"".$rsu_data->clientdir."/share/oldschool.prm\"";
 	}
 		
 }
@@ -198,12 +190,6 @@ $rsu_data->prmfile = parseargs("prmfile", "runescape.prm");
 # Check if useprimusrun is enabled
 $rsu_data->useprimusrun = parseargs("useprimusrun", "false");
 
-# Define fallbackprms incase we cannot read share/runescape.prm
-$rsu_data->fallbackprms = "jagexappletviewer.jar -Dsun.java2d.noddraw=true -Dcom.jagex.config=http://www.runescape.com/k=3/l=\$(Language:0)/jav_config.ws -Xss2m -Xmx512m jagexappletviewer ";
-
-# garbage collection prms (useful for "ancient" systems)
-# -XX:CompileThreshold=1500 -Xincgc -XX:+UseConcMarkSweepGC -XX:+UseParNewGC
-
 ########################################################################
 #DO NOT EDIT THE CODE BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
 ########################################################################
@@ -244,20 +230,20 @@ use strict;
 # Start actual process of running the client
 
 # Check if user wants to run in compability mode
-client::mains::checkcompabilitymode($rsu_data);
+rsu::mains::checkcompabilitymode($rsu_data);
 
 # If compabilitymode is disabled then it will run the main function
 # If we are on windows
 if ($rsu_data->OS =~ /MSWin32/)
 {
 	# Run the main function for windows
-	client::mains::windows_main($rsu_data);
+	rsu::mains::windows_main($rsu_data);
 }
 # Else we are on unix
 else
 {
 	# Run the main function for unix
-	client::mains::unix_main($rsu_data);
+	rsu::mains::unix_main($rsu_data);
 }
 
 #

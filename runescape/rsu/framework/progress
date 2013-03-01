@@ -1,0 +1,50 @@
+# This is the initial progress of the API and modules
+
+API:
+	get.client.prms				= 100%
+	get.rsu.setting				= 100%
+	set.client.language			= 100%
+	get.client.language			= 100%
+	set.rsu.setting				= 100%
+	get.rsu.clientdir			= 100%
+	help						= 100%
+	get.java.lib				= 0%
+	get.java.bin				= 0%
+	get.optimus.bin				= 0%
+	client.launch.runescape		= 100%
+	client.launch.settings		= 30%
+	client.launch.launcher		= 70%
+	client.launch.updater		= 80%
+	rsu.download.client			= 0% # Will download using wget, curl or LWP::Simple depending on the system and use 7zip to extract the jagexappletviewer
+	rsu.download.file			= 0% # Will download a file using wget, curl or LWP::Simple
+	rsu.extract.file			= 0% # Will support at least .zip and .tar.gz on all platforms
+	addon.platform.launch		= 0% # Will launch a platform specific addon
+	addon.universal.launch		= 0% # Will launch a universal addon
+
+modules:
+	client::settings::language	= 100%
+	client::settings::prms		= 50%
+	client::env					= 100%
+	updater::gui::zenity		= 100%
+	updater::download::file		= 0%
+	updater::extract::archive	= 0%
+	updater::extract::client	= 0% # Uses 7-zip
+	rsu::files::IO				= 100%
+	rsu::files::clientdir		= 100%
+	rsu::files::dirs			= 0% # Will run directory checks (equal to "ls /dir | grep" or similar)
+	rsu::nvidia::optimus		= 100%
+	rsu::java::jre				= 50% # Replace $rsu_data and try to remove grep dependency
+	rsu::java::opengl			= 50% # Replace $rsu_data
+	client::appletviewer::jagex	= 50% # Remove grep dependency and use opendir+readdir
+	client::modes::verbose		= 100%
+	rsu::mains					= 100%
+	rsu::init					= ?% # No way to track atm
+	
+TODO:
+	* a way to fetch the launchcode for the client
+	* an updater using LWP::Simple
+	* addon loader for api (not sure how i want it yet)
+	* API call to save/edit prms
+	* find a way to get the rsu-query binary to work on snow leopard and above (currently it works only on snow leopard)
+	* make a display setting for universal addons (eg: OnlyShowIn=Windows,Mac,Linux)
+	* Make the internals of the client and API use stuff from the API itself (listed as its not 100% complete)

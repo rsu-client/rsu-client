@@ -53,10 +53,23 @@ sub ReadFile
 sub readconf
 {
 	# Get the passed data from function call
-	my ($key, $default, $conf_file, $basedir) = @_;
+	my ($key, $default, $conf_file, $dir) = @_;
+	
+	# Require the clientdir module
+	require rsu::files::clientdir;
+	
+	# Make a variable to hold the basedir
+	my $basedir = rsu::files::clientdir::getclientdir()."/share";
+	
+	# If a directory is passed
+	if (defined $dir && $dir ne '')
+	{
+		# Use the passed directory as the basedir
+		$basedir = $dir;
+	}
 	
 	# Get the content from the settings file
-	my $confcontent = rsu::files::IO::ReadFile($basedir."/share/$conf_file");
+	my $confcontent = rsu::files::IO::ReadFile($basedir."/$conf_file");
 	
 	# If no file is found or error reading the file
 	if ($confcontent =~ /error reading file/)

@@ -1,26 +1,7 @@
 package get::client::language;
 
 # Use the module for fetching the language setting for runescape
-use client::settings::language;
-
-# Get the OS we are running on
-my $OS = "$^O";
-
-# Make a variable to contain the users HOME directory
-my $HOME;
-
-# If we are on windows
-if ($OS =~ /MSWin32/)
-{
-	# Get the userprofile directory
-	$HOME = $ENV{"USERPROFILE"};
-}
-# Else
-else
-{
-	# Get the users HOME directory
-	$HOME = $ENV{"HOME"};
-}
+require client::settings::language;
 
 # If help is passed as a parameter
 if ("@ARGV" =~ /\s+help(|\s+)/)
@@ -51,7 +32,7 @@ Purpose:
 else
 {
 	# Get the language setting
-	my $lang = client::settings::language::getlanguage($HOME);
+	my $lang = client::settings::language::getlanguage();
 
 	# Write the value to STDOUT
 	print "$lang\n";

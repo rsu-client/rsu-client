@@ -1,4 +1,4 @@
-package client::mains;
+package rsu::mains;
 
 # All functions in this module requires these modules
 require rsu::java::jre;

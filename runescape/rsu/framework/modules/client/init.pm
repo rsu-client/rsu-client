@@ -7,7 +7,10 @@ package client::init;
 	require client::modes::verbose;
 	require rsu::java::jre;
 	require rsu::java::opengl;
-	require client::mains;
+	require rsu::mains;
+	require rsu::files::clientdir;
+	require client::env;
+	require rsu::files::dirs;
 
 	# End of core modules, add custom modules below this line
 

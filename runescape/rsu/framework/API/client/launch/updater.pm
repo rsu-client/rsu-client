@@ -44,7 +44,7 @@ my $cwd = getcwd;
 # Include perl modules in ./modules/client_modules/extra
 #use lib $FindBin::RealBin."/modules/client_modules/extra";
 # Require rsu_zenity so we can make dialog windows if zenity is installed
-use updater::gui::zenity;
+require updater::gui::zenity;
 
 # Make a variable to contain the client directory
 my $clientdir = $cwd;
