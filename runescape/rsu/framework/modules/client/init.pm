@@ -3,7 +3,7 @@ package client::init;
 	require client::appletviewer::jagex;
 	require rsu::files::IO;
 	require client::settings::language;
-	require client::settings::prm;
+	require client::settings::prms;
 	require client::modes::verbose;
 	require rsu::java::jre;
 	require rsu::java::opengl;

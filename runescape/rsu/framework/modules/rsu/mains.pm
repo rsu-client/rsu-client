@@ -2,7 +2,7 @@ package rsu::mains;
 
 # All functions in this module requires these modules
 require rsu::java::jre;
-require client::settings::prm;
+require client::settings::prms;
 
 sub unix_main
 {
@@ -48,7 +48,7 @@ sub unix_main
 	
 	
 	# Get the language setting
-	my $params = client::settings::prm::parseprmfile($rsu_data);
+	my $params = client::settings::prms::parseprmfile($rsu_data);
 	
 	# Make a variable to contain the java library path
 	my $javalibpath;
@@ -201,7 +201,7 @@ sub windows_main
 	}
 	
 	# Get the language setting
-	my $params = client::settings::prm::parseprmfile($rsu_data);
+	my $params = client::settings::prms::parseprmfile($rsu_data);
 	
 	# Display java version we are using
 	print "Launching client using this java version: \n";
@@ -235,7 +235,7 @@ sub checkcompabilitymode
 		print "Compabilitymode requested, starting client through wine!\nThe client will use the java that is installed inside wine\n\n";
 		
 		# Parse the prm file
-		my $params = client::settings::prm::parseprmfile($rsu_data);
+		my $params = client::settings::prms::parseprmfile($rsu_data);
 		
 		# Launch client through wine
 		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share && exit\"";
