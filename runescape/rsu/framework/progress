@@ -38,7 +38,7 @@ modules:
 	client::appletviewer::jagex	= 50% # Remove grep dependency and use opendir+readdir
 	client::modes::verbose		= 100%
 	rsu::mains					= 100%
-	rsu::init					= ?% # No way to track atm
+	client::init					= ?% # No way to track atm
 	
 TODO:
 	* a way to fetch the launchcode for the client
