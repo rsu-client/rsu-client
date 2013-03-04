@@ -4,7 +4,7 @@ package get::rsu::setting;
 require rsu::files::IO;
 
 # Use the module for Cwd
-use rsu::files::clientdir;
+require rsu::files::clientdir;
 my $clientdir = rsu::files::clientdir::getclientdir();
 
 # If parameters are missing or help is passed

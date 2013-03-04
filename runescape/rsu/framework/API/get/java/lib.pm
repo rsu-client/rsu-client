@@ -18,7 +18,7 @@ Remarks:
 	from the STDOUT.
 
 Purpose:
-	Simplify the task of locating the java binary
+	Simplify the task of locating the java library
 "
 }
 # Else
