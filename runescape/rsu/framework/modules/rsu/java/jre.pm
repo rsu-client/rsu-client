@@ -4,10 +4,17 @@ package rsu::java::jre;
 	sub findjavabin
 	{
 		# Get the data container
-		my $rsu_data = shift;
+		my ($preferredjava) = @_;
 		
-		# Print debug info
-		print "I will now check what platform you are using\nand use the correct java path for that platform\n\n";
+		# Get the current OS
+		my $OS = "$^O";
+		
+		# If we are not run through an API call
+		if ($ARGV[0] !~ /^(get|set)\..+/)
+		{
+			# Print debug info
+			print "I will now check what platform you are using\nand use the correct java path for that platform\n\n";
+		}
 		
 		# Define the variable for javabin
 		my $javabin;
@@ -16,10 +23,14 @@ package rsu::java::jre;
 		my $openjdk;
 		
 		# If we are on mac osx (AKA Darwin)
-		if ($rsu_data->OS =~ /darwin/)
+		if ($OS =~ /darwin/)
 		{
-			# Print debug info
-			print "You are running darwin/MacOSX.\nI will use Apple Java6 if it exists\notherwise we will use the Java from PATH\n";
+			# If we are not run through an API call
+			if ($ARGV[0] !~ /^(get|set)\..+/)
+			{
+				# Print debug info
+				print "You are running darwin/MacOSX.\nI will use Apple Java6 if it exists\notherwise we will use the Java from PATH\n";
+			}
 			
 			# javabin is /usr/bin/java
 			$javabin = "/usr/bin/java";
@@ -35,13 +46,14 @@ package rsu::java::jre;
 			}
 		}
 		# Else if we are on linux
-		elsif($rsu_data->OS =~ /linux/)
+		elsif($OS =~ /linux/)
 		{
-			# Print debug info
-			print "You are running ".$rsu_data->OS.", I will probe for OpenJDK6 or newer\nand use the newest version if possible.\n\n";
-			
-			# Make a variable to contain the preferredjava so we can use it in the command
-			my $preferredjava = $rsu_data->preferredjava;
+			# If we are not run through an API call
+			if ($ARGV[0] !~ /^(get|set)\..+/)
+			{
+				# Print debug info
+				print "You are running ".$OS.", I will probe for OpenJDK6 or newer\nand use the newest version if possible.\n\n";
+			}
 			
 			# run "find /usr/lib/jvm/ -name java" to see if we can find openjdk by using grep
 			$openjdk = `find -L /usr/lib/jvm/ -name "java" |grep -P "$preferredjava(|-amd64|-i386|-\$\(uname -i\))/bin"`;
@@ -49,14 +61,22 @@ package rsu::java::jre;
 			# if $openjdk is found (hurray!)
 			if ($openjdk =~ /java-\d{1,1}-openjdk(|-\$\(uname -p\)|-i386|-amd64)/)
 			{
-				# Print debug info
-				print "Found OpenJDK files, now checking for the newest installed one.\n";
+				# If we are not run through an API call
+				if ($ARGV[0] !~ /^(get|set)\..+/)
+				{
+					# Print debug info
+					print "Found OpenJDK files, now checking for the newest installed one.\n";
+				}
 				
 				# Split the string by newline incase openjdk-7 was found
 				my @openjdkbin = split /\n/, $openjdk;
 				
-				# Print debug info
-				print "Checking which OpenJDK versions are installed...\n\n";
+				# If we are not run through an API call
+				if ($ARGV[0] !~ /^(get|set)\..+/)
+				{
+					# Print debug info
+					print "Checking which OpenJDK versions are installed...\n\n";
+				}
 				
 				# Run a check to see if we detected openjdk7
 				my $detectedopenjdk7 = grep { $openjdkbin[$_] =~ /java-\d{1,1}-openjdk-(\$\(uname -p\)|i386|amd64)/ } 0..$#openjdkbin;
@@ -65,16 +85,24 @@ package rsu::java::jre;
 				#if ($openjdkbin[$index] !~ /java-\d{1,1}-openjdk-(\$\(uname -p\)|i386|amd64)/)
 				if($detectedopenjdk7 =~ /0/)
 				{
-					# Print debug info
-					print "OpenJDK6 detected!, I will use this to run the client!\n";
+					# If we are not run through an API call
+					if ($ARGV[0] !~ /^(get|set)\..+/)
+					{
+						# Print debug info
+						print "OpenJDK6 detected!, I will use this to run the client!\n";
+					}
 					
 					# we will use openjdk6 to launch it (openjdk does not have sfx problems like sun-java)
 					$javabin = "$openjdkbin[0] ";
 				}
 				else
 				{
-					# Print debug info
-					print "OpenJDK7 detected!, I will use this to run the client!\n";
+					# If we are not run through an API call
+					if ($ARGV[0] !~ /^(get|set)\..+/)
+					{
+						# Print debug info
+						print "OpenJDK7 detected!, I will use this to run the client!\n";
+					}
 					
 					# Find the index of OpenJDK7
 					my @openjdk7index = grep { $openjdkbin[$_] =~ /java-\d{1,1}-openjdk-(\$\(uname -p\)|i386|amd64)/ } 0..$#openjdkbin;
@@ -85,8 +113,12 @@ package rsu::java::jre;
 			}		
 			else
 			{
-				# Print debug info
-				print "I did not find any version of OpenJDK in /usr/lib/jvm\nI will instead use the default java in \$PATH\n";
+				# If we are not run through an API call
+				if ($ARGV[0] !~ /^(get|set)\..+/)
+				{
+					# Print debug info
+					print "I did not find any version of OpenJDK in /usr/lib/jvm\nI will instead use the default java in \$PATH\n";
+				}
 				
 				# if openjdk is not found then we will use default java (lets pray it is in the $PATH)
 				$javabin = "java";
@@ -95,8 +127,12 @@ package rsu::java::jre;
 		# Else we are running bsd or solaris (both should have java in their $PATH)
 		else
 		{
-			# Print debug info
-			print "You are running ".$rsu_data->OS.", I will use the default java on your system\n\n";
+			# If we are not run through an API call
+			if ($ARGV[0] !~ /^(get|set)\..+/)
+			{
+				# Print debug info
+				print "You are running ".$OS.", I will use the default java on your system\n\n";
+			}
 			
 			# We just use the one from $PATH
 			$javabin = "java";
@@ -113,10 +149,7 @@ package rsu::java::jre;
 	sub check_client_mode
 	{
 		# Gets passed data from the function call
-		my $rsu_data = shift;
-		
-		# Pass the binary to a variable so we can use it in commands
-		my $java_binary = $rsu_data->javabin;
+		my ($java_binary) = @_;
 		
 		# Execute java -help and see if this java have the -client parameter available
 		my $results = `$java_binary -help 2>&1`;
@@ -138,20 +171,23 @@ package rsu::java::jre;
 
 	sub unix_find_default_java_binary
 	{
-		# Get the data container
-		my $rsu_data = shift;
+		# Get passed data
+		my ($javabin, $settingsdir, $conffile) = @_;
+		
+		# Get the current OS
+		my $OS = "$^O";
 		
 		# Make a variable for the location of the java in path
 		my $whereisjava;
 		
 		# If our os is linux or freebsd
-		if ($rsu_data->OS =~ /(linux|freebsd)/)
+		if ($OS =~ /(linux|freebsd)/)
 		{
 			# Ask where the java executable is
 			$whereisjava = `whereis java | sed "s/java:\\ //" | sed "s/\\ .*//"`;
 		}
 		# Else if we are on solaris
-		elsif($rsu_data->OS =~ /(solaris)/)
+		elsif($OS =~ /(solaris)/)
 		{
 			# Return the default symlink location (since solaris have the libjli.so linked properly)
 			return "/usr/bin/java";
@@ -198,7 +234,7 @@ package rsu::java::jre;
 		if ($whereisjava !~ /\/bin\/java$/)
 		{
 			# Run a function which will tell the user what to do in order to fix this issue
-			$whereisjava = client::java::jre::unix_default_java_is_a_script($rsu_data);
+			$whereisjava = rsu::java::jre::unix_default_java_is_a_script($javabin, $settingsdir, $conffile);
 		}
 		
 		# Return the true default java binary
@@ -212,13 +248,45 @@ package rsu::java::jre;
 	sub unix_default_java_is_a_script
 	{	
 		# This function depends on rsu_IO.pm
-		require rsu_IO;
+		require rsu::files::IO;
 		
-		# Get the data container
-		my $rsu_data = shift;
+		# Get passed data
+		my ($javabin, $settingsdir, $conffile) = @_;
+		
+		# Use the Cwd module to get the current working directory
+		use Cwd;
 		
 		# Pass the current directory to a variable for use in a message
-		my $cwd = $rsu_data->cwd;
+		my $cwd = getcwd;
+		
+		# Require the clientdir module to get the client directory
+		require rsu::files::clientdir;
+		
+		# Make a variable to contain the clientdir
+		my $clientdir;
+		
+		# If a different clientdir is passed
+		if (defined $settingsdir)
+		{
+			# Pass the value over to $clientdir
+			$clientdir = $settingsdir;
+		}
+		# Else
+		else
+		{
+			# Get the clientdir/share folder
+			$clientdir = rsu::files::clientdir::getclientdir()."/share";
+		}
+		
+		# Make a variable to contain the settingsfile name
+		my $settingsfile = "settings.conf";
+		
+		# If a different settingsfile is specified
+		if (defined $conffile)
+		{
+			# Pass the value to $settingsfile
+			$settingsfile = $conffile;
+		}
 		
 		# Define any large messages we will need in the script
 		# Message if java in $PATH is not a binary
@@ -261,7 +329,7 @@ java_not_binary_message
 			system "rm /tmp/java_notice.txt";
 			
 			# Read the preferred java in the config file, if nothing is found then say JAVA NOT SET
-			$newjavapath = rsu::files::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);		
+			$newjavapath = rsu::files::IO::readconf("preferredjava", "JAVA NOT SET", $settingsfile, $clientdir);		
 		}
 		else
 		{
@@ -275,14 +343,14 @@ java_not_binary_message
 			system "rm /tmp/java_notice.txt";
 			
 			# Read the preferred java in the config file, if nothing is found then say JAVA NOT SET
-			$newjavapath = rsu::files::IO::readconf("preferredjava", "JAVA NOT SET", "settings.conf", $rsu_data->clientdir);
+			$newjavapath = rsu::files::IO::readconf("preferredjava", "JAVA NOT SET", $settingsfile, $clientdir);
 		}
 		
 		# If java is still not set
 		if ($newjavapath =~ /JAVA NOT SET/)
 		{
 			# Tell user whats wrong and then exit
-			print "You did not set the path to java in the preferredjava setting\ninside ".$rsu_data->cwd."/share/settings.conf\nThe client will not work for you without this setting... EXITING!\n";
+			print STDERR "You did not set the path to java in the preferredjava setting\ninside $clientdir/$settingsfile\nThe client will not work for you without this setting... EXITING!\n";
 			exit
 		}
 		
@@ -297,7 +365,7 @@ java_not_binary_message
 	sub win32_find_java
 	{
 		# Gets passed data from the function call
-		my ($win32java_setting, $rsu_data) = "@_";
+		my ($win32java_setting) = @_;
 		
 		# Make an array for the current version
 		my $currentversion = "6";

@@ -8,8 +8,8 @@ API:
 	set.rsu.setting				= 100%
 	get.rsu.clientdir			= 100%
 	help						= 100%
-	get.java.lib				= 0%
-	get.java.bin				= 0%
+	get.java.lib				= 100%
+	get.java.bin				= 100%
 	get.optimus.bin				= 0%
 	client.launch.runescape		= 100%
 	client.launch.settings		= 30%
@@ -23,7 +23,7 @@ API:
 
 modules:
 	client::settings::language	= 100%
-	client::settings::prms		= 50%
+	client::settings::prms		= 100%
 	client::env					= 100%
 	updater::gui::zenity		= 100%
 	updater::download::file		= 0%
@@ -33,8 +33,8 @@ modules:
 	rsu::files::clientdir		= 100%
 	rsu::files::dirs			= 0% # Will run directory checks (equal to "ls /dir | grep" or similar)
 	rsu::nvidia::optimus		= 100%
-	rsu::java::jre				= 50% # Replace $rsu_data and try to remove grep dependency
-	rsu::java::opengl			= 50% # Replace $rsu_data
+	rsu::java::jre				= 80% # Replace $rsu_data and try to remove grep dependency
+	rsu::java::opengl			= 80% # Replace $rsu_data
 	client::appletviewer::jagex	= 50% # Remove grep dependency and use opendir+readdir
 	client::modes::verbose		= 100%
 	rsu::mains					= 100%

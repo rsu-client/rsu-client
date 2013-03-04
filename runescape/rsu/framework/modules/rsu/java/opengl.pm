@@ -5,10 +5,7 @@ package rsu::java::opengl;
 	sub unix_findlibrarypath
 	{
 		# Gets passed data from the function call
-		my $rsu_data = shift;
-		
-		# Pass the binary to a variable so we can use it in commands
-		my $binary = $rsu_data->javabin;
+		my ($binary) = @_;
 		
 		# List up the shared library files used by the java binary (not the symlink!) and remove unneeded info
 		my $lddresult = `ldd $binary | grep libjli.so`;

@@ -3,6 +3,7 @@ package rsu::mains;
 # All functions in this module requires these modules
 require rsu::java::jre;
 require client::settings::prms;
+require rsu::files::clientdir;
 
 sub unix_main
 {
@@ -11,6 +12,12 @@ sub unix_main
 	
 	# Get the data container
 	my $rsu_data = shift;
+	
+	# Require the clientdir module
+	require rsu::files::clientdir;
+	
+	# Get the clientdir
+	my $clientdir = rsu::files::clientdir::getclientdir();
 	
 	# Check if user have a preferred java on unix
 	# If user want to use default-java then
@@ -23,13 +30,13 @@ sub unix_main
 		if ($rsu_data->OS !~ /darwin/)
 		{
 			# Search for the location of the true default java binary (not the symlink)
-			$rsu_data->javabin = rsu::java::jre::unix_find_default_java_binary($rsu_data);
+			$rsu_data->javabin = rsu::java::jre::unix_find_default_java_binary($rsu_data->javabin, "$clientdir/share", "settings.conf");
 		}
 		# Else we are on mac
 		else
 		{
 			# Probe for Java6 and use that instead of Java7 (if Java6 exists)
-			$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data);
+			$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data->preferredjava);
 		}		
 	}
 	# Else if user have set a custom path to a java binary (most likely sun/oracle java)
@@ -43,12 +50,12 @@ sub unix_main
 	else
 	{
 		# Find the java executable
-		$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data);
+		$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data->preferredjava);
 	}
 	
 	
 	# Get the language setting
-	my $params = client::settings::prms::parseprmfile($rsu_data);
+	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
 	# Make a variable to contain the java library path
 	my $javalibpath;
@@ -57,12 +64,12 @@ sub unix_main
 	if ($rsu_data->OS !~ /darwin/)
 	{
 		# Locate the java JRE lib folder so we can add it to the library PATH
-		$javalibpath = rsu::java::opengl::unix_findlibrarypath($rsu_data);
+		$javalibpath = rsu::java::opengl::unix_findlibrarypath($rsu_data->javabin);
 	}
 	
 	# Check if java can be run in client mode and make sure we use the client mode if available
 	# as the client mode gives a HUGE boost in performance compared to the default server mode.
-	$rsu_data->javabin = rsu::java::jre::check_client_mode($rsu_data);
+	$rsu_data->javabin = rsu::java::jre::check_client_mode($rsu_data->javabin);
 	
 	# Pass the java binary to a variable so we can use it in commands
 	my $javabin = $rsu_data->javabin;
@@ -118,8 +125,8 @@ sub unix_main
 	print "Launching client using this java version: \n";
 	
 	# Display the java version
-	system $rsu_data->javabin." -version 2>&1 && echo";	
-
+	system $rsu_data->javabin." -version 2>&1 && echo";
+	
 	# Make a variable to contain the MacOSX integration (app icon and name)
 	my $osxprms = "";
 	
@@ -191,7 +198,7 @@ sub windows_main
 	if ($win32javabin =~ /^(default-java|6|7|1\.6|1\.7)/)
 	{
 		# Probe for the default java used on the system
-		$win32javabin = rsu::java::jre::win32_find_java($win32javabin, $rsu_data);
+		$win32javabin = rsu::java::jre::win32_find_java($win32javabin);
 		
 		# Prepare the new native javalibs path
 		$javalibspath = $win32javabin;
@@ -201,7 +208,7 @@ sub windows_main
 	}
 	
 	# Get the language setting
-	my $params = client::settings::prms::parseprmfile($rsu_data);
+	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
 	# Display java version we are using
 	print "Launching client using this java version: \n";
@@ -235,7 +242,7 @@ sub checkcompabilitymode
 		print "Compabilitymode requested, starting client through wine!\nThe client will use the java that is installed inside wine\n\n";
 		
 		# Parse the prm file
-		my $params = client::settings::prms::parseprmfile($rsu_data);
+		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
 		# Launch client through wine
 		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share && exit\"";
