@@ -44,10 +44,21 @@ else
 	# Require the download API
 	require updater::download::file;
 	
-	# Get the clientdir
-	my $clientdir = rsu::files::clientdir::getclientdir();
+	# Split the url by /
+	my @filename = split /\//, $ARGV[1];
 	
-	updater::download::file::wxdownload("http://www.runescape.com/downloads/runescape.msi", "$clientdir/runescape.msi");
+	# Make a variable that contains the download location
+	my $location = rsu::files::clientdir::getclientdir()."/.download/$filename[-1]";
+	
+	# If a location is defined
+	if ($ARGV[2] ne '')
+	{
+		# Pass the location to the downloadto variable
+		$location = $ARGV[2];
+	}
+	
+	# Download the file
+	updater::download::file::from($ARGV[1], $location);
 }
 
 1; 

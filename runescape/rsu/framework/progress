@@ -26,7 +26,9 @@ modules:
 	client::settings::prms		= 100%
 	client::env					= 100%
 	updater::gui::zenity		= 100%
-	updater::download::file		= 30% # Wx Download Dialog is complete
+	updater::download::file		= 30% # Missing fallback download methods (the ones using wget and/or curl)
+	updater::download::wxdload	= 100% # Wx Download Dialog is complete
+	updater::download::sysdload	= 0% # Download methods using wget and/or curl) (might be removed)
 	updater::extract::archive	= 0%
 	updater::extract::client	= 0% # Uses 7-zip
 	rsu::files::IO				= 100%
@@ -38,7 +40,7 @@ modules:
 	client::appletviewer::jagex	= 50% # Remove grep dependency and use opendir+readdir
 	client::modes::verbose		= 100%
 	rsu::mains					= 100%
-	client::init					= ?% # No way to track atm
+	client::init				= ?% # No way to track atm
 	
 TODO:
 	* a way to fetch the launchcode for the client
