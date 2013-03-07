@@ -29,8 +29,8 @@ modules:
 	updater::download::file		= 100%
 	updater::download::wxdload	= 100% # Wx Download Dialog is complete
 	updater::download::sysdload	= 100% # Download methods using LWP, prints progress to STDOUT
-	rsu::files::archive			= 0% # Uses Archive::Extract to extract .zip and .tar.gz archives (if .msi or .dmg are detected it will try use native tools if possible)
-	updater::extract::client	= 0% # Uses 7-zip or native tools to extract the client
+	rsu::extract::archive		= 0% # Uses Archive::Extract to extract .zip and .tar.gz archives (if .msi or .dmg are detected it will try use native tools if possible)
+	rsu::extract::client		= 0% # Uses 7-zip or native tools to extract the client
 	rsu::files::IO				= 100%
 	rsu::files::clientdir		= 100%
 	rsu::files::dirs			= 0% # Will run directory checks (equal to "ls /dir | grep" or similar)
