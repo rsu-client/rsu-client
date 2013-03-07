@@ -1,22 +1,22 @@
 # This is the initial progress of the API and modules
 
 API:
-	get.client.prms				= 100%
-	get.rsu.setting				= 100%
-	set.client.language			= 100%
-	get.client.language			= 100%
-	set.rsu.setting				= 100%
-	get.rsu.clientdir			= 100%
-	help						= 100%
-	get.java.lib				= 100%
-	get.java.bin				= 100%
-	get.optimus.bin				= 0%
-	client.launch.runescape		= 100%
-	client.launch.settings		= 30%
-	client.launch.launcher		= 70%
-	client.launch.updater		= 80%
-	rsu.download.client			= 0% # Will download using wget, curl or LWP::Simple depending on the system and use 7zip to extract the jagexappletviewer
-	rsu.download.file			= 10% # Will download a file using wget, curl or LWP::Simple
+	get.client.prms				= 100% # Returns a single string containing the client parameters
+	get.rsu.setting				= 100% # Returns all setting keys in settings.conf, the contents of settings.conf or the individual value of a key
+	set.client.language			= 100% # Changes the language used by the client
+	get.client.language			= 100% # Returns the language used by the client (set by jagexappletviewer.jar)
+	set.rsu.setting				= 100% # Change values inside settings.conf
+	get.rsu.clientdir			= 100% # Returns the location of the clientdir
+	help						= 100% # Shows all available API calls (autoupdates)
+	get.java.lib				= 100% # Returns the absolute path to the java library
+	get.java.bin				= 100% # Returns the absolute path to the java binary
+	get.optimus.bin				= 100% # Return "primusrun" if primus is installed, otherwise return an empty string
+	client.launch.runescape		= 100% # Complete, uses the API
+	client.launch.settings		= 30% # Make settings use the API
+	client.launch.launcher		= 70% # Make launcher use the API
+	client.launch.updater		= 10% # Rewrite to use a Wx dialog
+	rsu.download.client			= 0% # Will download using LWP and use 7zip or native tools depending on the system to extract the jagexappletviewer
+	rsu.download.file			= 100% # Will download a file using the LWP module
 	rsu.extract.file			= 0% # Will support at least .zip and .tar.gz on all platforms
 	addon.platform.launch		= 0% # Will launch a platform specific addon
 	addon.universal.launch		= 0% # Will launch a universal addon
@@ -26,20 +26,20 @@ modules:
 	client::settings::prms		= 100%
 	client::env					= 100%
 	updater::gui::zenity		= 100%
-	updater::download::file		= 30% # Missing fallback download methods (the ones using wget and/or curl)
+	updater::download::file		= 100%
 	updater::download::wxdload	= 100% # Wx Download Dialog is complete
-	updater::download::sysdload	= 0% # Download methods using wget and/or curl) (might be removed)
-	updater::extract::archive	= 0%
-	updater::extract::client	= 0% # Uses 7-zip
+	updater::download::sysdload	= 100% # Download methods using LWP, prints progress to STDOUT
+	rsu::files::archive			= 0% # Uses Archive::Extract to extract .zip and .tar.gz archives (if .msi or .dmg are detected it will try use native tools if possible)
+	updater::extract::client	= 0% # Uses 7-zip or native tools to extract the client
 	rsu::files::IO				= 100%
 	rsu::files::clientdir		= 100%
 	rsu::files::dirs			= 0% # Will run directory checks (equal to "ls /dir | grep" or similar)
-	rsu::nvidia::optimus		= 100%
+	rsu::nvidia::optimus		= 100% # Complete
 	rsu::java::jre				= 80% # Try to remove grep dependency
 	rsu::java::opengl			= 100% # Replace $rsu_data
 	client::appletviewer::jagex	= 50% # Remove grep dependency and use opendir+readdir
-	client::modes::verbose		= 100%
-	rsu::mains					= 100%
+	client::modes::verbose		= 100% # Complete
+	rsu::mains					= 100% # Complete
 	client::init				= ?% # No way to track atm
 	
 TODO:
