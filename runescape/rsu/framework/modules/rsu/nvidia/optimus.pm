@@ -54,7 +54,7 @@ sub enableprimus
 	
 	# Check if primusrun exists
 	my $primusrun_exists = "";
-	$primusrun_exists = rsu_primusrun::checkforprimus($rsu_data);
+	$primusrun_exists = rsu::nvidia::optimus::checkforprimus($rsu_data);
 	
 	# Make a variable for the returnvalue
 	my $return_value;
