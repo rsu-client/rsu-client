@@ -21,9 +21,9 @@ sub from
 	{
 		# Use the fallback download (using wget or curl and possibly show output in zenity)
 		require updater::download::sysdload;
-		
+
 		# Run the commands download the file
-		updater::download::sysdload($url,$location);
+		updater::download::sysdload::sysdownload($url,$location);
 	}
 }
 

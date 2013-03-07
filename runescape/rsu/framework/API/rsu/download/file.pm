@@ -14,7 +14,7 @@ Syntaxes (parts with [ infront of them are optional):
 	$ARGV[0] URL [\"directory\"
 	
 DEFAULTS:
-	directory = \$clientdir/.tmp
+	directory = \$clientdir/.download
 	
 NOTES:
 	The directory parameter is the location
@@ -28,7 +28,9 @@ Examples:
 	result: downloads the runescape.msi to /tmp
 	
 Remarks:
-	Returns nothing when done
+	Returns nothing unless Wx is not installed.
+	If Wx is not installed the download progress will be
+	written to STDOUT.
 
 Purpose:
 	Simplify the task of downloading a file from an url
