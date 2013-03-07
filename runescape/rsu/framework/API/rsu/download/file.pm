@@ -1,9 +1,5 @@
 package rsu::download::file;
 
-# Use the module for Cwd
-require rsu::files::clientdir;
-my $clientdir = rsu::files::clientdir::getclientdir();
-
 # If parameters are missing or help is passed
 if ("@ARGV" =~ /\s+help(|\s+)/i)
 {
@@ -19,13 +15,18 @@ DEFAULTS:
 NOTES:
 	The directory parameter is the location
 	you want the file to be downloaded to.
+	The directory can just be the foldername in which case
+	it will result in \$clientdir/foldername
 
 Examples:
 	$ARGV[0] http://www.runescape.com/downloads/runescape.msi
-	result: downloads the runescape.msi to $clientdir/.tmp
+	result: downloads the runescape.msi to \$clientdir/.download
 	
 	$ARGV[0] http://www.runescape.com/downloads/runescape.msi \"/tmp\"
 	result: downloads the runescape.msi to /tmp
+	
+	$ARGV[0] http://www.runescape.com/downloads/runescape.msi \"tmp\"
+	result: downloads the runescape.msi to \$clientdir/tmp
 	
 Remarks:
 	Returns nothing unless Wx is not installed.
@@ -43,6 +44,9 @@ else
 	# Require the clientdir module
 	require rsu::files::clientdir;
 	
+	# Get the clientdir
+	my $clientdir = rsu::files::clientdir::getclientdir();
+	
 	# Require the download API
 	require updater::download::file;
 	
@@ -50,13 +54,23 @@ else
 	my @filename = split /\//, $ARGV[1];
 	
 	# Make a variable that contains the download location
-	my $location = rsu::files::clientdir::getclientdir()."/.download/$filename[-1]";
+	my $location = "$clientdir/.download/$filename[-1]";
 	
-	# If a location is defined
+	# If a 2nd parameter is passed
 	if ($ARGV[2] ne '')
 	{
-		# Pass the location to the downloadto variable
-		$location = $ARGV[2];
+		# If the parameter starts with a full path or variable
+		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/)/i)
+		{
+			# Use parameter as location
+			$location = $ARGV[2];
+		}
+		# Else
+		else
+		{
+			# Use the parameter as foldername
+			$location = "$clientdir/$ARGV[2]";
+		}
 	}
 	
 	# Download the file
