@@ -105,11 +105,17 @@ sub p7zip_msi
 			# Create the path for the 3rdParty/Win32 folder
 			make_path("$clientdir/rsu/3rdParty/Win32");
 			
+			# Make a variable to contain the destfile
+			my $destfile = $file;
+			
 			# Replace DLLFile with .dll
-			$file =~ s/DLLFile/\.dll/i;
+			$destfile =~ s/DLLFile.+/\.dll/i;
+			
+			# Turn into lowercase
+			$destfile = lc($destfile);
 			
 			# Copy the jawt or jawt dependency to the 3rdParty/Win32 folder
-			cp("$clientdir/.download/extracted_files/".lc($file), "$clientdir/rsu/3rdParty/Win32/".lc($file));
+			cp("$clientdir/.download/extracted_files/$file", "$clientdir/rsu/3rdParty/Win32/$destfile");
 		}
 	}
 }
