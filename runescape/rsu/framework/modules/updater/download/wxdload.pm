@@ -27,7 +27,7 @@ sub wxdownload
 	my $file_size = $headers->content_length; 
 	
 	# Make a download dialog
-	my $download_dialog = Wx::ProgressDialog->new("Downloading", "Downloading file: $filename[-1]", $file_size, undef, wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE | wxPD_CAN_ABORT); 
+	my $download_dialog = Wx::ProgressDialog->new("Downloading", "Downloading file: $filename[-1]", $file_size, undef, wxPD_ELAPSED_TIME | wxPD_AUTO_HIDE | wxPD_CAN_ABORT); 
 	
 	# Show the download dialog
 	$download_dialog->Show(1); 
@@ -38,8 +38,14 @@ sub wxdownload
 	# Make a variable to contain the abort status
 	my $abort = 0; 
 	
+	# Make a filehandle which we can write to
+	open my $fh, '>:raw', $downloadto or die $!;
+
 	# Download the file from $url and save it to $downloadto and callback to wxupdate_progressbar
-	my $file_data = $lwp_handle->get($url, ':content_file' => $downloadto, ':content_cb' => \&wxupdate_progressbar ); 
+	my $file_data = $lwp_handle->get($url, ':content_cb' => \&wxupdate_progressbar, 8192);
+
+	# Close file handle
+	close $fh;
 	
 	# Add the downloaded data to $file_data
 	$file_data = $file_data->content();
@@ -54,10 +60,25 @@ sub wxdownload
 	sub wxupdate_progressbar
 	{
 		# Get the passed data
-		my ($data, $response) = @_;
+		my ($data, $response, $protocol) = @_;
 		
 		# Get how many % is downloaded
-		$downloaded_data .= $data; 
+		$downloaded_data .= $data;
+		
+		# Get how many bytes is downloaded
+		my $downloaded_bytes = length $downloaded_data;
+		
+		# Get the rough percentage of the download
+		my $percentage = ($downloaded_bytes/$file_size)*100;
+		
+		# Remove the decimals
+		$percentage =~ s/(\..+|,.+)//g;
+		
+		# Update the title
+		$download_dialog->SetTitle("Downloading [$percentage%]");
+		
+		# Write chunk data to filehandle
+		print $fh $data;
 		
 		# Make a variable that contains the size of the download data
 		my $status = $download_dialog->Update(length $downloaded_data); 

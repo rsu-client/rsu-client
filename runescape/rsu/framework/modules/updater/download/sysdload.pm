@@ -11,6 +11,9 @@ sub sysdownload
 	# Use LWP::UserAgent which we use to download files
 	use LWP::UserAgent;
 	
+	# Get the current OS
+	my $OS = "$^O";
+	
 	# Split the url by /
 	my @filename = split /\//, $url;
 	
@@ -27,10 +30,16 @@ sub sysdownload
 	my $file_size = $headers->content_length;
 	
 	# Make a variable to contain the downloaded data
-	my $downloaded_data = '';  
+	my $downloaded_data = '';
 	
+	# Make a filehandle which we can write to
+	open my $fh, '>:raw', $downloadto or die $!;
+
 	# Download the file from $url and save it to $downloadto and callback to wxupdate_progressbar
-	my $file_data = $lwp_handle->get($url, ':content_file' => $downloadto, ':content_cb' => \&print_progress ); 
+	my $file_data = $lwp_handle->get($url, ':content_cb' => \&print_progress , 8192 );
+
+	# Close file handle
+	close $fh;
 	
 	# Add the downloaded data to $file_data
 	$file_data = $file_data->content();
@@ -42,13 +51,13 @@ sub sysdownload
 	sub print_progress
 	{
 		# Get the passed data
-		my ($data, $response) = @_;
+		my ($data, $response, $protocol) = @_;
 		
 		# Get the data that is downloaded
 		$downloaded_data .= $data; 
 		
 		# Get how many bytes is downloaded
-		$downloaded_bytes = length $downloaded_data;
+		my $downloaded_bytes = length $downloaded_data;
 		
 		# Get the rough percentage of the download
 		my $percentage = ($downloaded_bytes/$file_size)*100;
@@ -58,9 +67,12 @@ sub sysdownload
 		my $total_kb = $file_size/1000;
 		
 		# Remove the decimals
-		$percentage =~ s/(\..+)//g;
-		$downloaded_kb =~ s/(\..+)//g;
-		$total_kb =~ s/(\..+)//g;
+		$percentage =~ s/(\..+|,.+)//g;
+		$downloaded_kb =~ s/(\..+|,.+)//g;
+		$total_kb =~ s/(\..+|,.+)//g;
+		
+		# Write chunk data to filehandle
+		print $fh $data;
 		
 		# Print the download process to STDOUT
 		print "Downloading: $filename[-1] [$percentage%] - ".$downloaded_kb."kb of ".$total_kb."kb\n";
