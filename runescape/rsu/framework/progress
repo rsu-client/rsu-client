@@ -15,7 +15,7 @@ API:
 	client.launch.settings		= 30% # Make settings use the API
 	client.launch.launcher		= 70% # Make launcher use the API
 	client.launch.updater		= 10% # Rewrite to use a Wx dialog
-	rsu.download.client			= 50% # Will download using LWP and use 7zip or native tools depending on the system to extract the jagexappletviewer
+	rsu.download.client			= 80% # Will download using LWP and use 7zip or native tools depending on the system to extract the jagexappletviewer
 	rsu.download.file			= 100% # Will download a file using the LWP module
 	rsu.extract.file			= 100% # Will support at least .zip and .tar/.tar.gz on all platforms
 	addon.platform.launch		= 0% # Will launch a platform specific addon
@@ -30,7 +30,7 @@ modules:
 	updater::download::wxdload	= 100% # Wx Download Dialog is complete
 	updater::download::sysdload	= 100% # Download methods using LWP, prints progress to STDOUT
 	rsu::extract::archive		= 100% # Uses Archive::Extract to extract .zip and .tar/.tar.gz archives
-	updater::extract::client	= 40% # msiextract complete, Uses 7-zip or native tools to extract the client
+	updater::extract::client	= 80% # msiextract complete, Uses 7-zip or native tools to extract the client
 	rsu::files::IO				= 100%
 	rsu::files::clientdir		= 100%
 	rsu::files::dirs			= 100% # Will run list directories and files (list = list contents of directory, rlist = list files recursively)
