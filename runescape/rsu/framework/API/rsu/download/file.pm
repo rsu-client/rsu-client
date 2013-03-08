@@ -41,6 +41,9 @@ Purpose:
 # Else
 else
 {
+	# Use the File::Path module so we get a crossplatform mkpath and rmdir implementation
+	use File::Path qw(make_path);
+	
 	# Require the clientdir module
 	require rsu::files::clientdir;
 	
@@ -54,7 +57,7 @@ else
 	my @filename = split /\//, $ARGV[1];
 	
 	# Make a variable that contains the download location
-	my $location = "$clientdir/.download/$filename[-1]";
+	my $location = "$clientdir/.download";
 	
 	# If a 2nd parameter is passed
 	if ($ARGV[2] ne '')
@@ -72,6 +75,12 @@ else
 			$location = "$clientdir/$ARGV[2]";
 		}
 	}
+	
+	# Make the download location
+	make_path($location);
+	
+	# Append the filename to the location
+	$location = "$location/$filename[-1]";
 	
 	# Download the file
 	updater::download::file::from($ARGV[1], $location);
