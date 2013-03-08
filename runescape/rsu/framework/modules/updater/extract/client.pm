@@ -79,7 +79,7 @@ sub p7zip_msi
 	my ($placejar, $extractjawt) = @_;
 	
 	# Extract the msi using p7zip
-	system "cd \"$clientdir/.download/\" && 7z e runescape.msi -oextracted_files";
+	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y runescape.msi";
 	
 	# Open the directory
 	opendir(my $msi_dir, "$clientdir/.download/extracted_files");
@@ -126,7 +126,14 @@ sub p7zip_msi
 
 sub p7zip_dmg
 {
+	# Get the passed data
+	my ($placejar) = @_;
 	
+	# Extract the msi using p7zip
+	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y runescape.dmg *.hfs && 7z e -oextracted_files -y extracted_files/*.hfs";
+	
+	# Copy the jagexappletviewer to the location requested
+	cp("$clientdir/.download/extracted_files/jagexappletviewer.jar", "$clientdir/$placejar/jagexappletviewer.jar");
 }
 
 #
