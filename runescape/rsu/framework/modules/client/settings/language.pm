@@ -71,7 +71,7 @@ package client::settings::language;
 		require client::env;
 		
 		# Get the location of the home directory
-		my $HOME = client::env::home;
+		my $HOME = client::env::home();
 		
 		# Read the content of the config file
 		my $content = rsu::files::IO::getcontent($HOME, "jagexappletviewer.preferences");
