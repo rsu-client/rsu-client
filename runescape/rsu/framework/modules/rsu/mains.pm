@@ -173,7 +173,7 @@ sub unix_main
 	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully)
-	system "cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
+	rsu::mains::runjar("cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share 2>&1");
 }
 
 #
@@ -220,10 +220,12 @@ sub windows_main
 	$params =~ s/jagexappletviewer\.jar/bin\/jagexappletviewer\.jar/;
 	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%CD%\\win32\\gnu\\;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which i dont know why appears
-	system "set PATH=$javalibspath;%CD%\\win32\\gnu\\;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1 | grep -v \"Received command\"";
+	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
+	
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1");
 }
 
 #
@@ -275,6 +277,22 @@ sub checkcompabilitymode
 #
 #---------------------------------------- *** ----------------------------------------
 #
+
+sub runjar
+{
+	# Get the passed data
+	my ($command) = @_;
+	
+	# Start the client process
+	open CLIENT, "$command |";
+	
+	# While client is running
+	while(<CLIENT>)
+	{
+		# Print output if it is not the "Received command" output spam
+		print $_ if $_ !~ /Received command/;
+	}
+}
 
 1;
  

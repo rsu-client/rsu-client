@@ -364,6 +364,9 @@ java_not_binary_message
 
 	sub win32_find_java
 	{
+		# Require the grep module
+		require rsu::files::grep;
+		
 		# Gets passed data from the function call
 		my ($win32java_setting) = @_;
 		
@@ -374,7 +377,14 @@ java_not_binary_message
 		if ($win32java_setting =~ /default-java/)
 		{
 			# Run a registry query and grep for the current java version (example: 1.6)
-			$currentversion = `set PATH=%CD%\\win32\\gnu\\;%PATH% && reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v CurrentVersion | grep CurrentVersion`;
+			$currentversion = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v CurrentVersion`;
+			
+			# Run a string grep query
+			my @currentversion = rsu::files::grep::strgrep($currentversion, "CurrentVersion");
+			
+			# Convert array to string
+			$currentversion = "@currentversion";
+			
 			# Remove all tabs, whitespace and newlines and the 1. and also remove REG_SZ and everything before that from the last array entry
 			$currentversion =~ s/(.+REG_SZ|\n\r|\r|\n|\s+|\t+|1\.)//g;
 		}
@@ -391,12 +401,26 @@ java_not_binary_message
 		my $javafamily = "Java$currentversion"."FamilyVersion";
 		
 		# Use the current version to run a new registry query and grep for Java#FamilyVersion (replace # with number)
-		my $javafamilyversion = `set PATH=%CD%\\win32\\gnu\\;%PATH% && reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v $javafamily | grep $javafamily`;
+		my $javafamilyversion = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v $javafamily`;
+		
+		# Run a string grep query
+		my @javafamilyversion = rsu::files::grep::strgrep($javafamilyversion, $javafamily);
+		
+		# Convert array to string
+		$javafamilyversion = "@javafamilyversion";
+		
 		# Remove all tabs, whitespace and newlines and also remove REG_SZ and everything before that from the last array entry
 		$javafamilyversion =~ s/(.+REG_SZ|\n\r|\r|\n|\s|\t|\s+)//g;
 		
 		# Use the javafamilyversion to run a new registry querty and grep for JavaHome which contains the location of the java installation
-		my $javahome = `set PATH=%CD%\\win32\\gnu\\;%PATH% && reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\\$javafamilyversion\" /v JavaHome | grep JavaHome`;
+		my $javahome = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\\$javafamilyversion\" /v JavaHome`;
+		
+		# Run a string grep query
+		my @javahome = rsu::files::grep::strgrep($javahome, "JavaHome");
+		
+		# Convert array to string
+		$javahome = "@javahome";
+		
 		# Split the result by REG_SZ and add everything to an array
 		my @javahome_array = split(/REG_SZ/i, $javahome);
 		# Remove all tabs, whitespace and newlines and also remove REG_SZ and everything before that from the last array entry
