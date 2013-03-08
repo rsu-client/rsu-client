@@ -98,25 +98,19 @@ else
 	updater::download::file::from($url, $location);
 	
 	# Make a variable to contain the path we shall place the jar file
-	my $placejar = "$clientdir/bin";
+	my $placejar = "bin";
 	
-	# If the first parameter is a full path then
-	if ($ARGV[1] =~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] !~ /^(dmg|msi)$/i)
-	{
-		# Use the full parameter as the archive
-		$placejar = $ARGV[1];
-	}
-	# Else if the first parameter is not a full path but does contain / or \ then
-	elsif($ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] =~ /(.\/.+|.\\.+)/i)
+	# If the first parameter is not a full path but does contain / or \ then
+	if($ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] =~ /(.\/.+|.\\.+)/i)
 	{
 		# Use $clientdir as the base location and add the parameter at the end
-		$placejar = "$clientdir/$ARGV[1]";
+		$placejar = "$ARGV[1]";
 	}
 	# Else if the first parameter is not a full path, does not contain / or \ and is not dmg or msi then
-	elsif($ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] =~ /(.\/.+|.\\.+)/i && $ARGV[1] !~ /^(dmg|msi)$/i)
+	elsif($ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] !~ /(.\/.+|.\\.+)/i && $ARGV[1] !~ /^(dmg|msi)$/i)
 	{
 		# Use the parameter as foldername
-		$placejar = "$clientdir/$ARGV[1]";
+		$placejar = "$ARGV[1]";
 	}
 	
 	# Extract the client
@@ -127,6 +121,12 @@ sub extractclient
 {
 	# Get the passed data
 	my ($placejar, $filename) = @_;
+	
+	# Get the current OS
+	my $OS = "$^O";
+	
+	# Get the client directory
+	my $clientdir = rsu::files::clientdir::getclientdir();
 	
 	# If we are not on MacOSX and the filename is runescape.msi
 	if ($filename =~ /runescape.msi/ && $OS !~ /darwin/)
