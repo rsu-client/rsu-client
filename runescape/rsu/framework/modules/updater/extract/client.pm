@@ -39,7 +39,7 @@ sub msiextract
 		system "msiexec /a \"$clientdir\\.download\\runescape.msi\" /qn TARGETDIR=\"$clientdir\\.download\\extracted_files\"";
 		
 		# Copy the jagexappletviewer.jar to $placejar
-		cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/jagexappletviewer.jar", "$clientdir/$placejar/");
+		updater::extract::client::print_cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/jagexappletviewer.jar", "$clientdir/$placejar/");
 		
 		# If we are told to extract jawt too then
 		if (defined $extractjawt && $extractjawt =~ /true/i)
@@ -48,9 +48,9 @@ sub msiextract
 			make_path("$clientdir/rsu/3rdParty/Win32/jawt");
 			
 			# Copy the jawt dll files to the 3RD
-			cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/jawt.dll", "$clientdir/rsu/3rdParty/Win32/jawt/");
-			cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/awt.dll", "$clientdir/rsu/3rdParty/Win32/jawt/");
-			cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/msvcr100.dll", "$clientdir/rsu/3rdParty/Win32/jawt/");
+			updater::extract::client::print_cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/jawt.dll", "$clientdir/rsu/3rdParty/Win32/jawt/");
+			updater::extract::client::print_cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/awt.dll", "$clientdir/rsu/3rdParty/Win32/jawt/");
+			updater::extract::client::print_cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/msvcr100.dll", "$clientdir/rsu/3rdParty/Win32/jawt/");
 		}
 		
 	}
@@ -67,6 +67,13 @@ sub dmgextract
 	
 	# Make the location to place the jar file
 	make_path("$clientdir/$placejar");
+	
+	# If we are not on MacOSX
+	if ($OS !~ /darwin/)
+	{
+		# Run the p7zip extraction method
+		updater::extract::client::p7zip_dmg($placejar);
+	}
 }
 
 #
@@ -97,7 +104,7 @@ sub p7zip_msi
 		if ($file =~ /^JagexAppletViewerJarFile/i)
 		{
 			# Copy the jagexappletviewer.jar to $placejar
-			cp("$clientdir/.download/extracted_files/$file", "$clientdir/$placejar/jagexappletviewer.jar");
+			updater::extract::client::print_cp("$clientdir/.download/extracted_files/$file", "$clientdir/$placejar/jagexappletviewer.jar");
 		}
 		# Else if current file is a jawt file or dependency and $extractjawt is defined and true then
 		elsif($file =~ /^(AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)/i && defined $extractjawt && $extractjawt =~ /true/i)
@@ -115,7 +122,7 @@ sub p7zip_msi
 			$destfile = lc($destfile);
 			
 			# Copy the jawt or jawt dependency to the 3rdParty/Win32 folder
-			cp("$clientdir/.download/extracted_files/$file", "$clientdir/rsu/3rdParty/Win32/$destfile");
+			updater::extract::client::print_cp("$clientdir/.download/extracted_files/$file", "$clientdir/rsu/3rdParty/Win32/$destfile");
 		}
 	}
 }
@@ -133,13 +140,23 @@ sub p7zip_dmg
 	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y runescape.dmg *.hfs && 7z e -oextracted_files -y extracted_files/*.hfs";
 	
 	# Copy the jagexappletviewer to the location requested
-	cp("$clientdir/.download/extracted_files/jagexappletviewer.jar", "$clientdir/$placejar/jagexappletviewer.jar");
+	updater::extract::client::print_cp("$clientdir/.download/extracted_files/jagexappletviewer.jar", "$clientdir/$placejar/jagexappletviewer.jar");
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
 
-
+sub print_cp
+{
+	# Get the passed data
+	my ($from,$to) = @_;
+	
+	# Tell user what we are doing
+	print "\"$from\" -> \"$to\"\n";
+	
+	# Copy file $from $to
+	cp("$from", "$to");
+}
 
 1; 
