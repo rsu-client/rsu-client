@@ -10,17 +10,6 @@ BEGIN
 	# Use FindBin module to get script directory
 	use FindBin;
 
-	# Add the location of our redistributed cpan modules which are not available by default
-	# Translation: Define the $PATH for perl modules
-	# Kept this incase i need it in the future
-	#use lib $FindBin::RealBin."/modules/universal/framework/perl/modules";
-	#use lib $FindBin::RealBin."/modules/$^O/framework/perl/modules";
-	#use lib $FindBin::RealBin."/../framework/perl/modules";
-	#use lib $FindBin::RealBin."/../../$^O/framework/perl/modules";
-	use lib $FindBin::RealBin."/modules/universal/rsu-launcher/modules";
-	use lib $FindBin::RealBin."/../../universal/rsu-launcher/modules";
-	use lib $FindBin::RealBin."/modules";
-
 	# Include OS Specific modules
 	if ($^O  eq "MSWin32")
 	{
@@ -339,16 +328,16 @@ sub create_addons_page
 	$self->{addonsvertical}->Add($self->{addonscontainer},1,wxEXPAND|wxALL,0);
 	
 	# Open the addons directory
-	opendir(my $addondirs, "$clientdir/modules/addons/");
+	opendir(my $addondirs, "$clientdir/share/addons/");
 	
 	# While there is still content in the folder
 	while (readdir $addondirs)
 	{
 		# If the current content is either named universal or the same as $OS
-		if (($_ =~ /^universal$/ && -d "$clientdir/modules/addons/$_") || ($_ =~ /^$OS$/ && -d "$clientdir/modules/addons/$_"))
+		if (($_ =~ /^universal$/ && -d "$clientdir/share/addons/$_") || ($_ =~ /^$OS$/ && -d "$clientdir/share/addons/$_"))
 		{
 			# Make the addons buttons
-			make_addon_buttons($self, "$clientdir/modules/addons/$_");
+			make_addon_buttons($self, "$clientdir/share/addons/$_");
 		}
 	}
 	
@@ -397,7 +386,7 @@ sub fetch_rssnews
 		# Fix some formating issues from html
 		$rssTitle =~ s/(&#8217;|&APOS;)/'/gi;
 		$rssTitle =~ s/(&#8211;)/-/gi;
-		$rssTitle =~ s/(&#13;&#10;)//gi;
+		$rssTitle =~ s/(&#13;|&#10;|&#9;)//gi;
 		
 		# If we are on mac or windows
 		if ($OS =~ /(darwin|MSWin32)/)
@@ -466,7 +455,7 @@ sub fetch_rssnews
 		# Fix some stuff in the finished activity list
 		$rssDescription =~ s/(&#8217;|&APOS;)/'/gi;
 		$rssDescription =~ s/(&#8211;)/-/gi;
-		$rssDescription =~ s/(&#13;&#10;)//gi;
+		$rssDescription =~ s/(&#13;|&#10;|&#9;)//gi;
 		
 		# If we are on mac or windows
 		if ($OS =~ /(darwin|MSWin32)/)
@@ -680,10 +669,10 @@ sub about
 		#$about->{dialog}->SetIcon($self->GetParent()->GetParent()->GetParent()->GetParent()->GetIcon());
 		
 		# Set the aboutdialog icon
-		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, $self->GetParent()->GetParent()->GetParent()->GetParent()->GetIcon());
+		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/runescape.png", wxBITMAP_TYPE_PNG));
 		
 		# Set the size of the aboutdialog
-		$about->{dialog}->SetSize(365,375);
+		$about->{dialog}->SetSize(365,395);
 		
 		# Add the aboutdialog icon to the dialog
 		$about->{vertical}->Add($about->{icon}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
@@ -1395,7 +1384,7 @@ sub launch_addon
 	my $addon = $event->GetEventObject()->GetLabel();
 	
 	# Open the universal addon directory
-	opendir (my $addons, "$clientdir/modules/addons/universal/");
+	opendir (my $addons, "$clientdir/share/addons/universal/");
 	
 	# While there is still content in the folder
 	while (readdir $addons)
@@ -1407,7 +1396,7 @@ sub launch_addon
 		if ($OS =~ /MSWin32/)
 		{
 			# Launch the addon
-			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
+			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=false &");
 		}
 		# Else
 		else
@@ -1421,7 +1410,7 @@ sub launch_addon
 	closedir($addons);
 	
 	# Open the platform specific addons directory
-	opendir (my $platform_addons, "$clientdir/modules/addons/$OS/");
+	opendir (my $platform_addons, "$clientdir/share/addons/$OS/");
 	
 	# While there is still content in the folder
 	while (readdir $platform_addons)
@@ -1433,7 +1422,7 @@ sub launch_addon
 		if ($OS =~ /MSWin32/)
 		{
 			# Launch the addon
-			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=true &");
+			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
 		}
 		# Else
 		else

@@ -75,30 +75,30 @@ if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 
 # Read from the config file if the user want to run in compabilitymode/wine,
 # if nothing is found then dont use it
-my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "settings.conf", "$clientdir");
+my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "settings.conf", "$clientdir/share");
 
 # Read the preferred java in the config file, if nothing is found then use default-java
-my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf", "$clientdir");
+my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf", "$clientdir/share");
 
 # If we are running on windows then
 if ($OS =~ /MSWin32/)
 {
-	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf", "$clientdir");
+	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf", "$clientdir/share");
 }
 
 # Read from the config file if the user want to force the client to use pulseaudio
 # if nothing then dont use it (incase a system does not have pulseaudio/padsp installed)
-my $forcepulseaudio = rsu::files::IO::readconf("forcepulseaudio", "False", "settings.conf", "$clientdir");
+my $forcepulseaudio = rsu::files::IO::readconf("forcepulseaudio", "False", "settings.conf", "$clientdir/share");
 
 # Read from the config file if the user want to tell java to use alsa in the base for sounds
 # If nothing is found then do not use alsa and instead use the java default
-my $forcealsa = rsu::files::IO::readconf("forcealsa", "False", "settings.conf", "$clientdir");
+my $forcealsa = rsu::files::IO::readconf("forcealsa", "False", "settings.conf", "$clientdir/share");
 
 # Read from the config file, the name of the prm file to use
-my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf", "$clientdir");
+my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf", "$clientdir/share");
 
 # Read from the config file if the user have told the script to use primusrun or not if it is available
-my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "settings.conf", "$clientdir");
+my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "settings.conf", "$clientdir/share");
 
 # Define a text inside the script for use
 my $plist_template = << "plist_template";

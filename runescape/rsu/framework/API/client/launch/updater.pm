@@ -36,624 +36,430 @@ my $updateurl = "http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix
 use strict;
 
 # Use FindBin module to get script directory
+use FindBin;
+
+# Use the Cwd module so we can find the current working directory
 use Cwd;
 
-# Get script directory
+# Name of our xrc gui resource file
+my $xrc_gui_file = "rsu-updater.xrc";
+
+# Disable buffering
+$|=1;
+
+# Get the cwd
 my $cwd = getcwd;
 
-# Include perl modules in ./modules/client_modules/extra
-#use lib $FindBin::RealBin."/modules/client_modules/extra";
-# Require rsu_zenity so we can make dialog windows if zenity is installed
-require updater::gui::zenity;
-
-# Make a variable to contain the client directory
-my $clientdir = $cwd;
-
+# Get script directory
+my $scriptdir = $FindBin::RealBin;
+# Get script filename
+my $scriptname = $FindBin::Script;
 # Detect the current OS
 my $OS = "$^O";
 
-# Make a variable to contain the temponairly %PATH% variable
-my $win32path;
-
-# Make a variable to contain if the user ran script as root or not
-my $isroot;
-
-# Make a variable to contain the users home folder
+# Make a variable for users homedir
 my $HOME;
-
-# If we are running on windows then
+# If we are on windows
 if ($OS =~ /MSWin32/)
 {
-	# Replace / with \\
-	$cwd =~ s/\//\\\\/g;
-	
-	# Path variable to set in windows
-	$win32path = "set PATH=$cwd\\win32\\perl\\bin;$cwd\\win32\\gnu\\;$cwd\\win32\\7-zip\\;%PATH%";
+	# Get the environment variable for USERPROFILE
+	$HOME = $ENV{"USERPROFILE"};
+	# Replace all / with \
+	$HOME =~ s/\//\\/g;
 }
-# Else we are on unix
+# Else we are on UNIX
 else
 {
-	# Check if we are root
-	$isroot = `whoami`;
-	
-	# Get users homefolder
 	$HOME = $ENV{"HOME"};
 }
 
+# Require the clientdir module
+require rsu::files::clientdir;
 
-# Make variable to contain the 7zip binary name
-my $zipbin = "7z";
+# Get the client directory
+my $clientdir = rsu::files::clientdir::getclientdir();
+
+# Get the resource directory for this script
+my $resourcedir = "$cwd/rsu/framework/resources/client/launch/updater";
+
+#---------------------------------------- *** ----------------------------------------
+#---------------------------------------- *** ----------------------------------------
+#---------------------------------------- *** ----------------------------------------
+
+package wxTopLevelFrame;
+
+use Wx qw[:everything];
+use Wx::XRC;
+# Which events shall we include
+use Wx::Event qw(EVT_BUTTON);
+
+use base qw(Wx::Frame);
+
+# Use File::Path so we can make and remove directories
+use File::Path qw(make_path remove_tree);
+
+# Require the files IO module
+require rsu::files::IO;
+
+# Require the download file module
+require updater::download::file;
+
+# Require the archive module
+require rsu::extract::archive;
+
+sub new
+{
+	# Create a class
+	my $class = shift;
 	
-# command to fetch the p7zip source
-my $fetchcommand = "wget -O";
-
-# Define the variable to wait for the user to press Enter to exit
-my $exit;
-			
-# If we are on mac osx we need to use curl
-if ($OS =~ /darwin/)
-{
-	# Curl command equalent to the wget command
-	$fetchcommand = "curl -L -o";
-}
-# Else if STATEMENT
-elsif($OS =~ /MSWin32/)
-{
-	# Set the temponairly PATH environment variable and add wget to the fetchcommand
-	$fetchcommand = "$win32path && wget -O";
-}
-# Else if /usr/bin contains wget
-elsif(`ls /usr/bin | grep wget` =~  /wget/)
-{
-	# Use wget command to fetch files
-	$fetchcommand = "wget -O";
-}
-# Else if /usr/bin contains curl
-elsif(`ls /usr/bin | grep curl` =~  /curl/)
-{
-	# Curl command equalent to the wget command to fetch files
-	$fetchcommand = "curl -L -o";
-}
-
-# Make a variable to control if we are going to use zenity or not
-my $usezenity = updater::gui::zenity::checkfor_zenity();
-
-# If we are inside an interactive shell then
-if (-t STDOUT || $usezenity =~ /1/)
-{
+	# Assign class object to $self
+	my $self = $class->SUPER::new;
 	
-	# If this script have been installed systemwide
-	if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
+	# Initialize everything
+	$self->initialize;
+	
+	return $self;
+}
+
+sub initialize
+{
+	# Get pointers
+	my $self = shift;
+	
+	# Create mutators for widgets (enter the objectname for every object here)
+	$self->create_mutator
+	(
+		qw
+		(
+			xrc_resource
+		)
+	);
+	
+	load_xrc_gui($self);
+	
+	set_layout($self);
+	
+	set_events($self);
+	
+	set_tooltips($self);
+	
+}
+
+sub load_xrc_gui
+{
+	# Get the pointers
+	my $self = shift;
+	
+	# Get the xrc file
+	my $xrc_file = "$resourcedir/$xrc_gui_file";
+	
+	# Initialize WX
+	Wx::InitAllImageHandlers();
+	
+	# Create xrc/xml resource
+	$self->xrc_resource = Wx::XmlResource->new;
+	# Initialize handlers
+	$self->xrc_resource->InitAllHandlers;
+	# Load the xrc file
+	$self->xrc_resource->Load($xrc_file);
+	
+	# Tell what window/frame to load
+	$self->xrc_resource->LoadFrame($self,undef,"mainwindow");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub set_layout
+{
+	# Get the pointers
+	my $self = shift;
+	
+	# Find the widgets
+	# $self->objectname = $self->FindWindow('objectname
+	
+	# Get the scrolledlist which will contain the buttons and description
+	$self->{scrolledlist} = $self->FindWindow('scrolledlist');
+	
+	# Make a flexible gridsizer to make everything look good
+	$self->{listgrid} = Wx::FlexGridSizer->new(3,2,0,0);
+	
+	# Make the 2nd column growable
+	$self->{listgrid}->AddGrowableCol(1);
+	
+	# Make the buttons list
+	create_button_list($self);
+	
+	# Set the sizer for scrolledlist
+	$self->{scrolledlist}->SetSizer($self->{listgrid});
+	
+	# Set minimum size and maximum size of the window
+	$self->SetMinSize($self->GetSize);
+	$self->SetMaxSize($self->GetSize);
+	
+	# If the icon exists
+	if (-e "$cwd/share/runescape.png")
 	{
-		# change $clientdir to ~/.config/runescape
-		$clientdir = "$HOME/.config/runescape/";
-		
-		# Make the client folders
-		system "mkdir -p \"$HOME/.config/runescape/bin\" && mkdir -p \"$HOME/.config/runescape/share\"";
+		# Set the window icon
+		$self->SetIcon(Wx::Icon->new("$cwd/share/runescape.png", wxBITMAP_TYPE_PNG));
 	}
-
-	# run the script
-	main();
-}
-# else
-else
-{
-	# run script in xterm so we can get input from user
-	system ("xterm -e \"perl $cwd/update-runescape-client\"");
 }
 
-sub main
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub create_button_list
 {
-	# Place the main message in a variable
-	my $updatetext = "Due to Legal Reasons the file jagexappletviewer.jar is not \navailable/downloadable in certain countries. For this script \nto work you must be able to download at LEAST one of the \nOfficial RuneScape Clients for extraction!\n\n";
+	# Get the pointers
+	my $self = shift;
 	
-	# Make a variable to contain the answers
-	my $answer;
-	
-	# If zenity is not installed, print all text to the console
-	if ($usezenity =~ /0/)
-	{
-		# Show the updatetext
-		print $updatetext;
-		
-		# Ask what type of update to run
-		print "What type of update do you want to run?\n [1] Update jagexappletviewer.jar(from Jagex) by using the\n     official Windows client, then ask to update the scripts. (default)\n\n [2] Update jagexappletviewer.jar(from Jagex) by using the\n     official MacOSX client(EXPERIMENTAL! but smaller download),\n     then ask to update the scripts.\n\n";
-		
-		# If the script is not located in /opt
-		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
-		{
-			# Show the 3rd option
-			print " [3] Update the rsu-client scripts (from HikariKnight)\n\n";
-		}
-		
-		# Complete the message
-		print "Enter the number for your choice:";
-		
-		# Get user input
-		$answer = <STDIN>;
-	}
-	# Else use zenity
-	else
-	{
-		# Make a variable to contain the update script option for zenity
-		my $updatescriptoption;
-		
-		# If the script is not located in /opt
-		if ($cwd !~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
-		{
-			# Show the 3rd option
-			$updatescriptoption = 'FALSE "Update the rsu-client scripts (from HikariKnight)"';
-		}
-		
-		# Display the message and options though zenity
-		$answer = updater::gui::zenity::zenity_radiolist("Information", "$updatetext\n\nWhat type of update do you want to run?", "TRUE \"Update the jagexappletviewer.jar \(Extract from Windows client\)\" 0 \"Update the jagexappletviewer.jar \(Extract from Mac client\)\" $updatescriptoption");
-		
-		# If user choose update from jagexappletviewer.jar from the windows client
-		if ($answer =~ /Windows client/)
-		{
-			$answer = "1";
-		}
-		# Else if user choose update from jagexappletviewer.jar from the mac client
-		elsif($answer =~ /Mac client/)
-		{
-			$answer = "2";
-		}
-		# Else if user choose update the rsu-client scripts
-		elsif($answer =~ /rsu-client scripts/)
-		{
-			$answer = "3";
-		}
-		# Else cancel was clicked
-		else
-		{
-			exit;
-		}
-	}
-	
-	
-	# If user answered 2 then run the script updater and exit
-	if ($answer =~ /^3/ && $cwd !~ /\/opt\/runescape/)
-	{
-		# Execute script updater
-		runscriptupdater();
-		
-		# Make a done message
-		my $donemessage = "Done running the update process!";
-		
-		if ($usezenity =~ /0/)
-		{
-			# Tell user the update is done
-			print "\n$donemessage\nPress Enter/Return to exit:";
-			
-			# Wait for user to press enter
-			$exit = <STDIN>;
-		}
-		else
-		{
-			# Tell the user that the update is done
-			updater::gui::zenity::zenity_info("Update Done!", "$donemessage\nYou should now have the latest version of RSU-Client installed!");
-		}
-		
-		# Exit script
-		exit;
-	}
-	
-	# If we are on windows
+	# If we are on Windows
 	if ($OS =~ /MSWin32/)
 	{
-		# Make updating folder
-		system "mkdir \"$clientdir\\.updating\"";
+		# Generate an update entry for windows
+		generate_update_entry($self, "msi", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.msi;Download and extract the jagexappletviewer.jar from the Official Windows Client (from Jagex)");
 	}
-	# Else we are on unix
+	# Else if we are on mac
+	elsif($OS =~ /darwin/)
+	{
+		# Generate an update entry for mac
+		generate_update_entry($self, "dmg", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.dmg;Download and extract the jagexappletviewer.jar from the Official Mac Client (from Jagex)");
+	}
+	# Else (we are on linux or some other unix)
 	else
 	{
-		# Make updating folder
-		system "mkdir \"$clientdir/.updating\"";
+		# Generate an update entry for windows
+		generate_update_entry($self, "msi", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.msi;Download and extract the jagexappletviewer.jar from\nthe Official Windows Client (from Jagex)");
 		
-		# Check if p7zip-full is installed, otherwise compile it
-		checkfor_p7zip();
+		# Generate an update entry for mac
+		generate_update_entry($self, "dmg", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.dmg;Download and extract the jagexappletviewer.jar from\nthe Official Mac Client (from Jagex)");
 	}
 	
-	# If user entered "2" on the choices of what to update from
-	if ($answer =~ /^2/)
+	# If clientdir is not $HOME/.config/runescape
+	if ($clientdir !~ /$HOME\/\.config\/runescape/)
 	{
-		# Download and extract the jagexappletviewer from the official MacOSX client
-		updatefrommacclient();
+		# Generate an update entry for windows
+		generate_update_entry($self, "api", "Update rsu-api;http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/update.tar.gz;Update the rsu-api to the newest version\n(from HikariKnight)");
 	}
-	# Else
-	else
-	{
-		# Download and extract the jagexappletviewer from the official windows client
-		updatefromwindowsclient();
-	}
-		
-	# Clean up based on operatingsystem
-	# If we are on windows
-	if ($OS =~ /MSWin32/)
-	{
-		# Remove the .updating directory
-		system "cd \"$clientdir\" && rmdir /S /Q \"$clientdir\\.updating\"";
-	}
-	# Else we are on unix
-	else
-	{
-		system "cd \"$clientdir\" && rm -rf \"$clientdir/.updating/\"";
-	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub generate_update_entry
+{
+	# Get the passed data
+	my ($self, $type, $default) = @_;
 	
-	# If the script is not located in a read only location for the user
-	if ($cwd !~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
+	# Get the information needed for the updater gui
+	my $buttonconfig = rsu::files::IO::readconf($type."_button", $default, "buttons.conf", "$resourcedir/configs");
+	
+	# Split the buttonconfig into an array
+	my @buttondata = split /;/, $buttonconfig;
+	
+	# Make a update button for the msi client
+	make_button($self, $type."_button", "$buttondata[0]");
+	
+	# Replace \n with newlines
+	$buttondata[2] =~ s/\\n/\n/g;
+	
+	# Make a description
+	$self->{$type."_label"} = Wx::StaticText->new($self->{scrolledlist}, -1, "$buttondata[2]", wxDefaultPosition, wxDefaultSize);
+	
+	# Add description to list
+	$self->{listgrid}->Add($self->{$type."_label"},2,wxEXPAND|wxALL,5);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+
+
+sub make_button
+{
+	# Get the passed data
+	my ($self, $button, $label) = @_;
+	
+	# Make a button for the launcher
+	$self->{$button} = Wx::Button->new($self->{scrolledlist}, -1, "$label");
+	$self->{$button}->SetName("$button");
+	$self->{listgrid}->Add($self->{$button},0,wxEXPAND|wxALL,5);
+	
+	# Make an event trigger for the newly created button
+	EVT_BUTTON($self->{$button}, -1, \&update_clicked);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub update_clicked
+{
+	# Get the pointers
+	my ($self, $event) = @_;
+	
+	# Get the name of the addon that triggered the event
+	my $caller = $event->GetEventObject()->GetName();
+	
+	# Remove _button from the caller name
+	$caller =~ s/_button//i;
+	
+	# Make the download directory
+	make_path("$clientdir/.download");
+	
+	# If the caller was the dmg or msi button
+	if ($caller =~ /^(msi|dmg)$/)
 	{
-		# Make a variable to hold the users answer
-		my $updatescripts = "n";
+		# Get the location to store the jar file
+		my $jardir = rsu::files::IO::readconf("jardir", "bin", "updater.conf", "$resourcedir/configs");
 		
-		if ($usezenity =~ /0/)
+		# If we are on windows
+		if ($OS =~ /MSWin32/)
 		{
-			# Ask user if we shall update the scripts too
-			print "\nDo you want to update the RuneScape UNIX Client scripts too?\n[y/n] (default = y):";
-			
-			# Get user input
-			$updatescripts = <STDIN>;
+			# Launch the client downloader
+			system ("$cwd/rsu/rsu-query.exe rsu.download.client $jardir $caller");
 		}
-		# Else zenity is installed
+		# Else we are on a unix platform
 		else
 		{
-			# Display a question asking the user if they want to update the scripts too (displaying a question in zenity makes it use the return code as output meaning system will be able to get it)
-			$updatescripts = updater::gui::zenity::zenity_question("Update Scripts Too?", "Do you want to update the RuneScape UNIX Client scripts too?");
+			# Launch the client downloader
+			system ("$cwd/rsu/rsu-query rsu.download.client $jardir $caller");
 		}
 		
-		# If user said yes or choose the default
-		if ($updatescripts !~ /^(n|N)/)
-		{
-			# Execute script updater
-			runscriptupdater();
-		}
+		# Show a message that we are done
+		Wx::MessageBox("jagexappletviewer.jar should now be the newest version.", "Done updating jagexappletviewer");
 	}
-	
-	# Make a done message
-	my $donemessage = "Done running the update process!";
-	
-	# If zenity is not installed
-	if ($usezenity =~ /0/)
+	# Else if the caller was the api button
+	elsif($caller =~ /^api$/)
 	{
-		# Tell user the update is done
-		print "\n$donemessage\nPress Enter/Return to exit:";
+		# Get the download link
+		my $callerconfig = rsu::files::IO::readconf("api_button", "Update rsu-api;http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/update.tar.gz;Update the rsu-api to the newest version\n(from HikariKnight)", "$resourcedir/configs");
 		
-		# Wait for user to press enter
-		$exit = <STDIN>;
-	}
-	else
-	{
-		# Tell the user that the update is done
-		updater::gui::zenity::zenity_info("Update Done!", "$donemessage\nYou should now have the latest version of the jagexappletviewer.jar!");
+		# Split the config
+		my @callerdata = split /;/, $callerconfig;
+		
+		# Download the api
+		updater::download::file::from($callerdata[1], "$clientdir/.download/api-update.tar.gz");
+		
+		# Extract the api
+		rsu::extract::archive::extract("$clientdir/.download/api-update.tar.gz", "$clientdir");
+		
+		# Show a message that we are done
+		Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api");
 	}
 	
-	# Exit the script
-	exit;
+	# Remove the update directory
+	remove_tree("$clientdir/.download");
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
 
-# Read contents from a file and put it into a pointer
-sub ReadFile 
+sub set_events
 {
-	# Gets passed data from the function call
-	my ($filename) = @_;
-
-	# Makes an array to keep the inputdata
-	my @inputdata;
-
-	# Opens the passed file, if error it dies with the message "Can't open filename"
-	open (my $FILE, "$filename") || die "Can not open $_!";
-
-	# While there is something in the file
-	while(<$FILE>)
-	{
-		# Skip problematic lines in the 7zip makefile
-		next if /^\s*\$\(MAKE\) -C CPP\/7zip\/Compress\/Rar/;
-		
-		# Push data into the inputdata array
-		push(@inputdata, $_)
-	}
-
-	# Close the file
-	close($FILE);
-
-	# Return the pointer to the datafile inputdata
-	return(\@inputdata);
+	# Get the pointers
+	my $self = shift;
+	
+	# Setup the events
+	# EVT_BUTTON($self, Wx::XmlResource::GetXRCID('objectname'), \&function);
+	
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub runscriptupdater
+
+
+# Create mutator function from "Programming Perl"
+sub create_mutator
 {
-	# Make a newline so the output looks nicer
-	print "\n";
-	
-	startupdate();
+
+	my $self = shift;
+
+	# From "Programming Perl" 3rd Ed. p338.
+	for my $attribute (@_)
+	{
+
+		no strict "refs"; # So symbolic ref to typeglob works.
+		no warnings;      # Suppress "subroutine redefined" warning.
+
+		*$attribute = sub : lvalue
+		{
+
+			my $self = shift;
+
+			$self->{$attribute} = shift if @_;
+			$self->{$attribute};
+
+		};
+
+	}
+
 }
 
-#
-#---------------------------------------- *** ----------------------------------------
-#
 
-sub get_p7zip
+### Events
+
+sub close_clicked
 {
-	# If we are running on freebsd we need to tell the user to install p7zip manually
-	if($OS =~ /freebsd/)
-	{
-		# Tell the user to install p7zip-full/p7zip from ports then re run this script
-		# p7zip have different makefiles for each freebsd version, the bsd ports include
-		# a freebsd prepared source unless p7zip-full is already installed by default
-		print "You are running a version of FreeBSD that comes without p7zip-full installed!\nPlease install p7zip/p7zip-full from ports,\nthen re run this script.\n\nPress ENTER/RETURN to exit:";
-		my $exit = <STDIN>;
-		exit;
-	}
-			
-	# Tell user that we did not find the 7z binary and offer to download and compile a local copy
-	print "I was unable to find the 7z binary!
-Please install the package p7zip-full from your package manager
-if you want it to be installen across your system.
-For compability reasons this script can download and compile
-p7zip-full for local usage of the client updater only!
-Doing so requires the packages gcc, make and g++.
-
-Is it ok for me to try download and compile the binary 
-for use in this and later updates?
-Answer (default = y) [y/n]:";
-	# Get users reply for the question above
-	my $installp7zip = <STDIN>;
+	# Get pointers
+	my ($self, $event) = @_;
 	
-	#If user said no then
-	if ($installp7zip =~ /(n|No)/i)
-	{
-		# Show user a final message and ask them to press ENTER/RETURN to exit
-		print "\nPlease use your package manager to install p7zip-full\nso that you can update the client.\nIf you cannot find p7zip-full then try install p7zip\nand then try run the command \"7z\".\nIf it is found then you have installed p7zip-full.\n\nPress ENTER/RETURN to exit:";
-		my $exit = <STDIN>;
-		exit;
-	}
-			
-	# Run the commands
-	system "mkdir \"$clientdir/p7zip-source\" && mkdir -p \"$clientdir/modules/7-zip/$OS/\$(uname -p)\" && $fetchcommand \"$clientdir/p7zip-source/p7zip_9.20.1_src_all.tar.bz2\" http://downloads.sourceforge.net/project/p7zip/p7zip/9.20.1/p7zip_9.20.1_src_all.tar.bz2 && cd \"$clientdir/p7zip-source/\" && tar -xvf \"$clientdir/p7zip-source/p7zip_9.20.1_src_all.tar.bz2\"";
-			
-	# Copy the correct makefile "header" to makefile.machine so it will build on our current system(p7zip default is linux)
-	# If we are on darwin/macosx
-	if ($OS =~ /darwin/)
-	{
-		# Use the 32bit makefile header, since the 64bit one lacks some libraries by default
-		system "cp \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.macosx_32bits_asm\" \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.machine\"";
-	}
-	# Else if we are on solaris (solaris comes with p7zip-full installed but still having this just incase)
-	elsif($OS =~ /solaris/)
-	{
-		# Check if we are on the sparc architecture
-		my $solarisarch = `uname -a`;
-				
-		# If we are on a sparc processor
-		if ($solarisarch =~ /sparc/)
-		{
-			# Use the sparc makefile "header"
-			system "cp \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.solaris_sparc_CC_32\" \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.machine\"";
-		}
-		# Else we are on either i386/i586/i686 or x86_64 processor
-		else
-		{
-			# Use the solaris makefile x86 header(the x86 version of solaris can run x64 code if the processor is capable of it)
-			system "cp \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.solaris_x86\" \"$clientdir/p7zip-source/p7zip_9.20.1/makefile.machine\"";
-		}
-	}
-			
-			
-	# Now we need to "repair" the makefile and remove some stuff
-	# we cannot use (like rar support since it is not in the source)
-	# Read the makefile using ReadFile function that will skip the problematic lines
-	my $makefile = ReadFile("$clientdir/p7zip-source/p7zip_9.20.1/makefile");
-			
-	# Write the new makefile, overwriting the old one
-	#WriteFile("@$makefile", ">", "$cwd/p7zip-source/p7zip_9.20.1/makefile");
-	system "echo $makefile > \"$clientdir/p7zip-source/p7zip_9.20.1/makefile\"";
-			
-	# Compile the 7-zip source
-	system "cd \"$clientdir/p7zip-source/p7zip_9.20.1\" && make clean && make all3 && cp -v \"$clientdir/p7zip-source/p7zip_9.20.1/bin/\"* \"$clientdir/modules/7-zip/$OS/\$(uname -p)/\" && rm -rf \"$clientdir/p7zip-source/\"";
+	# Close window
+	$self->Destroy();
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub updatefromwindowsclient
+sub set_tooltips
 {
-	# If zenity is not installed
-	if ($usezenity =~ /0/)
-	{
-		# Download the windows client
-		system "$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl";
-	}
-	# Else zenity is installed
-	else
-	{
-		# Download the mac client and show the user a zenity dialog while the file is being downloaded
-		updater::gui::zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.msi\" $windowsurl", "Downloading jagexappletviewer.jar", "Downloading and updating the jagexappletviewer.jar\nBy extracting it from the Official Windows Client.", "");
-	}
-	
-	# If we are on anything but windows
-	if ($OS !~ /MSWin32/)#/(darwin|freebsd|netbsd|openbsd|solaris|linux)/)
-	{
-		# Prepare the directory for p7zip (it requires the library to be
-		# in the same directory we are in unless i make a wrapper
-		# (but the .updating folder is getting removed anyway once we are done)
-		system "cd \"$clientdir/.updating/\" && ln -s \"$clientdir/7-zip/$OS/\$(uname -p)/\"* ./";
+	my ($self) = @_;
 		
-		# Check if we can extract the jagexappletviewer.jar directly
-		my $jarfile = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin l runescape.msi | grep "JagexAppletViewerJarFile*" | cut -c54-1000`;
-		# Remove newlines
-		$jarfile =~ s/(\n|\r|\r\n)//g;
-		
-		# If we did not get the jagexappletviewer.jar listed then
-		if ($jarfile !~ /JagexAppletViewerJarFile*/)
-		{
-			# Extract rslauncher.cab from runescape.msi
-			system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && sleep 3 && $zipbin e runescape.msi rslauncher.cab ";
-		
-			# Find the name of the jar file
-			$jarfile = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin l rslauncher.cab | grep "JagexAppletViewerJarFile*" | cut -c54-1000`;
-			# Remove newlines
-			$jarfile =~ s/(\n|\r|\r\n)//g;
-		
-			# Extract jagexappletviewer.jar and move it into place
-			system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e rslauncher.cab $jarfile && cp -v \"$clientdir/.updating/$jarfile\" \"$clientdir/bin/jagexappletviewer.jar\"";
-		}
-		# Else just extract the file directly
-		else
-		{
-			# Extract jagexappletviewer.jar and move it into place
-			system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e runescape.msi $jarfile";
-			system "cp -v \"$clientdir/.updating/$jarfile\" \"$clientdir/bin/jagexappletviewer.jar\"";
-		}
-	}
-	# Else we are on windows
-	else
-	{
-		# Extract the jagexappletviewer.jar and place it into the client bin folder
-		system "cd \"$cwd\\.updating\\\" && $win32path && 7z e runescape.msi JagexAppletViewerJarFile.* && ren JagexAppletViewerJarFile.* jagexappletviewer.jar && copy /Y \"$cwd\\.updating\\jagexappletviewer.jar\" \"$cwd\\bin\\jagexappletviewer.jar\"";
-	}
+	# Set tooltips with info about the settings
+	# $self->objectname->SetToolTip("message");
 	
 }
 
-#
 #---------------------------------------- *** ----------------------------------------
-#
+#---------------------------------------- *** ----------------------------------------
+#---------------------------------------- *** ----------------------------------------
 
-sub updatefrommacclient
+package application;
+use base qw(Wx::App);
+
+sub OnInit
 {
-	# If zenity is not installed
-	if ($usezenity =~ /0/)
-	{
-		# Download the Mac client
-		system "$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl";
-	}
-	# Else zenity is installed
-	else
-	{
-		# Download the mac client and show the user a zenity dialog while the file is being downloaded
-		updater::gui::zenity::zenity_dl("$fetchcommand \"$clientdir/.updating/runescape.dmg\" $macurl", "Downloading jagexappletviewer.jar", "Downloading and updating the jagexappletviewer.jar\nBy extracting it from the Official Mac Client.", "");
-	}
+	# Get pointers
+	my $self = shift;
 	
-	# If we are on anything but windows
-	if ($OS !~ /MSWin32/)#/(darwin|freebsd|netbsd|openbsd|solaris|linux)/)
-	{
-		# Prepare the directory for p7zip (it requires the library to be
-		# in the same directory we are in unless i make a wrapper
-		# (but the .updating folder is getting removed anyway once we are done)
-		system "cd \"$clientdir/.updating/\" && ln -s \"$clientdir/modules/7-zip/$OS/\$(uname -p)/\"* ./";
-		
-		# Extract the 2.hfs filesystem from the dmg file
-		system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e runescape.dmg *.hfs";
-		
-		# Extract the hfs filesystem
-		system "export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && cd \"$clientdir/.updating/\" && $zipbin e *.hfs -y";
-		
-		# Copy the jagexappletviewer into place
-		system "cp -v \"$clientdir/.updating/jagexappletviewer.jar\" \"$clientdir/bin/jagexappletviewer.jar\"";
-	}
-	# Else we are on windows
-	else
-	{
-		# Extract and move jagexappletviewer.jar to the client bin folder
-		system "cd \"$cwd\\.updating\\\" && $win32path && 7z e runescape.dmg *.hfs && 7z e *.hfs -y && copy \"$cwd\\.updating\\jagexappletviewer.jar\" \"$cwd\\bin\\jagexappletviewer.jar\"";
-	}
+	# Create mainwindow(new window)
+	my $mainwindow = wxTopLevelFrame->new(undef, -1);
 	
+	# Set mainwindo/topwindow
+	$self->SetTopWindow($mainwindow);
+	
+	# Show the window
+	$mainwindow->Show(1);
 }
 
-#
 #---------------------------------------- *** ----------------------------------------
-#
-
-
-
-sub checkfor_p7zip
-{
-	# Test for system installed 7zip
-	my $test7zsys = `7z`;
-	
-	# Disable warnings for now to avoid a warning message if the 7z command returned nothing
-	no warnings;
-	
-	# If we do not have 7zip, check if we have a compiled version from earlier
-	if ($test7zsys !~ /7-Zip/)
-	{
-		# Tell user that the warning is bogus
-		print "\n\n";
-		
-		# Set a new testpath
-		my $test7z = `export PATH=\$PATH:$clientdir/modules/7-zip/$OS/\$(uname -p)/ && 7z`;
-		
-		# If we do not have 7zip at all
-		if ($test7z !~ /7-Zip/)
-		{
-			# If zenity is not installed
-			if ($usezenity =~ /0/)
-			{
-				# Download and compile p7zip-full from source
-				get_p7zip();
-			}
-			# Else zenity is installed
-			else
-			{
-				# Since it will be hard to effectively show the compile process in zenity
-				# We will just tell the user to install p7zip themselves
-				updater::gui::zenity::zenity_error("No p7zip found.", "I was unable to find the p7zip binary\\!\nPlease install the p7zip binary and re-run this script to continue.\n\n--Install Commands--\nUbuntu/Debian/Mint: sudo apt-get install p7zip-full\nFedora: su -c \\\"yum install p7zip-plugins\\\"\nArch-Linux: pacman -Syu p7zip");
-				exit;
-			}
-		}
-	}
-	
-	# Enable warnings again
-	use warnings;
-}
-
-#
 #---------------------------------------- *** ----------------------------------------
-#
-
-sub startupdate
-{
-	# Fetch the update.tar.gz and extract it
-	if ($OS =~ /MSWin32/)
-	{
-		system "cd \"$cwd\" && $fetchcommand \"$cwd\\update.tar.gz\" $updateurl && 7z e update.tar.gz && 7z x -y update.tar && del /Q update.tar.gz && del /Q update.tar";
-	}
-	else
-	{
-		# If zenity is not installed
-		if ($usezenity =~ /0/)
-		{
-			# Download the update and extract the files
-			system "cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl && tar -zxvf update.tar.gz && rm update.tar.gz";
-			
-			# Show exit message
-			print "\nPress ENTER/RETURN to exit:";
-	
-			# Wait for user to press enter
-			my $exit = <STDIN>;
-		}
-		# Else zenity is installed
-		else
-		{
-			# Download the update.tar.gz and show a zenity window for the user while the update process is running
-			updater::gui::zenity::zenity_dl("cd \"$cwd\" && $fetchcommand \"$cwd/update.tar.gz\" $updateurl", "Updating the RSU-Client", "Downloading and updating the RSU-Client scripts.", "&& tar -zxvf update.tar.gz && rm update.tar.gz");
-		}
-	}
-	
-	# Exit script
-	exit;
-}
-
-#
 #---------------------------------------- *** ----------------------------------------
-#
+
+
+package main;
+
+my $app = application->new;
+$app->MainLoop;
+
+
 
 1;

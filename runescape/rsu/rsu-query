@@ -178,7 +178,7 @@ sub checkformaclibs
 	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
 	{
 		# Display a message prompting the user to download an archive file containing the rsu-settings_mac loader(self contained minimal wxperl) and the wxWidgets libraries.
-		print "The rsu-launcher requires extra libraries on MacOSX
+		print "The rsu-query requires extra libraries on MacOSX
 (because apple broke their own in 10.5 and up)
 So i have packaged a custom loader with a working version of wxWidgets
 for use by this script to save you 1 - 2 hours of your life

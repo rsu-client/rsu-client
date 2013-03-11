@@ -24,18 +24,9 @@ our $scriptname = $FindBin::Script;
 # Detect the current OS
 our $OS = "$^O";
 
-# Check if it is an addon that is called or an API
-if ($ARGV[0] =~ /^addon\./)
-{
-	# Launch the addon in its own environment
-	launch_addon();
-}
-# Else
-else
-{
-	# Run the main function which is just calling the API
-	main();
-}
+
+# Run the main function which is just calling the API
+main();
 
 #
 #---------------------------------------- *** ----------------------------------------
@@ -61,30 +52,5 @@ sub main
 #
 #---------------------------------------- *** ----------------------------------------
 #
-
-sub launch_addon
-{
-	# Change dir to the parent directory
-	chdir("$cwd/..");
-	
-	# Get the call for the api
-	my $addon = $ARGV[0];
-	# Convert to perl module call
-	$addon =~ s/addon\.//g;
-	
-	# Try to run the module and warn if execution failed
-	eval "use ".$addon."::moduleloader"; warn if $@;
-	
-	# Change dir to the parent directory
-	chdir("$cwd/..");
-	
-	# Exit script
-	exit;
-}
-
-#
-#---------------------------------------- *** ----------------------------------------
-#
-
 
 1;
