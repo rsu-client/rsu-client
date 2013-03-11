@@ -34,26 +34,30 @@ sub main
 	# Get the architecture
 	my $arch = $Config{archname};
 	
-	# If we are on 64bit
-	if ($arch =~ /(x86_64|amd64)/ && $OS =~ /linux/)
+	# If we are not on windows or mac
+	if ($OS !~ /(MSWin32|darwin)/)
 	{
-		# Use x86_64 as architecture
-		$arch = "x86_64";
-	}
-	# Else if we are on 32bit
-	elsif($arch =~ /i\d{1,1}86/ && $OS =~ /linux/)
-	{
-		# Use i386 as architecture
-		$arch = "i386";
-	}
-	# Else we are on an architecture that does not support the launcher
-	else
-	{
-		# Run in fallback mode
-		fallbackmode();
-		
-		# Exit once we are done so we dont trigger the launcher
-		exit;
+		# If we are on 64bit
+		if ($arch =~ /(x86_64|amd64)/ && $OS =~ /linux/)
+		{
+			# Use x86_64 as architecture
+			$arch = "x86_64";
+		}
+		# Else if we are on 32bit
+		elsif($arch =~ /i\d{1,1}86/ && $OS =~ /linux/)
+		{
+			# Use i386 as architecture
+			$arch = "i386";
+		}
+		# Else we are on an architecture that does not support the launcher
+		else
+		{
+			# Run in fallback mode
+			fallbackmode();
+			
+			# Exit once we are done so we dont trigger the launcher
+			exit;
+		}
 	}
 	
 	# If we are not on windows and --unixquery was passed
@@ -136,7 +140,7 @@ sub main
 	elsif($OS =~ /darwin/)
 	{
 		# Run a check to see if the mac libraries are installed
-		checkformaclibs();
+		#checkformaclibs();
 		
 		# Launch the launcher for mac osx
 		system "$cwd/bin/rsu-query-darwin @ARGV";
