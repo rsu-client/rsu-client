@@ -74,6 +74,31 @@ sub dmgextract
 		# Run the p7zip extraction method
 		updater::extract::client::p7zip_dmg($placejar);
 	}
+	# Else we are on MacOSX
+	else
+	{
+		# Require the grep module
+		require rsu::files::grep;
+		
+		# Mount the dmg file
+		my $mountoutput = `hdiutil attach "$clientdir/.download/runescape.dmg"`;
+		
+		# Find the line containing the mountpoint
+		my @mountinfo = rsu::files::grep::strgrep($mountoutput, "RuneScape");
+		
+		# Split the mountinfo by more than 1 whitespace
+		@mountinfo = split /\s{2,}+/, "@mountinfo";
+		
+		# Locate the jagexappletviewer.jar (futureproof incase jagex decide to change the location)
+		my @jarsearch = rsu::files::grep::rdirgrep($mountinfo[1], "jagexappletviewer.jar");
+		
+		# Copy the jagexappletviewer.jar to $placejar
+		updater::extract::client::print_cp($jarsearch[0], "$clientdir/$placejar");
+		
+		# Unmount the dmg file
+		system "hdiutil detach $mountinfo[0]";
+	}
+	
 }
 
 #
