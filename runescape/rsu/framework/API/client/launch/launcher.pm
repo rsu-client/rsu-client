@@ -1273,11 +1273,6 @@ sub update
 		Wx::MessageBox("Finished running the updater!\nPlease close the Launcher and run the \"Download-Windows-Files.exe\"\nlocated in the client's folder to finish the update.", "Running update complete!", wxOK,$self);
 		
 	}
-	elsif ($OS =~ /darwin/)
-	{
-		# Run the update script
-		system "open \"$cwd/rsu/rsu-query\" client.launch.updater &";
-	}
 	# Else
 	else
 	{
