@@ -12,42 +12,38 @@ API:
 	get.java.bin				= 100% # Returns the absolute path to the java binary
 	get.optimus.bin				= 100% # Return "primusrun" if primus is installed, otherwise return an empty string
 	client.launch.runescape		= 100% # Complete, uses the API
-	client.launch.settings		= 80% # Make settings use the API (does not use the api for prms however that can be updated later as it uses ReadFile instead)
+	client.launch.settings		= 100% # Make settings use the API (does not use the api for prms however that can be updated later as it uses ReadFile instead)
 	client.launch.launcher		= 100% # Make launcher use the API
 	client.launch.updater		= 100% # Rewrite to use a Wx dialog
-	rsu.download.client			= 80% # Will download using LWP and use 7zip or native tools depending on the system to extract the jagexappletviewer
+	rsu.download.client			= 100% # Will download using LWP and use 7zip or native tools depending on the system to extract the jagexappletviewer
 	rsu.download.file			= 100% # Will download a file using the LWP module
 	rsu.extract.file			= 100% # Will support at least .zip and .tar/.tar.gz on all platforms
 	addon.platform.launch		= 100% # Will launch a platform specific addon
 	addon.universal.launch		= 100% # Will launch a universal addon
 
 modules:
-	client::settings::language	= 100%
-	client::settings::prms		= 100%
-	client::env					= 100%
-	updater::gui::zenity		= 100%
-	updater::download::file		= 100%
+	addon::framework			= 100% # Contains the addon framework and loads basic api modules and some useful functions
+	client::settings::language	= 100% # Get the selected client language
+	client::settings::prms		= 100% # Gets the contents from a prm file
+	client::env					= 100% # access to often used env values that might need formating depending on system
+	updater::gui::zenity		= 100% # Unused but kept for those thinking of using wget or curl
+	updater::download::file		= 100% # uses wxdload or sysdload depending on if wx is available or not
 	updater::download::wxdload	= 100% # Wx Download Dialog is complete
 	updater::download::sysdload	= 100% # Download methods using LWP, prints progress to STDOUT
 	rsu::extract::archive		= 100% # Uses Archive::Extract to extract .zip and .tar/.tar.gz archives
-	updater::extract::client	= 80% # msiextract complete, Uses 7-zip or native tools to extract the client
-	rsu::files::IO				= 100%
-	rsu::files::clientdir		= 100%
+	updater::extract::client	= 100% # msiextract complete, Uses 7-zip or native tools to extract the client
+	rsu::files::IO				= 100% # Various file input and output commands
+	rsu::files::copy			= 100% # Reimplementation of cp -v from unix for perl
+	rsu::files::clientdir		= 100% # Finds the location of the client directory
 	rsu::files::dirs			= 100% # Will run list directories and files (list = list contents of directory, rlist = list files recursively)
 	rsu::files::grep			= 100% # Provides crossplatform grep functionality
 	rsu::nvidia::optimus		= 100% # Complete
 	rsu::java::jre				= 100% # Complete
-	rsu::java::opengl			= 100% # Replace $rsu_data
+	rsu::java::opengl			= 100% # Complete
 	client::appletviewer::jagex	= 100% # Complete
 	client::modes::verbose		= 100% # Complete
 	rsu::mains					= 100% # Complete
 	client::init				= ?% # No way to track atm
 	
 TODO:
-	* a way to fetch the launchcode for the client
-	* an updater using LWP::Simple
-	* addon loader for api (not sure how i want it yet)
-	* API call to save/edit prms
-	* find a way to get the rsu-query binary to work on snow leopard and above (currently it works only on snow leopard)
 	* make a display setting for universal addons (eg: OnlyShowIn=Windows,Mac,Linux)
-	* Make the internals of the client and API use stuff from the API itself (listed as its not 100% complete)
