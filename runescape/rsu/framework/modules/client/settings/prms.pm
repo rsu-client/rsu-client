@@ -18,12 +18,12 @@ sub parseprmfile
 	my $clientdir = rsu::files::clientdir::getclientdir();
 	
 	# Make a variable to store the location of the file
-	my $location = "$clientdir/share";
+	my $location = "$clientdir/share/prms";
 	
-	# If a location is not passed
+	# If a location is passed
 	if (defined $dir && $dir ne '')
 	{
-		# Use $clientdir/share as location
+		# Use $dir as location
 		$location = "$dir";
 	}
 	

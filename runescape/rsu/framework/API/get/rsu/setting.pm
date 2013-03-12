@@ -20,7 +20,7 @@ Syntaxes (parts with [ infront of them are optional):
 	
 DEFAULTS:
 	filename = settings.conf
-	directory = \$clientdir/share
+	directory = \$clientdir/share/configs
 	
 NOTES:
 	Filename must end with .conf
@@ -56,7 +56,7 @@ Purpose:
 else
 {
 	# Make a variable to contain the location
-	my $location = "$clientdir/share";
+	my $location = "$clientdir/share/configs";
 	
 	# Make a variable to contain the filename
 	my $file = "settings.conf";

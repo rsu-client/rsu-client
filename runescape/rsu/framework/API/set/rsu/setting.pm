@@ -15,7 +15,7 @@ Syntaxes (parts with [ infront of them are optional):
 	
 DEFAULTS:
 	filename = settings.conf
-	directory = \$clientdir/share
+	directory = \$clientdir/share/configs
 	
 NOTES:
 	Filename must end with .conf
@@ -29,7 +29,7 @@ NOTES:
 Examples:
 	$ARGV[0] preferredjava default-java
 	result: returns nothing & sets the value of preferredjava to default-java in settings.conf
-		located inside \$clientdir/share
+		located inside \$clientdir/share/configs
 	
 	$ARGV[0] forcealsa true /tmp
 	result: returns nothing & sets the value of forcealsa to true in settings.conf
@@ -37,7 +37,7 @@ Examples:
 	
 	$ARGV[0] preferredjava default-java options.conf
 	result: returns nothing & sets the value of preferredjava to default-java in options.conf
-		located inside \$clientdir/share
+		located inside \$clientdir/share/configs
 	
 	$ARGV[0] forcepulseaudio true options.conf /tmp
 	result: returns nothing & sets the value of preferredjava to default-java in options.conf
@@ -56,7 +56,7 @@ Purpose:
 else
 {
 	# Make a variable to contain the location
-	my $location = "$clientdir/share";
+	my $location = "$clientdir/share/configs";
 	
 	# Make a variable to contain the filename
 	my $file = "settings.conf";

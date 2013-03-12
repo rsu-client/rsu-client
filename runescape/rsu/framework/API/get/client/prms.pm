@@ -9,16 +9,16 @@ Syntaxes (parts with [ infront of them are optional):
 	$ARGV[0] prmfile [directory
 	
 DEFAULTS:
-	directory = \$clientdir/share
+	directory = \$clientdir/share/prms
 
 Examples:
 	$ARGV[0]
 	result: a 1 line string with the parameters from runescape.prm located
-		inside \$clientdir/share
+		inside \$clientdir/share/prms
 	
 	$ARGV[0] oldschool.prm
 	result: a 1 line string with the parameters from oldschool.prm located
-		inside \$clientdir/share
+		inside \$clientdir/share/prms
 		
 	$ARGV[0] custom.prm \"D:\\\"
 	or
@@ -54,7 +54,7 @@ else
 	my $clientdir = rsu::files::clientdir::getclientdir();
 
 	# Make a variable containing the location of the prm file
-	my $location = "$clientdir/share";
+	my $location = "$clientdir/share/prms";
 
 	# If a location is is passed
 	if ($ARGV[2] ne '')
