@@ -15,7 +15,7 @@ sub wxdownload
 	my @filename = split /\//, $url;
 	
 	# Make an LWP agent for use to download the file
-	my $lwp_handle = LWP::UserAgent->new();
+	my $lwp_handle = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 	
 	# Get the remote headers
 	my $result = $lwp_handle->head($url);
