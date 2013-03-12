@@ -6,7 +6,7 @@
 -Djava.class.path=jagexappletviewer.jar
 -Dsun.java2d.noddraw=true
 -Dcom.jagex.config=http://www.runescape.com/k=3/l=$(Language:0)/jav_config.ws
--Xmx512m
+-Xmx256m
 
 # Stack size fixing Error_game_crash, Credit to Test6125 for the solution
 -Xss1m
