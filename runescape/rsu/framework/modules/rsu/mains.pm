@@ -30,7 +30,7 @@ sub unix_main
 		if ($rsu_data->OS !~ /darwin/)
 		{
 			# Search for the location of the true default java binary (not the symlink)
-			$rsu_data->javabin = rsu::java::jre::unix_find_default_java_binary($rsu_data->javabin, "$clientdir/share", "settings.conf");
+			$rsu_data->javabin = rsu::java::jre::unix_find_default_java_binary($rsu_data->javabin, "$clientdir/share/configs", "settings.conf");
 		}
 		# Else we are on mac
 		else
@@ -137,7 +137,7 @@ sub unix_main
 		print "Adding application name and icon to the dock.\n";
 		
 		# Add the dock icon and dock name to the variable, so that it will be used in the java execution
-		$osxprms = "-Xdock:name=\"RuneScape Unix Client\" -Xdock:icon=\"".$rsu_data->cwd."/share/runescape.icns\"";
+		$osxprms = "-Xdock:name=\"RuneScape Unix Client\" -Xdock:icon=\"".$rsu_data->cwd."/share/img/runescape.icns\"";
 	}
 	# Else if we are on linux and the useprimusrun setting is enabled
 	elsif($rsu_data->useprimusrun =~ /(true|1)/i && $rsu_data->OS =~ /linux/)
@@ -170,10 +170,10 @@ sub unix_main
 	
 	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully)
-	rsu::mains::runjar("cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share 2>&1");
+	rsu::mains::runjar("cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img 2>&1");
 }
 
 #
@@ -189,7 +189,7 @@ sub windows_main
 	my $rsu_data = shift;
 	
 	# Get the win32javabin setting which will be used as a searchpath to find jawt.dll and java.exe
-	my $win32javabin = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf", $rsu_data->clientdir);
+	my $win32javabin = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
 	
 	# Make a variable containing the default path containing jawt.dll
 	my $javalibspath = "%CD%\\win32\\jawt";
@@ -225,7 +225,7 @@ sub windows_main
 	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which i dont know why appears
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
-	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1");
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share/img 2>&1");
 }
 
 #
@@ -247,7 +247,7 @@ sub checkcompabilitymode
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
 		# Launch client through wine
-		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share && exit\"";
+		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share/img && exit\"";
 		
 		# Once the client is closed we need to do some cleanup (bug when running commands through shell to wine cmd
 		# Make a variable to contain the pids of cmd (from wine)
