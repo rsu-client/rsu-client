@@ -14,6 +14,9 @@ sub list
 	# While there are still contents in the directory
 	while (readdir $dir_content)
 	{
+		# Skip . and ..
+		next if $_ =~ /^(\.|)\.$/;
+		
 		# Add file to array
 		push @list, $_;
 	}
