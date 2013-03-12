@@ -38,7 +38,7 @@ elsif($ARGV[1] =~ /^list$/)
 	my $clientdir = rsu::files::clientdir::getclientdir();
 	
 	# Get a list of the addons
-	my @addons = rsu::files::dirs::list("$clientdir/addons/universal");
+	my @addons = rsu::files::dirs::list("$clientdir/share/addons/universal");
 	
 	# Change the delimiter to comma
 	@addons = join(",", @addons);
@@ -61,10 +61,10 @@ else
 	my $clientdir = rsu::files::clientdir::getclientdir();
 	
 	# Add the universal addons directory to the include path
-	unshift @INC, "$clientdir/addons/universal";
+	unshift @INC, "$clientdir/share/addons/universal";
 	
 	# Change cwd to the addons own directory so we do not confuse it
-	chdir("$clientdir/addons/universal/$ARGV[1]");
+	chdir("$clientdir/share/addons/universal/$ARGV[1]");
 	
 	# Load the moduleloader for the addon
 	eval "use $ARGV[1]::moduleloader"; warn if $@;
