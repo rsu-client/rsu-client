@@ -240,13 +240,13 @@ sub set_layout
 	if ($OS =~ /(linux|darwin|MSWin32)/)
 	{
 		# Check whats is inside the modules folder
-		opendir(my $modulefolders, "$clientdir/modules");
+		opendir(my $modulefolders, "$clientdir/share");
 		
 		# While there is still content inside the folder
 		while (readdir $modulefolders)
 		{
 			# If the current content is the addons folder
-			if ($_ =~ /^addons$/ && -d "$clientdir/modules/$_")
+			if ($_ =~ /^addons$/ && -d "$clientdir/share/$_")
 			{
 				# Add the addons/module page
 				create_addons_page($self);
@@ -261,10 +261,10 @@ sub set_layout
 	set_events($self);
 	
 	# If the icon exists
-	if (-e "$cwd/share/runescape.png")
+	if (-e "$cwd/share/img/runescape.png")
 	{
 		# Set the window icon
-		$self->SetIcon(Wx::Icon->new("$cwd/share/runescape.png", wxBITMAP_TYPE_PNG));
+		$self->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 	}
 	
 	# Add the contents of the layoutsizer to the mainpanel
@@ -662,14 +662,13 @@ sub about
 	$about->{horizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
 	
 	# Else if we are not on windows and the icon exists
-	if ($OS !~ /MSWin32/ && -e "$cwd/share/runescape.png")
+	if ($OS !~ /MSWin32/ && -e "$cwd/share/img/runescape.png")
 	{
 		# Set the window icon
-		$about->{dialog}->SetIcon(Wx::Icon->new("$cwd/share/runescape.png", wxBITMAP_TYPE_PNG));
-		#$about->{dialog}->SetIcon($self->GetParent()->GetParent()->GetParent()->GetParent()->GetIcon());
+		$about->{dialog}->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 		
 		# Set the aboutdialog icon
-		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/runescape.png", wxBITMAP_TYPE_PNG));
+		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 		
 		# Set the size of the aboutdialog
 		$about->{dialog}->SetSize(365,395);
@@ -1472,7 +1471,7 @@ sub open_addonsdir
 	my ($self,$event) = @_;
 	
 	# Put the path to the addons directory into a variable
-	my $addonsdir = "$clientdir/modules/addons";
+	my $addonsdir = "$clientdir/share/addons";
 	
 	# If we are on windows
 	if ($OS =~ /MSWin32/)
