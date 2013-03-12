@@ -104,6 +104,9 @@ require rsu::files::IO;
 # Require the files grep module
 require rsu::files::grep;
 
+# Require the files copy module
+require rsu::files::copy;
+
 # Require the download file module
 require updater::download::file;
 
@@ -421,7 +424,16 @@ sub update_clicked
 		updater::download::file::from($callerdata[1], "$clientdir/.download/api-update.tar.gz");
 		
 		# Extract the api
-		rsu::extract::archive::extract("$clientdir/.download/api-update.tar.gz", "$clientdir");
+		rsu::extract::archive::extract("$clientdir/.download/api-update.tar.gz", "$clientdir/.download/extracted_files/rsu-client-master/runescape/");
+		
+		# Replace the old API files with the new ones (rewrites directories)
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/rsu/framework/API", "$clientdir/rsu/framework/API", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/rsu/framework/modules", "$clientdir/rsu/framework/modules", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/rsu/framework/resources", "$clientdir/rsu/framework/resources", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/templates", "$clientdir/templates", 1);
+		
+		# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
+		rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-master/runescape", "$clientdir", 0);
 		
 		# Show a message that we are done
 		Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api");
