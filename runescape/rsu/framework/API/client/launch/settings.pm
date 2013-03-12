@@ -15,6 +15,12 @@ my $scriptdir = $FindBin::RealBin;
 # Get the current working directory
 my $cwd = getcwd;
 
+# Require the clientdir module
+require rsu::files::clientdir;
+
+# Make a variable to contain the client directory
+my $clientdir = rsu::files::clientdir::getclientdir();
+
 # Use the file IO module
 use rsu::files::IO;
 
@@ -33,6 +39,9 @@ if ($RSU =~ /0/)
 # Get the resources directory
 my $resourcedir = "$cwd/rsu/framework/resources/client/launch/settings";
 
+# Make a variable to contain the conf_file
+my $conf_file = "$clientdir/share/configs/settings.conf";
+
 # Name of our xrc gui resource file
 my $xrc_gui_file = "rsu-settings_gui.xrc";
 
@@ -43,9 +52,6 @@ $|=1;
 my $scriptname = $FindBin::Script;
 # Detect the current OS
 my $OS = "$^O";
-
-# Make a variable to contain the client directory
-my $clientdir = "$cwd";
 
 # Make a variable for users homedir
 my $HOME;
@@ -63,42 +69,39 @@ else
 	$HOME = $ENV{"HOME"};
 }
 
-# If this script have been installed systemwide
-if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
-{	
-	# Change $clientdir to ~/.config/runescape
-	$clientdir = "$HOME/.config/runescape/";
-		
+# If the clientdir is inside $HOME/.config/runescape then we might be installed systemwide
+if ($clientdir =~ /$HOME\/\.config\/runescape/)
+{		
 	# Make the client folders
-	system "mkdir -p \"$HOME/.config/runescape/bin\" && mkdir -p \"$HOME/.config/runescape/share\"";
+	make_path("$clientdir/bin", "$clientdir/share/img", "$clientdir/share/configs", "$clientdir/share/prms");
 }
 
 # Read from the config file if the user want to run in compabilitymode/wine,
 # if nothing is found then dont use it
-my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "settings.conf", "$clientdir/share");
+my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "settings.conf");
 
 # Read the preferred java in the config file, if nothing is found then use default-java
-my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf", "$clientdir/share");
+my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
 
 # If we are running on windows then
 if ($OS =~ /MSWin32/)
 {
-	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf", "$clientdir/share");
+	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
 }
 
 # Read from the config file if the user want to force the client to use pulseaudio
 # if nothing then dont use it (incase a system does not have pulseaudio/padsp installed)
-my $forcepulseaudio = rsu::files::IO::readconf("forcepulseaudio", "False", "settings.conf", "$clientdir/share");
+my $forcepulseaudio = rsu::files::IO::readconf("forcepulseaudio", "False", "settings.conf");
 
 # Read from the config file if the user want to tell java to use alsa in the base for sounds
 # If nothing is found then do not use alsa and instead use the java default
-my $forcealsa = rsu::files::IO::readconf("forcealsa", "False", "settings.conf", "$clientdir/share");
+my $forcealsa = rsu::files::IO::readconf("forcealsa", "False", "settings.conf");
 
 # Read from the config file, the name of the prm file to use
-my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf", "$clientdir/share");
+my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf");
 
 # Read from the config file if the user have told the script to use primusrun or not if it is available
-my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "settings.conf", "$clientdir/share");
+my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "settings.conf");
 
 # Define a text inside the script for use
 my $plist_template = << "plist_template";
@@ -159,6 +162,9 @@ use Wx::XRC;
 use Wx::Event qw(EVT_BUTTON EVT_CHOICE EVT_NOTEBOOK_PAGE_CHANGED EVT_CHECKBOX);
 
 use base qw(Wx::Frame Wx::ScrolledWindow);
+
+# Use the File::Path module so we can make and remove folders
+use File::Path qw(make_path remove_tree);
 
 sub new
 {
@@ -283,6 +289,13 @@ sub set_events
 		## Close the directory to free up memory
 		#closedir($modulefolders);
 	#}
+	
+	# If the icon exists
+	if (-e "$cwd/share/img/runescape.png")
+	{
+		# Set the window icon
+		$self->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
+	}
 	
 	# Set default size
 	$self->SetSize(510,520);
@@ -672,7 +685,7 @@ sub save_clicked
 		$prmfile = "runescape.prm";
 		
 		# Set the prm file to the $settingsfile variable
-		$settingsfile = "$clientdir/share/$prmfile";
+		$settingsfile = "$clientdir/share/prms/$prmfile";
 	}
 	
 	# If we are on windows
@@ -889,7 +902,7 @@ sub loadsettings
 	my $self = shift;
 	
 	# Make a variable for the settingsfile (use the Cwd::abs_path function to show the direct path)
-	my $settingsfile = Cwd::abs_path("$clientdir/share/$prmfile");
+	my $settingsfile = Cwd::abs_path("$clientdir/share/prms/$prmfile");
 	
 	# If we are on windows and not in RSU mode
 	if ($OS =~ /MSWin32/ && $RSU =~ /0/)
@@ -1128,10 +1141,8 @@ sub parse_plist
 
 sub delete_maincache
 {
+	# Get the pointers
 	my ($self, $event) = @_;
-	
-	# Make a variable to get the output
-	my $output;
 	
 	# If we are on windows
 	if ($OS =~ /MSWin32/)
@@ -1141,24 +1152,11 @@ sub delete_maincache
 		my $WINDIR = $ENV{"WINDIR"};
 		
 		# Delete the cache
-		remove_dir($self, "$HOME\\jagexcache\\runescape\\LIVE", 1);
-		remove_dir($self, "$HOME\\jagexcache1\\runescape\\LIVE", 1);
-		remove_dir($self, "$HOME\\.jagex_cache_32", 1);
-		remove_dir($self, "$HOMEDRIVE\\.jagex_cache_32", 1);
-		remove_dir($self, "$ENV{WINDIR}\\.jagex_cache_32", 1);
-		
-		## Old code, kept incase test fails
-		#$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		#$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		#$output = `del /F /S /Q "$HOME\\.jagex_cache_32" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		#$output = `del /F /S /Q "$HOMEDRIVE\\.jagex_cache_32" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		#$output = `del /F /S /Q "$ENV{WINDIR}\\.jagex_cache_32" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output"."Operation Finished\n");
-		
+		remove_dir($self, "$HOME/jagexcache/runescape/LIVE", 1);
+		remove_dir($self, "$HOME/jagexcache1/runescape/LIVE", 1);
+		remove_dir($self, "$HOME/.jagex_cache_32", 1);
+		remove_dir($self, "$HOMEDRIVE/.jagex_cache_32", 1);
+		remove_dir($self, "$ENV{WINDIR}/.jagex_cache_32", 1);
 	}
 	# Else we are on UNIX
 	else
@@ -1167,19 +1165,11 @@ sub delete_maincache
 		remove_dir($self, "$HOME/jagexcache/runescape/LIVE", 1);
 		remove_dir($self, "$HOME/.jagex_cache_32", 1);
 		
-		#$output = `rm -r -v $HOME/jagexcache/runescape/LIVE 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		#$output = `rm -r -v $HOME/.jagex_cache_32 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
 			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE", 1);
-			
-			#$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE 2>&1`;
-			#$self->{terminal_output}->AppendText("$output");
 		}
 	}
 	
@@ -1192,29 +1182,15 @@ sub delete_maincache
 
 sub delete_betacache
 {
+	# Get the pointers
 	my ($self, $event) = @_;
-	
-	# Make a variable to get the output
-	my $output;
 	
 	# If we are on windows
 	if ($OS =~ /MSWin32/)
 	{
-		# Make variables for homedrive and windir
-		my $HOMEDRIVE = $ENV{"HOMEDRIVE"};
-		my $WINDIR = $ENV{"WINDIR"};
-		
-		# Replace / with \
-		$WINDIR =~ s/\//\\/g;
-		
 		# Delete the cache
-		remove_dir($self, "$HOME\\jagexcache\\runescape\\LIVE_BETA", 1);
-		remove_dir($self, "$HOME\\jagexcache1\\runescape\\LIVE_BETA", 1);
-		
-		#$output = `del /F /S /Q "$HOME\\jagexcache\\runescape\\LIVE_BETA" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		#$output = `del /F /S /Q "$HOME\\jagexcache1\\runescape\\LIVE_BETA" 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
+		remove_dir($self, "$HOME/jagexcache/runescape/LIVE_BETA", 1);
+		remove_dir($self, "$HOME/jagexcache1/runescape/LIVE_BETA", 1);
 	}
 	# Else we are on UNIX
 	else
@@ -1222,17 +1198,11 @@ sub delete_betacache
 		# Delete the cache
 		remove_dir($self, "$HOME/jagexcache/runescape/LIVE_BETA", 1);
 		
-		#$output = `rm -r -v $HOME/jagexcache/runescape/LIVE_BETA 2>&1`;
-		#$self->{terminal_output}->AppendText("$output");
-		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
 			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE_BETA", 1);
-			
-			#$output = `rm -r -v $HOME/Library/Caches/jagexcache/runescape/LIVE_BETA 2>&1`;
-			#$self->{terminal_output}->AppendText("$output");
 		}
 	}
 }
@@ -1303,15 +1273,15 @@ sub saveconf_clicked
 	my $customjava_setting = $self->{customjava}->GetPath;
 	my $winemode_setting = $self->{winemode}->GetValue;
 	my $primusmode_setting = $self->{primusmode}->GetValue;
-	my $old_win32java = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf", "$clientdir");
-	my $old_unixjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf", "$clientdir");
+	my $old_win32java = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
+	my $old_unixjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
 	
 	# Prepare a message that will be shown once all settings are saved
 	my $savemessage = "Configurations Saved!";
 	
 	## Write prmfile setting
 	# Start writing the settings.conf
-	rsu::files::IO::WriteFile("prmfile=$prmfile_setting", ">", "$clientdir/share/settings.conf");
+	rsu::files::IO::WriteFile("prmfile=$prmfile_setting", ">", "$conf_file");
 	
 	## Write preferredjava setting
 	# If preferredjava is set to custom-java
@@ -1321,37 +1291,37 @@ sub saveconf_clicked
 		if ($OS =~ /MSWin32/)
 		{
 			# Add the custom path to the settings.conf
-			rsu::files::IO::WriteFile("preferredjava=$old_unixjava", ">>", "$clientdir/share/settings.conf");
-			rsu::files::IO::WriteFile("win32java.exe=$customjava_setting", ">>", "$clientdir/share/settings.conf");
+			rsu::files::IO::WriteFile("preferredjava=$old_unixjava", ">>", "$conf_file");
+			rsu::files::IO::WriteFile("win32java.exe=$customjava_setting", ">>", "$conf_file");
 		}
 		# Else
 		else
 		{
 			# Add the custom path to the settings.conf
-			rsu::files::IO::WriteFile("preferredjava=$customjava_setting", ">>", "$clientdir/share/settings.conf");
-			rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$clientdir/share/settings.conf");
+			rsu::files::IO::WriteFile("preferredjava=$customjava_setting", ">>", "$conf_file");
+			rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$conf_file");
 		}
 	}
 	# Else if preferredjava is set to 7-openjdk
 	elsif($preferredjava_setting =~ /1/)
 	{
 		# Write the 7-openjdk option to settings.conf
-		rsu::files::IO::WriteFile("preferredjava=7-openjdk", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("preferredjava=7-openjdk", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$conf_file");
 	}
 	# Else if preferredjava is set to 6-openjdk
 	elsif($preferredjava_setting =~ /2/)
 	{
 		# Write the 6-openjdk option to settings.conf
-		rsu::files::IO::WriteFile("preferredjava=6-openjdk", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("preferredjava=6-openjdk", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write the default-java option to settings.conf
-		rsu::files::IO::WriteFile("preferredjava=default-java", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("win32java.exe=default-java", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("preferredjava=default-java", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("win32java.exe=default-java", ">>", "$conf_file");
 	}
 	
 	## Write sound settings
@@ -1359,29 +1329,29 @@ sub saveconf_clicked
 	if ($soundsystem_setting =~ /1/)
 	{
 		# Write forcepulseaudio=true to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=true", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("forcepulseaudio=true", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$conf_file");
 	}
 	# Else if alsa is selected as sound system
 	elsif($soundsystem_setting =~ /2/)
 	{
 		# Write forcealsa=true to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=false", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("forcealsa=true", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("forcepulseaudio=false", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("forcealsa=true", ">>", "$conf_file");
 	}
 	# Else if alsa+pulse is selected as soundsystem
 	elsif($soundsystem_setting =~ /3/)
 	{
 		# Write forcepulseaudio=true and forcealsa=true to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=true", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("forcealsa=true", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("forcepulseaudio=true", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("forcealsa=true", ">>", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write forcealsa=false and forcepulseaudio=false to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=false", ">>", "$clientdir/share/settings.conf");
-		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("forcepulseaudio=false", ">>", "$conf_file");
+		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$conf_file");
 	}
 	
 	
@@ -1390,13 +1360,13 @@ sub saveconf_clicked
 	if ($winemode_setting =~ /1/)
 	{
 		# Write compabilitymode=true to settings.conf
-		rsu::files::IO::WriteFile("compabilitymode=true", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("compabilitymode=true", ">>", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write compabilitymode=false to settings.conf
-		rsu::files::IO::WriteFile("compabilitymode=false", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("compabilitymode=false", ">>", "$conf_file");
 	}
 	
 	## Write primusmode setting
@@ -1404,7 +1374,7 @@ sub saveconf_clicked
 	if ($primusmode_setting =~ /1/)
 	{
 		# Write useprimusrun=true to settings.conf
-		rsu::files::IO::WriteFile("useprimusrun=true", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("useprimusrun=true", ">>", "$conf_file");
 		
 		$savemessage = "$savemessage\n\nWarning!: Do not disable your Nvidia Card with\n\"bbswitch\" while runescape runs through primusrun!";
 	}
@@ -1412,7 +1382,7 @@ sub saveconf_clicked
 	else
 	{
 		# Write useprimusrun=false to settings.conf
-		rsu::files::IO::WriteFile("useprimusrun=false", ">>", "$clientdir/share/settings.conf");
+		rsu::files::IO::WriteFile("useprimusrun=false", ">>", "$conf_file");
 	}
 	
 	# Display a messagebox to notify that the function is done
@@ -1430,6 +1400,7 @@ sub tab_box1_changepage
 	# Set $prmfile to the one typed into the script settings
 	$prmfile = $self->{prmFile}->GetValue;
 	
+	# Load the settings
 	loadsettings($self);
 }
 
@@ -1442,31 +1413,21 @@ sub remove_dir
 	# Get pointers
 	my ($self, $location, $giveoutput) = @_;
 	
-	# If we are on windows
-	if ($OS =~ /MSWin32/)
+	# If user asked to give output
+	if ($giveoutput =~ /1/)
 	{
-		# Delete all files in $location and pipe all output to the OUTPUT handle
-		open  (OUTPUT, "del /F /S /Q \"$location\" 2>&1 |");
+		# Remove all files from $location and do not try to remove files we lack permission to remove
+		remove_tree("$location", {safe => 1, result => \my $file});
+		
+		# Append output to the terminal_output widget
+		$self->{terminal_output}->AppendText("Removed file: $_ from $location\n") for @$file;
 	}
-	# Else we are on unix
+	# Else
 	else
 	{
-		# Remove all files in $location and pipe all output to the OUTPUT handle
-		open  (OUTPUT, "rm -r -v \"$location\" 2>&1 |");
+		# Remove all files from $location and do not try to remove files we lack permission to remove
+		remove_tree("$location", {safe => 1});
 	}
-	
-	# While OUTPUT still contains somethin
-	while (<OUTPUT>)
-	{
-		# If user asked to give output
-		if ($giveoutput =~ /1/)
-		{
-			# Append output to the terminal_output widget
-			$self->{terminal_output}->AppendText("$_");
-		}
-	}
-	# Close the handle
-	close(OUTPUT);
 	
 	# If user asked to give output
 	if ($giveoutput =~ /1/)
@@ -1509,117 +1470,5 @@ package main;
 
 my $app = RS_Config_Editor->new;
 $app->MainLoop;
-
-
-# Write a file from scratch(deletes previous content)
-sub WriteFile
-{
-	# Get the passed variables
-	my ($content, $writemode, $outfile) = @_;
-	
-	# Open the outfile for Writing/Rewrite
-	open (my $FILE, "$writemode$outfile");
-	
-	# Remove any whitespaces
-	$content =~ s/(\n|\r|\r\n|\n\r)\s*/\n/g;
-
-	# Write the content passed to the function to the file
-	print $FILE "$content";
-}
-
-#
-#---------------------------------------- *** ----------------------------------------
-#
-
-# Read contents from a file and put it into a pointer
-sub ReadFile 
-{
-	# Gets passed data from the function call
-	my ($filename) = @_;
-
-	# Makes an array to keep the inputdata
-	my @inputdata;
-
-	# Opens the passed file, if error it dies with the message "Can't open filename"
-	open (my $FILE, "$filename") || return "error reading file";
-	
-	# While there is something in the file
-	while(<$FILE>)
-	{
-		# Skip comments
-		next if /^\s*#/;
-		
-		# Push data into the inputdata array
-		push(@inputdata, $_)
-	}
-
-	# Close the file
-	close($FILE);
-
-	# Return the pointer to the datafile inputdata
-	return(\@inputdata);
-}
-
-#
-#---------------------------------------- *** ----------------------------------------
-#
-
-
-sub readconf
-{
-	# Get the passed data from function call
-	my ($key, $default, $conf_file) = @_;
-	
-	# Get the content from the settings file
-	my $confcontent = ReadFile("$clientdir/share/$conf_file");
-	
-	# If no file is found or error reading the file
-	if ($confcontent =~ /error reading file/)
-	{
-		# Then return default value
-		return $default;
-	}
-	
-	# Split the conf file content by newline
-	my @settings = split /(\n|\r\n|\r)/, "@$confcontent";
-	
-	# Make a container for the value of the key we are looking for
-	my $value = '';
-	
-	# Make a counter for the foreach loop
-	my $counter = 0;
-	
-	# For each index in the  @settings array
-	foreach(@settings)
-	{
-		# If the line starts with the $key
-		if ($settings[$counter] =~ /$key/)
-		{
-			# Split the line by =
-			my @keyvalue = split /=/, $_;
-			
-			# Put the value into the one we are returning
-			$value = $keyvalue[1];
-		}
-		
-		# Increase the counter by 1
-		$counter += 1;
-	}
-	
-	# If we still got no value
-	if ($value eq '')
-	{
-		# Set value to default
-		$value = $default;
-	}
-	
-	# Return the value of the key we were looking for
-	return $value;
-}
-
-#
-#---------------------------------------- *** ----------------------------------------
-#
-
 
 1;
