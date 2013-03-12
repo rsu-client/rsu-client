@@ -7,10 +7,33 @@ Syntaxes (parts with [ infront of them are optional):
 	$ARGV[0] help
 	$ARGV[0]
 	$ARGV[0] [filename.conf [\"directory\"
+	
+Defaults:
+	filename.conf = settings.conf
+	directory = \$clientdir/share/configs
+	
+Notes:
+	The directory parameter can be either a folder path or
+	a relative directory to \$clientdir.
 
 Examples:
 	$ARGV[0]
 	result: a 1 line string with the absolute path to the java's library folder
+	failure: returns the string \"undef\"
+	
+	$ARGV[0] options.conf
+	result: a 1 line string with the absolute path to the java's library folder,
+		using the preferredjava setting from \$clientdir/share/configs/options.conf
+	failure: returns the string \"undef\"
+	
+	$ARGV[0] settings
+	result: a 1 line string with the absolute path to the java's library folder,
+		using the preferredjava setting from \$clientdir/settings/settings.conf
+	failure: returns the string \"undef\"
+	
+	$ARGV[0] options.conf /tmp
+	result: a 1 line string with the absolute path to the java's library folder,
+		using the preferredjava setting from /tmp/options.conf
 	failure: returns the string \"undef\"
 	
 Remarks:
@@ -46,7 +69,7 @@ else
 	my $clientdir = rsu::files::clientdir::getclientdir();
 
 	# Make a variable to contain the location
-	my $location = "$clientdir/share";
+	my $location = "$clientdir/share/configs";
 	
 	# Make a variable to contain the filename
 	my $file = "settings.conf";
