@@ -485,17 +485,29 @@ sub update_addon_clicked
 	# Find out the filename
 	my @filename = split /\//, $addon_info[1];
 	
+	# Extract the archive to the universal addons folder
+	rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/.download/extracted_files");
+	
+	# Locate the moduleloader.pm
+	my @moduleloader = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_files", "\/moduleloader\.pm\$");
+	
+	# Move the moduleloader location to a variable
+	my $addonroot = $moduleloader[0];
+	
+	# Remove /moduleloader.pm from the path
+	$addonroot =~ s/\/moduleloader\.pm$//;
+	
 	# If this is an universal addon
 	if ($caller =~ /^universal_/)
 	{
-		# Extract the archive to the universal addons folder
-		rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/share/addons/universal");
+		# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
+		rsu::files::copy::print_mv($addonroot, "$clientdir/share/addons/universal/$caller", 1)
 	}
 	# Else
 	else
 	{
-		# Extract the archive to the platform specific addons folder
-		rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/share/addons/$OS");
+		# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
+		rsu::files::copy::print_mv($addonroot, "$clientdir/share/addons/$OS/$caller", 1)
 	}
 	
 	# Remove the .download folder
@@ -519,8 +531,6 @@ sub set_events
 #
 #---------------------------------------- *** ----------------------------------------
 #
-
-
 
 # Create mutator function from "Programming Perl"
 sub create_mutator
