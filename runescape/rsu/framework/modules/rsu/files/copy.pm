@@ -24,7 +24,7 @@ sub print_cpr
 		print "Replacing content in:\n\"$to/\"\nWith content from:\n\"$from/\"\n";
 		
 		# Copy $from to $to
-		dircopy($orig, $target) or warn $!;
+		dircopy($from, $to) or warn $!;
 	}
 	else
 	{
@@ -32,7 +32,7 @@ sub print_cpr
 		print "cp: \"$from/\" -> \"$to/\"\n";
 		
 		# Copy $from to $to
-		dircopy($orig, $target) or warn $!;
+		dircopy($from, $to) or warn $!;
 	}
 }
 
@@ -55,7 +55,7 @@ sub print_mv
 		print "Replacing content in:\n\"$to/\"\nWith content from:\n\"$from/\"\n";
 		
 		# Copy $from to $to
-		dirmove($orig, $target) or warn $!;
+		dirmove($from, $to) or warn $!;
 	}
 	else
 	{
@@ -63,7 +63,7 @@ sub print_mv
 		print "mv: \"$from/\" -> \"$to/\"\n";
 		
 		# Copy $from to $to
-		dirmove($orig, $target) or warn $!;
+		dirmove($from, $to) or warn $!;
 	}
 }
 
