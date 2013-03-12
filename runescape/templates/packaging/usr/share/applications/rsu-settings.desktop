@@ -14,7 +14,7 @@ GenericName=RuneScape Client Settings
 Comment=A graphical settings editor for the RSU client
 
 # Which icon file to use
-Icon=/opt/runescape/share/runescape.png
+Icon=/opt/runescape/share/img/runescape.png
 
 # Show terminal?
 Terminal=false

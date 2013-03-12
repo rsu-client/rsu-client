@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+
+# This script is provided for legacy support
+
+# Use the FindBin module so we can get the scriptname
+use FindBin;
+
+# Get the script name
+my $scriptname = $FindBin::Script;
+
+# Get the scriptdir
+my $scriptdir = $FindBin::RealBin;
+
+# Remove rsu- from the name
+$scriptname =~ s/rsu-//;
+
+# If scriptname is runescape and no parameters are passed
+if ($scriptname =~ /^runescape$/ && "@ARGV" eq '')
+{
+	# Try launch the launcher (if not it will fallback to starting runescape directly)
+	system "$scriptdir/rsu/rsu-query";
+}
+# Else
+else
+{
+	# Launch the actual script
+	system "$scriptdir/rsu/rsu-query client.launch.$scriptname @ARGV";
+}

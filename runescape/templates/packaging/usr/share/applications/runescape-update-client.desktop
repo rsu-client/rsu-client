@@ -14,7 +14,7 @@ GenericName=Runescape Client Updater
 Comment=Update the runescape client
 
 # Which icon file to use
-Icon=/opt/runescape/share/update-runescape.png
+Icon=/opt/runescape/share/img/update-runescape.png
 
 # Show terminal?
 Terminal=false
