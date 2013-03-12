@@ -177,6 +177,35 @@ package rsu::java::jre;
 		# Get the current OS
 		my $OS = "$^O";
 		
+		# Require the clientdir module to get the client directory
+		require rsu::files::clientdir;
+		
+		# Make a variable to contain the clientdir
+		my $dir;
+		
+		# If a different clientdir is passed
+		if (defined $settingsdir)
+		{
+			# Pass the value over to $clientdir
+			$dir = $settingsdir;
+		}
+		# Else
+		else
+		{
+			# Get the clientdir/share/configs folder
+			$dir = rsu::files::clientdir::getclientdir()."/share/configs";
+		}
+		
+		# Make a variable to contain the settingsfile name
+		my $settingsfile = "settings.conf";
+		
+		# If a different settingsfile is specified
+		if (defined $conffile)
+		{
+			# Pass the value to $settingsfile
+			$settingsfile = $conffile;
+		}
+		
 		# Make a variable for the location of the java in path
 		my $whereisjava;
 		
@@ -234,7 +263,7 @@ package rsu::java::jre;
 		if ($whereisjava !~ /\/bin\/java$/)
 		{
 			# Run a function which will tell the user what to do in order to fix this issue
-			$whereisjava = rsu::java::jre::unix_default_java_is_a_script($javabin, $settingsdir, $conffile);
+			$whereisjava = rsu::java::jre::unix_default_java_is_a_script($javabin, $dir, $conffile);
 		}
 		
 		# Return the true default java binary
@@ -274,8 +303,8 @@ package rsu::java::jre;
 		# Else
 		else
 		{
-			# Get the clientdir/share folder
-			$clientdir = rsu::files::clientdir::getclientdir()."/share";
+			# Get the clientdir/share/configs folder
+			$clientdir = rsu::files::clientdir::getclientdir()."/share/configs";
 		}
 		
 		# Make a variable to contain the settingsfile name
@@ -294,7 +323,7 @@ package rsu::java::jre;
 It looks like your default java is not a binary file!
 This script requires direct use of the java BINARY file
 in order to make sure all the java library files gets loaded properly.
-Please edit $cwd/share/settings.conf
+Please edit $clientdir/settings.conf
 and add the path to the java BINARY as the value for preferredjava.
 
 You can use the command (You can find this text inside /tmp/java_notice.txt):
