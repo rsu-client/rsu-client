@@ -40,6 +40,9 @@ my $scriptversion = "4.0.0";
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
 
+# Use the File::Path module
+use File::Path qw(make_path remove_tree);
+
 # Use FindBin module to get script directory
 use Cwd;
 # Get script directory
@@ -121,39 +124,58 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	print "The script is running from a system path!\n".$rsu_data->HOME."/.config/runescape will be used as client folder instead!\n\n";
 		
 	# Make the client folders
-	system "mkdir -p \"".$rsu_data->HOME."/.config/runescape/bin\" && mkdir -p \"".$rsu_data->HOME."/.config/runescape/share\"";
-		
+	make_path($rsu_data->clientdir."/bin", $rsu_data->clientdir."/share/img", $rsu_data->clientdir."/share/configs", $rsu_data->clientdir."/share/prms");
+	
 	# Symlink or Copy needed resources to the clientdir
-	system "ln -s \"".$rsu_data->cwd."/share/jagexappletviewer.png\" \"".$rsu_data->clientdir."/share/jagexappletviewer.png\" && cp -v \"".$rsu_data->cwd."/share/settings.conf.example\" \"".$rsu_data->clientdir."/share/settings.conf.example\" && cp -v \"".$rsu_data->cwd."/share/runescape.prm.example\" \"".$rsu_data->clientdir."/share/runescape.prm.example\" && cp -v \"".$rsu_data->cwd."/share/runescape-beta.prm\" \"".$rsu_data->clientdir."/share/runescape-beta.prm\"";
+	system "ln -sf \"".$rsu_data->cwd."/share/img/jagexappletviewer.png\" \"".$rsu_data->clientdir."/share/img/jagexappletviewer.png\"";
+	
+	# Copy the examples (should always be kept up to date)
+	rsu::files::copy::print_cp($rsu_data->cwd."/share/configs/settings.conf.example", $rsu_data->clientdir."/share/configs/settings.conf.example");
+	rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/runescape.prm.example", $rsu_data->clientdir."/share/prms/runescape.prm.example");
 	
 	# Make a variable to contain the clientdir so we can use it in a command
 	my $clientdir = $rsu_data->clientdir;
 	
-	# Check if runescape.prm exists
-	my $prmfile_exists = `ls -la $clientdir/share|grep -P \"runescape.prm\$\"`;
-		
-	# If runescape.prm do not exist
-	if ($prmfile_exists !~ /runescape.prm/)
+	# Check the contents of $clientdir/share
+	my @localcheck = rsu::files::dirs::rlist("$clientdir/share");
+	#my $prmfile_exists = `ls -la $clientdir/share|grep -P \"runescape.prm\$\"`;
+	
+	# If runescape.prm exists in old directory format
+	if ("@localcheck" =~ /$clientdir\/share\/runescape\.prm/)
 	{
 		# Copy the example file to clientdir as runescape.prm
-		system "cp -v \"".$rsu_data->cwd."/share/runescape.prm.example\" \"".$rsu_data->clientdir."/share/runescape.prm\"";
+		rsu::files::copy::print_cp($rsu_data->clientdir."/share/runescape.prm", $rsu_data->clientdir."/share/prms/runescape.prm");
+		
+		# Add file to the localcheck
+		push(@localcheck, "$clientdir\/share\/prms\/runescape.prm");
 	}
-	# If oldschool.prm do not exist
-	if ($prmfile_exists !~ /oldschool.prm/)
+	# If oldschool.prm exists in old directory format
+	if ("@localcheck" =~ /$clientdir\/share\/oldschool\.prm/)
 	{
 		# Copy the oldschool.prm file to clientdir
-		system "cp -v \"".$rsu_data->cwd."/share/oldschool.prm\" \"".$rsu_data->clientdir."/share/oldschool.prm\"";
+		rsu::files::copy::print_cp($rsu_data->clientdir."/share/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
+		
+		# Add file to the localcheck
+		push(@localcheck, "$clientdir\/share\/prms\/oldschool.prm");
 	}
-		
-}
-# Else if script is installed locally
-elsif($rsu_data->cwd =~ /$HOME\/.local\/bin/)
-{
-	# Print debug info
-	print "We are running from ".$rsu_data->cwd.", however the client\nshould be at \\\$HOME/.local/share/runescape\nchanging directory to \\\$HOME/.local/share/runescape\n\n";
-		
-	# change cwd to the local installation location
-	$cwd = $rsu_data->HOME."/.local/opt/runescape";
+	# If runescape.prm do not exist
+	if ("@localcheck" !~ /$clientdir\/share\/prms\/runescape\.prm/)
+	{
+		# Copy the example file to clientdir as runescape.prm
+		rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/runescape.prm.example", $rsu_data->clientdir."/share/prms/runescape.prm");
+	}
+	# If oldschool.prm do not exist
+	if ("@localcheck" !~ /$clientdir\/share\/prms\/oldschool\.prm/)
+	{
+		# Copy the oldschool.prm file to clientdir
+		rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
+	}
+	# If settings.conf exists in the old directory format
+	if ("@localcheck" !~ /$clientdir\/share\/settings\.conf/)
+	{
+		# Copy the oldschool.prm file to clientdir
+		rsu::files::copy::print_cp($rsu_data->clientdir."/share/settings.conf", $rsu_data->clientdir."/share/configs/settings.conf");
+	}
 }
 
 # Due to legal reasons the file jagexappletviewer.jar is no longer included by default so we need to check if it exists
@@ -162,7 +184,7 @@ client::appletviewer::jagex::runcheck($rsu_data);
 
 	
 # Print debug info
-print "Trying to read ".$rsu_data->clientdir."/share/settings.conf\n";
+print "Trying to read ".$rsu_data->clientdir."/share/configs/settings.conf\n";
 
 ########################################################################
 #        BELOW THIS LINE ARE SOME SETTINGS YOU CAN CHANGE              #
@@ -276,7 +298,7 @@ sub parseargs
 	else
 	{
 		# If no parameter that matches is passed then read from settings.conf
-		my $result = rsu::files::IO::readconf("$arg2find", "$default", "settings.conf", $rsu_data->clientdir);
+		my $result = rsu::files::IO::readconf("$arg2find", "$default", "settings.conf");
 		
 		# Return setting
 		return $result;
