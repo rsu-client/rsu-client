@@ -11,6 +11,7 @@ package client::init;
 	require rsu::files::clientdir;
 	require client::env;
 	require rsu::files::dirs;
+	require rsu::files::grep;
 
 	# End of core modules, add custom modules below this line
 
