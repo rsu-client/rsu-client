@@ -101,6 +101,9 @@ use File::Path qw(make_path remove_tree);
 # Require the files IO module
 require rsu::files::IO;
 
+# Require the files grep module
+require rsu::files::grep;
+
 # Require the download file module
 require updater::download::file;
 
@@ -182,6 +185,9 @@ sub set_layout
 	# Get the scrolledlist which will contain the buttons and description
 	$self->{scrolledlist} = $self->FindWindow('scrolledlist');
 	
+	# Get the addonlist which will contain the buttons and description
+	$self->{addonlist} = $self->FindWindow('addonlist');
+	
 	# Make a flexible gridsizer to make everything look good
 	$self->{listgrid} = Wx::FlexGridSizer->new(3,2,0,0);
 	
@@ -191,18 +197,30 @@ sub set_layout
 	# Make the buttons list
 	create_button_list($self);
 	
+	# Make a flexible gridsizer to make everything look good
+	$self->{addongrid} = Wx::FlexGridSizer->new(3,2,0,0);
+	
+	# Make the 2nd column growable
+	$self->{addongrid}->AddGrowableCol(1);
+	
+	# Make the addonlist
+	create_addon_list($self);
+	
 	# Set the sizer for scrolledlist
 	$self->{scrolledlist}->SetSizer($self->{listgrid});
+	
+	# Set the sizer for addonlist
+	$self->{addonlist}->SetSizer($self->{addongrid});
 	
 	# Set minimum size and maximum size of the window
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);
 	
 	# If the icon exists
-	if (-e "$cwd/share/runescape.png")
+	if (-e "$cwd/share/img/runescape.png")
 	{
 		# Set the window icon
-		$self->SetIcon(Wx::Icon->new("$cwd/share/runescape.png", wxBITMAP_TYPE_PNG));
+		$self->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 	}
 }
 
@@ -277,8 +295,6 @@ sub generate_update_entry
 #---------------------------------------- *** ----------------------------------------
 #
 
-
-
 sub make_button
 {
 	# Get the passed data
@@ -287,10 +303,69 @@ sub make_button
 	# Make a button for the launcher
 	$self->{$button} = Wx::Button->new($self->{scrolledlist}, -1, "$label");
 	$self->{$button}->SetName("$button");
-	$self->{listgrid}->Add($self->{$button},0,wxEXPAND|wxALL,5);
+	$self->{listgrid}->Add($self->{$button},1,wxEXPAND|wxALL,5);
 	
 	# Make an event trigger for the newly created button
 	EVT_BUTTON($self->{$button}, -1, \&update_clicked);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub make_addon_button
+{
+	# Get the passed data
+	my ($self, $button, $label) = @_;
+	
+	# Make a button for the launcher
+	$self->{$button} = Wx::Button->new($self->{addonlist}, -1, "$label");
+	$self->{$button}->SetName("$button");
+	$self->{addongrid}->Add($self->{$button},1,wxEXPAND|wxALL,5);
+	
+	# Make an event trigger for the newly created button
+	EVT_BUTTON($self->{$button}, -1, \&update_addon_clicked);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub create_addon_list
+{
+	# Get the pointers
+	my $self = shift;
+	
+	# Get the content of the addons
+	my $addons_conf = rsu::files::IO::getcontent("$clientdir/share/configs", "addons.conf");
+	
+	# Get all addons that are universal or specific to our platform
+	my @addons = rsu::files::grep::strgrep($addons_conf, "^($OS|universal)");
+	
+	# For each of the addons we found
+	foreach (@addons)
+	{
+		# Split the config so we can get the id
+		my @addon_id = split /=|;/, $_;
+		
+		# Get the config data for the addon
+		my $config = rsu::files::IO::readconf($addon_id[0],"0","addons.conf");
+		
+		# Next if config is 0
+		next if $config eq '0';
+		
+		# Split the config into sections
+		my @addon_data = split /;/, $config;
+		
+		# Make an addon button
+		make_addon_button($self, $addon_id[0], $addon_data[0]);
+		
+		# Make a description
+		$self->{$addon_id[0]."_label"} = Wx::StaticText->new($self->{addonlist}, -1, "$addon_data[2]", wxDefaultPosition, wxDefaultSize);
+		
+		# Add description to list
+		$self->{addongrid}->Add($self->{$addon_id[0]."_label"},2,wxEXPAND|wxALL,5);
+	}
 }
 
 #
@@ -353,6 +428,65 @@ sub update_clicked
 	}
 	
 	# Remove the update directory
+	remove_tree("$clientdir/.download");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub update_addon_clicked
+{
+	my ($self, $event) = @_;
+	
+	# Get the name of the addon that triggered the event
+	my $caller = $event->GetEventObject()->GetName();
+	
+	# Make a variable that contains the config for the addon
+	my $config = rsu::files::IO::readconf($caller, "0", "addons.conf");
+	
+	# If the config cannot be found
+	if ($config eq '')
+	{
+		Wx::MessageBox("Found no addon config for $caller inside\n$clientdir/share/configs/addons.conf", "Error! No Config");
+		
+		# Return to call
+		return;
+	}
+	
+	# Split the config into sections by ;
+	my @addon_info = split /;/, $config;
+	
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Download the archive file
+		system ("$cwd/rsu/rsu-query.exe rsu.download.file $addon_info[1]");
+	}
+	# Else we are on a unix platform
+	else
+	{
+		# Download the archive file
+		system ("$cwd/rsu/rsu-query rsu.download.file $addon_info[1]");
+	}
+	
+	# Find out the filename
+	my @filename = split /\//, $addon_info[1];
+	
+	# If this is an universal addon
+	if ($caller =~ /^universal_/)
+	{
+		# Extract the archive to the universal addons folder
+		rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/share/addons/universal");
+	}
+	# Else
+	else
+	{
+		# Extract the archive to the platform specific addons folder
+		rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/share/addons/$OS");
+	}
+	
+	# Remove the .download folder
 	remove_tree("$clientdir/.download");
 }
 
