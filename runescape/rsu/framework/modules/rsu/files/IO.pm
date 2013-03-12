@@ -59,7 +59,7 @@ sub readconf
 	require rsu::files::clientdir;
 	
 	# Make a variable to hold the basedir
-	my $basedir = rsu::files::clientdir::getclientdir()."/share";
+	my $basedir = rsu::files::clientdir::getclientdir()."/share/configs";
 	
 	# If a directory is passed
 	if (defined $dir && $dir ne '')
