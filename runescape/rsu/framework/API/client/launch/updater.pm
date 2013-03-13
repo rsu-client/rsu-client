@@ -240,29 +240,29 @@ sub create_button_list
 	if ($OS =~ /MSWin32/)
 	{
 		# Generate an update entry for windows
-		generate_update_entry($self, "msi", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.msi;Download and extract the jagexappletviewer.jar from the Official Windows Client (from Jagex)");
+		generate_update_entry($self, "msi", "Update jagexappletviewer;$windowsurl;Download and extract the jagexappletviewer.jar from the Official Windows Client (from Jagex)");
 	}
 	# Else if we are on mac
 	elsif($OS =~ /darwin/)
 	{
 		# Generate an update entry for mac
-		generate_update_entry($self, "dmg", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.dmg;Download and extract the jagexappletviewer.jar from the Official Mac Client (from Jagex)");
+		generate_update_entry($self, "dmg", "Update jagexappletviewer;$macsurl;Download and extract the jagexappletviewer.jar from the Official Mac Client (from Jagex)");
 	}
 	# Else (we are on linux or some other unix)
 	else
 	{
 		# Generate an update entry for windows
-		generate_update_entry($self, "msi", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.msi;Download and extract the jagexappletviewer.jar from\nthe Official Windows Client (from Jagex)");
+		generate_update_entry($self, "msi", "Update jagexappletviewer;$windowsurl;Download and extract the jagexappletviewer.jar from\nthe Official Windows Client (from Jagex)");
 		
 		# Generate an update entry for mac
-		generate_update_entry($self, "dmg", "Update jagexappletviewer;http://www.runescape.com/downloads/runescape.dmg;Download and extract the jagexappletviewer.jar from\nthe Official Mac Client (from Jagex)");
+		generate_update_entry($self, "dmg", "Update jagexappletviewer;$macurl;Download and extract the jagexappletviewer.jar from\nthe Official Mac Client (from Jagex)");
 	}
 	
 	# If clientdir is not $HOME/.config/runescape
 	if ($clientdir !~ /$HOME\/\.config\/runescape/)
 	{
 		# Generate an update entry for windows
-		generate_update_entry($self, "api", "Update rsu-api;http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/update.tar.gz;Update the rsu-api to the newest version\n(from HikariKnight)");
+		generate_update_entry($self, "api", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)");
 	}
 }
 
@@ -340,10 +340,10 @@ sub create_addon_list
 	my $self = shift;
 	
 	# Get the content of the addons
-	my $addons_conf = rsu::files::IO::getcontent("$clientdir/share/configs", "addons.conf");
+	my $addons_conf = rsu::files::IO::getcontent("$clientdir/share/configs", "addons_updater.conf");
 	
 	# Get all addons that are universal or specific to our platform
-	my @addons = rsu::files::grep::strgrep($addons_conf, "^($OS|universal)");
+	my @addons = rsu::files::grep::strgrep($addons_conf, "^(".$OS."_|universal_)");
 	
 	# For each of the addons we found
 	foreach (@addons)
@@ -352,7 +352,7 @@ sub create_addon_list
 		my @addon_id = split /=|;/, $_;
 		
 		# Get the config data for the addon
-		my $config = rsu::files::IO::readconf($addon_id[0],"0","addons.conf");
+		my $config = rsu::files::IO::readconf($addon_id[0],"0","addons_updater.conf");
 		
 		# Next if config is 0
 		next if $config eq '0';
@@ -455,7 +455,7 @@ sub update_addon_clicked
 	my $caller = $event->GetEventObject()->GetName();
 	
 	# Make a variable that contains the config for the addon
-	my $config = rsu::files::IO::readconf($caller, "0", "addons.conf");
+	my $config = rsu::files::IO::readconf($caller, "0", "addons_updater.conf");
 	
 	# If the config cannot be found
 	if ($config eq '')
@@ -497,17 +497,23 @@ sub update_addon_clicked
 	# Remove /moduleloader.pm from the path
 	$addonroot =~ s/\/moduleloader\.pm$//;
 	
+	# Create a variable that will contain only the id of the addon
+	my $addon_id = $caller;
+	
+	# Remove the identifier from the $addon_id
+	$addon_id =~ s/^(universal|$OS)_//;
+	
 	# If this is an universal addon
 	if ($caller =~ /^universal_/)
 	{
 		# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
-		rsu::files::copy::print_mv($addonroot, "$clientdir/share/addons/universal/$caller", 1)
+		rsu::files::copy::print_mv($addonroot, "$clientdir/share/addons/universal/$addon_id", 1)
 	}
 	# Else
 	else
 	{
 		# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
-		rsu::files::copy::print_mv($addonroot, "$clientdir/share/addons/$OS/$caller", 1)
+		rsu::files::copy::print_mv($addonroot, "$clientdir/share/addons/$OS/$addon_id", 1)
 	}
 	
 	# Remove the .download folder
