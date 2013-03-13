@@ -246,7 +246,7 @@ sub create_button_list
 	elsif($OS =~ /darwin/)
 	{
 		# Generate an update entry for mac
-		generate_update_entry($self, "dmg", "Update jagexappletviewer;$macsurl;Download and extract the jagexappletviewer.jar from the Official Mac Client (from Jagex)");
+		generate_update_entry($self, "dmg", "Update jagexappletviewer;$macurl;Download and extract the jagexappletviewer.jar from the Official Mac Client (from Jagex)");
 	}
 	# Else (we are on linux or some other unix)
 	else
