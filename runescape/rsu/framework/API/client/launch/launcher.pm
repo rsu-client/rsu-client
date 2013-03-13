@@ -71,6 +71,12 @@ use LWP::Simple;
 
 use base qw(Wx::Frame Wx::ScrolledWindow);
 
+# Require the files grep module
+require rsu::files::grep;
+
+# Require the files IO module
+require rsu::files::IO;
+
 sub new
 {
 	# Create a class
@@ -309,7 +315,7 @@ sub create_addons_page
 	$self->{addons_labeltop} = Wx::StaticText->new($self->{addonspage}, -1, "\nClick on the button coresponding to the addon you want to manually launch!\nClick the button below to open the addons directory. Install only addons you trust!", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	
 	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
-	$self->{addonsdirbutton} = Wx::Button->new($self->{addonspage}, -1, "Open Addons Folder (place extracted addons here)", wxDefaultPosition, wxDefaultSize, );
+	$self->{addonsdirbutton} = Wx::Button->new($self->{addonspage}, -1, "Open Addons Folder (place manually extracted addons here)", wxDefaultPosition, wxDefaultSize, );
 	EVT_BUTTON($self->{addonsdirbutton}, $self->{addonsdirbutton}, \&open_addonsdir);
 	
 	# Add the label and button to the vertical boxsizer
@@ -318,7 +324,7 @@ sub create_addons_page
 	$self->{addonsvertical}->Add(10,10,0,0);
 	
 	# Make a groupbox for tidyness
-	$self->{addonsbox} = Wx::StaticBox->new($self->{addonspage},-1, "Addons you have installed (Note: Avoid having addons with identical names)");
+	$self->{addonsbox} = Wx::StaticBox->new($self->{addonspage},-1, "Addons you have installed:");
 	$self->{addonscontainer} = Wx::StaticBoxSizer->new($self->{addonsbox},wxVERTICAL); 
 	
 	# Add the addonslist to the container
@@ -408,11 +414,11 @@ sub fetch_rssnews
 		$newsTitle->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
 		
 		# If we are not on Windows or MaxOSX
-		if ($OS !~ /(MSWin32|darwin)/)
-		{
+		#if ($OS !~ /(MSWin32|darwin)/)
+		#{
 			# Change the title color to the same color that Jagex use on news articles
 			$newsTitle->SetForegroundColour(Wx::Colour->new(243,177,63));
-		}
+		#}
 		
 		# Add label to the sizer
 		$self->{rss_sizer}->Add($newsTitle, 0, wxEXPAND|wxALL, 5);
@@ -429,11 +435,11 @@ sub fetch_rssnews
 		my $newsDate = Wx::StaticText->new($self->{rssview}, -1, "Published: $rssDate");
 		
 		# If we are not on Windows or MaxOSX
-		if ($OS !~ /(MSWin32|darwin)/)
-		{
+		#if ($OS !~ /(MSWin32|darwin)/)
+		#{
 			# Change the text color to the same color that Jagex use on news articles
 			$newsDate->SetForegroundColour(Wx::Colour->new(184,184,184));
-		}
+		#}
 		
 		# Make font bigger
 		$newsDate->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
@@ -474,11 +480,11 @@ sub fetch_rssnews
 		my $newsDescription = Wx::StaticText->new($self->{rssview}, -1, "$rssDescription");
 		
 		# If we are not on Windows or MaxOSX
-		if ($OS !~ /(MSWin32|darwin)/)
-		{
+		#if ($OS !~ /(MSWin32|darwin)/)
+		#{
 			# Change the text color to the same color that Jagex use on news articles
 			$newsDescription->SetForegroundColour(Wx::Colour->new(184,184,184));
-		}
+		#}
 		
 		$newsDescription->Wrap(480);
 		
@@ -537,49 +543,119 @@ sub make_addon_buttons
 	# Make a counter so we know when to add a new row to the grid
 	my $counter = 1;
 	
-	# Open the addon directory
-	opendir(my $addons, $addondir);
+	# Get all moduleloaders in the addon directory
+	my @addons = rsu::files::grep::rdirgrep($addondir, "\/moduleloader\.pm");
 	
-	# While there is still content in the directory
-	while (readdir $addons)
+	# For each addon we found
+	foreach my $addon_path (@addons)
 	{
-		# Go to next if the current content is a relative directory (. or ..) or if the folder is named framework
-		next if $_ =~ /^(\.|\.\.|framework)$/;
+		# Skip if we found a folder named moduleloader.pm (you never know)
+		next if -d $addon_path;
 		
-		# Pass the current addon to a variable we can reuse as $_ gets overwritten later
-		my $addon = $_;
+		# Split the path by /
+		my @folder_id = split /\//, $addon_path;
 		
-		# If the current "addon" is a folder then continue
-		if (-d "$addondir/$addon")
+		# Remove moduleloader.pm from the path
+		$addon_path =~ s/\/moduleloader\.pm$//;
+		
+		# If this is an universal addon
+		if ($folder_id[-3] =~ /^universal$/)
 		{
-			# If $counter is a modulo of 4 (translation: every 4th)
-			if (($counter %= 4) == 0)
-			{
-				# Increase the amount of rows by 1
-				$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
-			}
+			# Try to get the addon name (if nothing is found then use the folder id as addon name)
+			my $addon_platforms = rsu::files::IO::readconf("platforms", "linux;MSWin32;darwin;", "info.conf", $addon_path);
 			
-			# Make a button for the addon
-			$self->{$addon} = Wx::Button->new($self->{addonspage}, -1, "$addon", wxDefaultPosition, wxDefaultSize, );
+			# Split the list of platforms by ;
+			my @platforms = split /;/, $addon_platforms;
 			
-			# Make an event trigger for the newly created button
-			EVT_BUTTON($self, -1, \&launch_addon);
-			
-			# Add the button to the vertical addon list sizer
-			$self->{addonlist}->Add($self->{$addon}, 0, wxEXPAND|wxALL,5);
-			
-			# Increase counter by 1
-			$counter += 1;
+			# Go to next addon if this universal addon is not supported on this platform
+			next if "@platforms" !~ /$OS/i;
 		}
+		
+		my $addon_id = "$folder_id[-3]_$folder_id[-2]";
+		
+		# Try to get the addon name (if nothing is found then use the folder id as addon name)
+		my $addon_name = rsu::files::IO::readconf("name", "$addon_id", "info.conf", $addon_path);
+		
+		# Incase the id becomes the name we can remove universal_ or $OS_ from the start of the name
+		$addon_name =~ s/^(universal|$OS)_//;
+		
+		# Check if there is a download url in the info.conf
+		my $addon_url = rsu::files::IO::readconf("url", "", "info.conf", $addon_path);
+		
+		# If the addon url is not empty
+		if ($addon_url ne '')
+		{
+			# Get the addon description
+			my $addon_description = rsu::files::IO::readconf("description", "No description available for $addon_name", "info.conf", $addon_path);
+			
+			# Generate an updater entry
+			generate_updater_entry($addon_id, $addon_name, $addon_url, $addon_description);
+		}
+		
+		# If $counter is a modulo of 4 (translation: every 4th)
+		if (($counter %= 4) == 0)
+		{
+			# Increase the amount of rows by 1
+			$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
+		}
+			
+		# Make a button for the addon
+		$self->{$addon_id} = Wx::Button->new($self->{addonspage}, -1, "$addon_name", wxDefaultPosition, wxDefaultSize, );
+			
+		# Make an event trigger for the newly created button
+		EVT_BUTTON($self, -1, \&launch_addon);
+		
+		# Set the buttons name to $addon_id
+		$self->{$addon_id}->SetName($addon_id);
+			
+		# Add the button to the vertical addon list sizer
+		$self->{addonlist}->Add($self->{$addon_id}, 0, wxEXPAND|wxALL,5);
+		
+		# Increase counter by 1
+		$counter += 1;
 	}
-	
-	# Close the directory to free memory
-	closedir($addons);
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
+
+sub generate_updater_entry
+{
+	# Get the passed data
+	my ($id, $name, $url, $description) = @_;
+	
+	# Get the contents of the addons_updater.conf
+	my $addons_updater_config = rsu::files::IO::getcontent("$clientdir/share/configs", "addons_updater.conf");		
+	
+	# Check if there is already an entry for this addon in the config
+	my @entry_test = rsu::files::grep::strgrep($addons_updater_config, "^$id=");
+	
+	# If the test shows that an entry exists then
+	if ($entry_test[0] ne '')
+	{
+		# Replace the existing entry with the new one
+		$addons_updater_config =~ s/$entry_test[0]/$id=$name;$url;$description;/i;
+		
+		# Remove the newline at the end
+		$addons_updater_config =~ s/\n$//;
+		
+		# Rewrite the addons_updater.conf file
+		rsu::files::IO::WriteFile("$addons_updater_config", ">", "$clientdir/share/configs/addons_updater.conf");
+	}
+	# Else
+	else
+	{
+		# Append the entry to the existing file
+		rsu::files::IO::WriteFile("$id=$name;$url;$description;", ">>", "$clientdir/share/configs/addons_updater.conf");
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+
 
 sub setScrollBars
 {
@@ -1375,59 +1451,46 @@ sub launch_addon
 	my ($self, $event) = @_;
 	
 	# Get the name of the addon that triggered the event
-	my $addon = $event->GetEventObject()->GetLabel();
+	my $addon_id = $event->GetEventObject()->GetName();
 	
-	# Open the universal addon directory
-	opendir (my $addons, "$clientdir/share/addons/universal/");
+	# Make a variable which will contain only the unique id and not the universal_ or $OS_ identifier
+	my $addon = $addon_id;
 	
-	# While there is still content in the folder
-	while (readdir $addons)
+	# Remove the identifier from the variable $addon
+	$addon  =~ s/^(universal|$OS)_//;
+	
+	# If the addon_id starts with universal_
+	if ($addon_id =~ /^universal_/)
 	{
-		# Go to next if the current content is not the folder for this addon
-		next if $_ !~ /^$addon$/;
-		
 		# If we are on windows
 		if ($OS =~ /MSWin32/)
 		{
-			# Launch the addon
+			# Launch the universal addon
 			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=false &");
 		}
 		# Else
 		else
 		{
-			# Launch the addon using perl
+			# Launch the universal addon
 			system "\"$cwd/rsu/rsu-query\" addon.universal.launch $addon &";
 		}
 	}
-	
-	# Close the directory to free memory
-	closedir($addons);
-	
-	# Open the platform specific addons directory
-	opendir (my $platform_addons, "$clientdir/share/addons/$OS/");
-	
-	# While there is still content in the folder
-	while (readdir $platform_addons)
+	# Else
+	else
 	{
-		# Go to next if the current content is not the folder for this addon
-		next if $_ !~ /^$addon$/;
-		
 		# If we are on windows
 		if ($OS =~ /MSWin32/)
 		{
-			# Launch the addon
+			# Launch the platform specific addon
 			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
 		}
 		# Else
 		else
 		{
-			# Launch the addon using perl
+			# Launch the platform specific addon
 			system "\"$cwd/rsu/rsu-query\" addon.platform.launch $addon &";
 		}
 	}
-	
-	# Close the directory to free memory
-	closedir($platform_addons);
 }
 
 #
