@@ -30,7 +30,7 @@ package client::launch::updater;
 
 my $windowsurl = "http://www.runescape.com/downloads/runescape.msi";
 my $macurl = "http://www.runescape.com/downloads/runescape.dmg";
-my $updateurl = "http://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/update.tar.gz";
+my $updateurl = "https://github.com/HikariKnight/rsu-client/archive/rsu-api-latest.tar.gz";
 
 # Be strict to avoid messy code
 use strict;
