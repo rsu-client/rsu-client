@@ -14,6 +14,9 @@ require rsu::files::copy;
 
 # Require the clientdir module
 require rsu::files::clientdir;
+
+# Require the download file module
+require updater::download::file;
 	
 # Get the clientdir
 my $clientdir = rsu::files::clientdir::getclientdir();
@@ -84,7 +87,7 @@ sub fetch
 	my ($name) = @_;
 	
 	# Download the archive file containing the new binary
-	system ("$cwd/rsu/rsu-query rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz");
+	updater::download::file::from("https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz", "$clientdir/.download/$name-latest.tar.gz");
 				
 	# Extract the archive
 	rsu::extract::archive::extract("$clientdir/.download/$name-latest.tar.gz", "$clientdir/.download/extracted_binary");

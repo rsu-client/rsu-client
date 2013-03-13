@@ -418,7 +418,7 @@ sub update_clicked
 	elsif($caller =~ /^api$/)
 	{
 		# Get the download link
-		my $callerconfig = rsu::files::IO::readconf("api_button", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)", "$resourcedir/configs");
+		my $callerconfig = rsu::files::IO::readconf("api_button", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)", "updater.conf", "$resourcedir/configs");
 		
 		# Split the config
 		my @callerdata = split /;/, $callerconfig;
@@ -427,7 +427,7 @@ sub update_clicked
 		updater::download::file::from($callerdata[1], "$clientdir/.download/rsu-api-latest.tar.gz");
 		
 		# Extract the api
-		rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/rsu-client-master/runescape/");
+		rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/");
 		
 		# Replace the old API files with the new ones (rewrites directories)
 		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/API", "$clientdir/rsu/framework/API", 1);
