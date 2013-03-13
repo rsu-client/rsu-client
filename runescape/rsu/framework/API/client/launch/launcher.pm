@@ -170,13 +170,10 @@ sub set_layout
 		# Make a scrolledwindow (uses less resources than webview)
 		$self->{rssview} = Wx::ScrolledWindow->new($self->{mainpanel}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE);
 		
-		# If we are not on Windows or MaxOSX
-		if ($OS !~ /(MSWin32|darwin)/)
-		{
-			# Make a painting event
-			#EVT_PAINT( $self->{rssview}, \&OnPaint );
-			$self->{rssview}->SetBackgroundColour(wxBLACK);
-		}
+		# Make a painting event
+		#EVT_PAINT( $self->{rssview}, \&OnPaint );
+		# Change the RSSView background to black
+		$self->{rssview}->SetBackgroundColour(wxBLACK);
 	}
 	
 	# Create the boxsizer needed for the layout
@@ -413,12 +410,8 @@ sub fetch_rssnews
 		# Make font bigger
 		$newsTitle->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
 		
-		# If we are not on Windows or MaxOSX
-		#if ($OS !~ /(MSWin32|darwin)/)
-		#{
-			# Change the title color to the same color that Jagex use on news articles
-			$newsTitle->SetForegroundColour(Wx::Colour->new(243,177,63));
-		#}
+		# Change the title color to the same color that Jagex use on news articles
+		$newsTitle->SetForegroundColour(Wx::Colour->new(243,177,63));
 		
 		# Add label to the sizer
 		$self->{rss_sizer}->Add($newsTitle, 0, wxEXPAND|wxALL, 5);
@@ -434,12 +427,8 @@ sub fetch_rssnews
 		# Make a date label for the news
 		my $newsDate = Wx::StaticText->new($self->{rssview}, -1, "Published: $rssDate");
 		
-		# If we are not on Windows or MaxOSX
-		#if ($OS !~ /(MSWin32|darwin)/)
-		#{
-			# Change the text color to the same color that Jagex use on news articles
-			$newsDate->SetForegroundColour(Wx::Colour->new(184,184,184));
-		#}
+		# Change the text color to the same color that Jagex use on news articles
+		$newsDate->SetForegroundColour(Wx::Colour->new(184,184,184));
 		
 		# Make font bigger
 		$newsDate->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
@@ -479,12 +468,8 @@ sub fetch_rssnews
 		# Make a date label for the news
 		my $newsDescription = Wx::StaticText->new($self->{rssview}, -1, "$rssDescription");
 		
-		# If we are not on Windows or MaxOSX
-		#if ($OS !~ /(MSWin32|darwin)/)
-		#{
-			# Change the text color to the same color that Jagex use on news articles
-			$newsDescription->SetForegroundColour(Wx::Colour->new(184,184,184));
-		#}
+		# Change the text color to the same color that Jagex use on news articles
+		$newsDescription->SetForegroundColour(Wx::Colour->new(184,184,184));
 		
 		$newsDescription->Wrap(480);
 		
@@ -738,7 +723,7 @@ sub about
 	$about->{horizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
 	
 	# Else if we are not on windows and the icon exists
-	if ($OS !~ /MSWin32/ && -e "$cwd/share/img/runescape.png")
+	if ($OS =~ /(MSWin32|linux)/ && -e "$cwd/share/img/runescape.png")
 	{
 		# Set the window icon
 		$about->{dialog}->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
@@ -747,7 +732,7 @@ sub about
 		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 		
 		# Set the size of the aboutdialog
-		$about->{dialog}->SetSize(365,395);
+		$about->{dialog}->SetSize(365,400);
 		
 		# Add the aboutdialog icon to the dialog
 		$about->{vertical}->Add($about->{icon}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
@@ -1307,13 +1292,13 @@ sub playnow
 	if ($OS !~ /MSWin32/)
 	{
 		# Run the runescape script
-		system "\"$cwd/rsu/rsu-query\" client.launch.runescape &";
+		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --unixquery &";
 	}
 	# Else
 	else
 	{
 		# Run the runescape executable
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --showcmd=false");
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --showcmd=true");
 	}
 }
 
@@ -1332,10 +1317,10 @@ sub update
 		# Get the handle for the perl window
 		my $cmdwindow = Win32::GUI::GetPerlWindow();
 		# Show the cmd window
-		Win32::GUI::Show($cmdwindow);
+		Win32::GUI::Show($cmdwindow) if "@ARGV" =~ /--showcmd=true/;
 		
 		# Run the runescape executable
-		system "\"$cwd/rsu-query.exe\" client.launch.updater";
+		system "\"$cwd/rsu/rsu-query.exe\" client.launch.updater";
 		
 		# If --showcmd=false is passed
 		if ("@ARGV" =~ /--showcmd=false/)
@@ -1345,7 +1330,7 @@ sub update
 		}
 		
 		# Tell the user that they should close the launcher and run "Download-Windows-Files.exe" to finish the update
-		Wx::MessageBox("Finished running the updater!\nPlease close the Launcher and run the \"Download-Windows-Files.exe\"\nlocated in the client's folder to finish the update.", "Running update complete!", wxOK,$self);
+		#Wx::MessageBox("Finished running the updater!\nPlease close the Launcher and run the \"Download-Windows-Files.exe\"\nlocated in the client's folder to finish the update.", "Running update complete!", wxOK,$self);
 		
 	}
 	# Else
@@ -1466,7 +1451,7 @@ sub launch_addon
 		if ($OS =~ /MSWin32/)
 		{
 			# Launch the universal addon
-			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=false &");
+			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
 		}
 		# Else
 		else
