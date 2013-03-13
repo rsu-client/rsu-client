@@ -3,9 +3,6 @@ package updater::extract::query_bin;
 # Include Config module for checking system values
 use Config;
 
-# Require the extract archive module
-require rsu::extract::archive;
-
 # Require the files grep module
 require rsu::files::grep;
 
@@ -14,9 +11,6 @@ require rsu::files::copy;
 
 # Require the clientdir module
 require rsu::files::clientdir;
-
-# Require the download file module
-require updater::download::file;
 	
 # Get the clientdir
 my $clientdir = rsu::files::clientdir::getclientdir();
@@ -87,10 +81,11 @@ sub fetch
 	my ($name) = @_;
 	
 	# Download the archive file containing the new binary
-	updater::download::file::from("https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz", "$clientdir/.download/$name-latest.tar.gz");
+	system("\"$clientdir/rsu/rsu-query\" rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.zip \"$clientdir/.download/\"");
 				
 	# Extract the archive
-	rsu::extract::archive::extract("$clientdir/.download/$name-latest.tar.gz", "$clientdir/.download/extracted_binary");
+	system("\"$clientdir/rsu/rsu-query\" rsu.extract.file $name-latest.zip \"$clientdir/.download/extracted_binary\"");
+	#rsu::extract::archive::extract("$clientdir/.download/$name-latest.tar.gz", "$clientdir/.download/extracted_binary");
 				
 	# Locate the binary
 	my @binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name\$");
