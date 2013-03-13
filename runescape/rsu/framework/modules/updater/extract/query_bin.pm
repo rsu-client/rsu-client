@@ -84,10 +84,10 @@ sub fetch
 	my ($name) = @_;
 	
 	# Download the archive file containing the new binary
-	system ("$cwd/rsu/rsu-query rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name.tar.gz");
+	system ("$cwd/rsu/rsu-query rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz");
 				
 	# Extract the archive
-	rsu::extract::archive::extract("$clientdir/.download/$name.tar.gz", "$clientdir/.download/extracted_binary");
+	rsu::extract::archive::extract("$clientdir/.download/$name-latest.tar.gz", "$clientdir/.download/extracted_binary");
 				
 	# Locate the binary
 	my @binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name\$");
