@@ -430,13 +430,13 @@ sub update_clicked
 		rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/rsu-client-master/runescape/");
 		
 		# Replace the old API files with the new ones (rewrites directories)
-		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/rsu/framework/API", "$clientdir/rsu/framework/API", 1);
-		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/rsu/framework/modules", "$clientdir/rsu/framework/modules", 1);
-		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/rsu/framework/resources", "$clientdir/rsu/framework/resources", 1);
-		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-master/runescape/templates", "$clientdir/templates", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/API", "$clientdir/rsu/framework/API", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/modules", "$clientdir/rsu/framework/modules", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/resources", "$clientdir/rsu/framework/resources", 1);
+		rsu::files::copy::print_mv("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/templates", "$clientdir/templates", 1);
 		
 		# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
-		rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-master/runescape", "$clientdir", 0);
+		rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape", "$clientdir", 0);
 		
 		# Check if binary is installed and update it
 		updater::extract::query_bin::update();
