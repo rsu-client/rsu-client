@@ -81,7 +81,7 @@ sub fetch
 	my ($name) = @_;
 	
 	# Download the archive file containing the new binary
-	system("\"$clientdir/rsu/rsu-query\" rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.zip \"$clientdir/.download/\"");
+	system("\"$clientdir/rsu/rsu-query\" rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.zip \"$clientdir/.download\"");
 				
 	# Extract the archive
 	system("\"$clientdir/rsu/rsu-query\" rsu.extract.file $name-latest.zip \"$clientdir/.download/extracted_binary\"");

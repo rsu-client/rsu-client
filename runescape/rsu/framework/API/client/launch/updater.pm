@@ -424,7 +424,7 @@ sub update_clicked
 		my @callerdata = split /;/, $callerconfig;
 		
 		# Download the api
-		system("$clientdir/rsu/rsu-query rsu.download.file $callerdata[1] \"$clientdir/.download/\"");
+		system("$clientdir/rsu/rsu-query rsu.download.file $callerdata[1] \"$clientdir/.download\"");
 		
 		# Extract the api
 		rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/");
