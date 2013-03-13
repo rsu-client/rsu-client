@@ -46,4 +46,4 @@ modules:
 	client::init				= ?% # No way to track atm
 	
 TODO:
-	* make a display setting for universal addons (eg: OnlyShowIn=Windows,Mac,Linux)
+	* add a gui to manage addons_updater.conf from the settings editor
