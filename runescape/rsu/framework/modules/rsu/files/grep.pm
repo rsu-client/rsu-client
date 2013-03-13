@@ -74,7 +74,7 @@ sub grep
 	@list = @$list;
 	
 	# Run grep on list
-	my @greps = grep(/$grepfor/, @list);
+	my @greps = grep(/$grepfor/i, @list);
 	
 	# Return grepped items
 	return @greps;
