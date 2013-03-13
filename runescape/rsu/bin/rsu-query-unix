@@ -55,8 +55,24 @@ if ("$^O" =~ /MSWin32/)
 	# Else
 	else
 	{
-		# Remove --showcmd=false or -showcmd=true from the arguments array
+		# Remove --showcmd=true or -showcmd=true from the arguments array
 		s/(-|--)showcmd=true(\s)//g for @ARGV;
+	}
+	
+	# Move to the script directory
+	chdir("$scriptdir");
+	
+	# Update $cwd
+	$cwd = getcwd;
+	
+	# If $ARGV[0] does not contain any calls
+	if("$ARGV[0]" !~ /(\.|::)/)
+	{
+		# Move first argument to l
+		$ARGV[1] = $ARGV[0];
+		
+		# Make a call for the launcher
+		$ARGV[0] = "client.launch.launcher";
 	}
 }
 # Else
