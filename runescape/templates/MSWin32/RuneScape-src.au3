@@ -16,18 +16,20 @@
 ; Url of the always up to date exe file
 $url = "https://github.com/HikariKnight/rsu-launcher/archive/rsu-query-MSWin32.zip"
 
+; Get the size of the old zip file
+$zip_size = IniRead(@ScriptDir & "\share\configs\MSWin32-bin_info.conf","rsu-query","zip_size","0")
 
 ; If the rsu-query.exe exists
 If FileExists(@ScriptDir & "\rsu\rsu-query.exe") Then
 	; If the existing rsu-query.exe is a different size than the remote one
-	If FileGetSize(@ScriptDir & "\rsu\rsu-query.exe") <> InetGetSize($url,1) Then
+	If $zip_size <> InetGetSize($url) Then
 		; Tell the user we need to update the API too
 		$update = MsgBox(4, "Update available!", "A newer version of rsu-query.exe is available!" & @CRLF & "Do you want me to launch the updater then download the new rsu-query.exe?" & @CRLF & 'NOTE: Click "Update rsu-api" inside the updater.' & @CRLF & "Clicking No will launch the client normally")
 
 		; If yes then
 		If $update = 6 Then
-			; Run the updater
-			RunWait(@ScriptDir & "\rsu\rsu-query.exe client.launch.updater --showcmd=false")
+			; Run the updater and hide the cmd window
+			RunWait(@ScriptDir & "\rsu\rsu-query.exe client.launch.updater --showcmd=false", @ScriptDir, @SW_HIDE)
 
 			; Update rsu-query.exe
 			do_update("Updat")
@@ -40,17 +42,23 @@ Else
 	do_update("Download")
 EndIf
 
-; Run the client
+; Run the client and hide the cmd window
 Run(@ScriptDir & "\rsu\rsu-query.exe --showcmd=false",@ScriptDir,@SW_HIDE);
 
 func do_update($text)
 	#Region ### START Koda GUI section ###
-	$Form1 = GUICreate($text & "ing rsu-query.exe", 633, 42, -1, -1, BitOR($WS_SYSMENU,$WS_CAPTION,$WS_POPUP,$WS_POPUPWINDOW,$WS_BORDER,$WS_CLIPSIBLINGS), 0)
-	$Progress = GUICtrlCreateProgress(0, 0, 631, 17)
-	$Button = GUICtrlCreateButton($text & "ing rsu-query.exe", 0, 16, 632, 25, $WS_GROUP)
+	$Form1 = GUICreate($text & "ing rsu-query.exe", 350, 42, -1, -1, BitOR($WS_SYSMENU,$WS_CAPTION,$WS_POPUP,$WS_POPUPWINDOW,$WS_BORDER,$WS_CLIPSIBLINGS), 0)
+	$Progress = GUICtrlCreateProgress(0, 0, 348, 17)
+	$Button = GUICtrlCreateButton($text & "ing rsu-query.exe", 0, 16, 348, 25, $WS_GROUP)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 	GUISetState(@SW_SHOW)
 	#EndRegion ### END Koda GUI section ###
+
+	; If an old zip exists from before
+	If FileExists(@ScriptDir & "\rsu-query.zip") Then
+		; Delete the file
+		FileDelete(@ScriptDir & "\rsu-query.zip")
+	EndIf
 
 	; Gets the size of the file
 	$downsize = InetGetSize($url)
@@ -76,5 +84,17 @@ func do_update($text)
 	; Wait 10 milliseconds
 	sleep(10)
 
-	_Zip_Unzip($filename, "rsu-launcher-rsu-query-MSWin32\rsu-query.exe", @ScriptDir & '\rsu', 17)
+	; Unzip the rsu-query.exe
+	$success = _Zip_Unzip($filename, "rsu-launcher-rsu-query-MSWin32\rsu-query.exe", @ScriptDir & '\rsu', 17)
+
+	; If unzip is success then
+	If $success = 1 Then
+		; Add the new zip_size to MSWin32-bin_info.conf
+		IniWrite(@ScriptDir & '\share\configs\MSWin32-bin_info.conf', "rsu-query", "zip_size", $downsize)
+
+	EndIf
+
+	; Delete the downloaded file
+	FileDelete(@ScriptDir & "\rsu-query.zip")
+
 EndFunc
