@@ -110,6 +110,9 @@ require rsu::files::copy;
 # Require the download file module
 require updater::download::file;
 
+# Require the extract query_bin module
+require updater::extract::query_bin;
+
 # Require the archive module
 require rsu::extract::archive;
 
@@ -435,6 +438,9 @@ sub update_clicked
 		# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
 		rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-master/runescape", "$clientdir", 0);
 		
+		# Check if binary is installed and update it
+		updater::extract::query_bin::update();
+		
 		# Show a message that we are done
 		Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api");
 	}
@@ -485,7 +491,7 @@ sub update_addon_clicked
 	# Find out the filename
 	my @filename = split /\//, $addon_info[1];
 	
-	# Extract the archive to the universal addons folder
+	# Extract the archive
 	rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/.download/extracted_files");
 	
 	# Locate the moduleloader.pm
