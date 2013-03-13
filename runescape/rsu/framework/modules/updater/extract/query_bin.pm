@@ -90,7 +90,7 @@ sub fetch
 	rsu::extract::archive::extract("$clientdir/.download/$name.tar.gz", "$clientdir/.download/extracted_binary");
 				
 	# Locate the binary
-	my @binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name$");
+	my @binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name\$");
 				
 	# Copy the binary
 	rsu::files::copy::print_cp($binary[0],"$clientdir/rsu/bin/$name");
