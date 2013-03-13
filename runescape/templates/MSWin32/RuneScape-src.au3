@@ -11,10 +11,11 @@
 #include <GUIConstantsEx.au3>
 #include <ProgressConstants.au3>
 #include <WindowsConstants.au3>
-#NoTrayIcon
+#include <_Zip.au3>
 
 ; Url of the always up to date exe file
-$url = "https://raw.github.com/HikariKnight/rsu-launcher/Win32/rsu-query.exe"
+$url = "https://github.com/HikariKnight/rsu-launcher/archive/rsu-query-MSWin32.zip"
+
 
 ; If the rsu-query.exe exists
 If FileExists(@ScriptDir & "\rsu\rsu-query.exe") Then
@@ -55,7 +56,7 @@ func do_update($text)
 	$downsize = InetGetSize($url)
 
 	; Location and name of file when downloaded
-	$filename = @ScriptDir & '\rsu\rsu-query.exe'
+	$filename = @ScriptDir & '\rsu-query.zip'
 
 	; Downloads the file containing the windows files
 	$dl = inetget($url, $filename, 1, 1)
@@ -74,4 +75,6 @@ func do_update($text)
 
 	; Wait 10 milliseconds
 	sleep(10)
+
+	_Zip_Unzip($filename, "rsu-launcher-rsu-query-MSWin32\rsu-query.exe", @ScriptDir & '\rsu', 17)
 EndFunc
