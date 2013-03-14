@@ -656,7 +656,7 @@
                                                         <property name="gripper">0</property>
                                                         <property name="hidden">0</property>
                                                         <property name="id">wxID_ANY</property>
-                                                        <property name="label">All addons that have added their entry to the updater will be listed here&#x0A;</property>
+                                                        <property name="label">All addons that have added their entry to the updater will be listed here.&#x0A;NOTE: The launcher must be restarted to detect new addons!&#x0A;</property>
                                                         <property name="max_size"></property>
                                                         <property name="maximize_button">0</property>
                                                         <property name="maximum_size"></property>
@@ -713,7 +713,7 @@
                                                     <property name="proportion">1</property>
                                                     <object class="wxStaticBoxSizer" expanded="1">
                                                         <property name="id">wxID_ANY</property>
-                                                        <property name="label">What addon do you want to download/update?</property>
+                                                        <property name="label">Which addon do you want to download/update?</property>
                                                         <property name="minimum_size"></property>
                                                         <property name="name">addonupdater</property>
                                                         <property name="orient">wxVERTICAL</property>

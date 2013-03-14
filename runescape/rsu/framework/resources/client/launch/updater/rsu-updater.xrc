@@ -79,7 +79,7 @@
 										<border>5</border>
 										<object class="wxStaticText" name="addonnotice">
 											<style>wxALIGN_CENTRE</style>
-											<label>All addons that have added their entry to the updater will be listed here\n</label>
+											<label>All addons that have added their entry to the updater will be listed here.\nNOTE: The launcher must be restarted to detect new addons!\n</label>
 											<wrap>-1</wrap>
 										</object>
 									</object>
@@ -89,7 +89,7 @@
 										<border>5</border>
 										<object class="wxStaticBoxSizer">
 											<orient>wxVERTICAL</orient>
-											<label>What addon do you want to download/update?</label>
+											<label>Which addon do you want to download/update?</label>
 											<object class="sizeritem">
 												<option>1</option>
 												<flag>wxEXPAND | wxALL</flag>
