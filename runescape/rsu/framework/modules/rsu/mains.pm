@@ -225,7 +225,11 @@ sub windows_main
 	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which i dont know why appears
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
-	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share/img 2>&1");
+	# Split the clientdir path into sections so we can get the parent folder name (so we can get a window icon)
+	my @parentfolder = split /(\\|\/)/, $rsu_data->clientfolder;
+	
+	# Run the jar file
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
 }
 
 #
@@ -247,7 +251,7 @@ sub checkcompabilitymode
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
 		# Launch client through wine
-		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share/img && exit\"";
+		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\rsu\\\\3rdParty\\\\Win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share/img && exit\"";
 		
 		# Once the client is closed we need to do some cleanup (bug when running commands through shell to wine cmd
 		# Make a variable to contain the pids of cmd (from wine)
