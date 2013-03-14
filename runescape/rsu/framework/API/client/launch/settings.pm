@@ -3,6 +3,9 @@ package client::launch::settings;
 # Be strict to avoid messy code
 use strict;
 
+# Use the File::Path module so we can make and remove paths
+use File::Path qw(make_path remove_tree);
+
 # Use FindBin module to get script directory
 use FindBin;
 
