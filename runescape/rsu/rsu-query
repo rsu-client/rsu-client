@@ -23,8 +23,10 @@ my $scriptname = $FindBin::Script;
 # Detect the current OS
 my $OS = "$^O";
 
-# URL for the maclibs download
-my $maclib_url = "https://dl.dropbox.com/u/11631899/opensource/Perl/rsu-api/bin/darwin.tar.gz";
+# Add the rsu module paths (so we can use parts of the api if we need to)
+unshift @INC, "$cwd/framework/API";
+unshift @INC, "$cwd/framework/modules";
+unshift @INC, "$cwd/framework/Perl5lib";
 	
 # run the script
 main();
@@ -78,6 +80,12 @@ sub main
 			# Open the bin directory
 			opendir(my $bindir, "$cwd/bin");
 			
+			# Make a variable that tells if wx is loaded or not (by default it should be installed)
+			my $wxloaded = 1;
+			
+			# Test if Wx can be loaded and put $wxloaded to 0 if it fails
+			eval "use Wx"; $wxloaded = 0 if $@;
+			
 			# Make a variable to see if binary launched
 			my $binlaunched = 0;
 			
@@ -97,15 +105,22 @@ sub main
 			# If binlaunched is 0
 			if ($binlaunched =~ /^0$/)
 			{
-				# Add the client launcher api call to the parameters
-				push(@ARGV, "client.launch.launcher");
+				# If wx is loaded
+				if ($wxloaded eq '1')
+				{
+					# Add the client launcher api call to the parameters
+					push(@ARGV, "client.launch.launcher");
+				}
+				# Else add the parameters to just run runescape
+				else
+				{
+					# Add the runescape launch api call to the parameters
+					push(@ARGV, "client.launch.runescape");
+				}
 				
 				# Launch the fallback mode
 				fallbackmode();
 			}
-			
-			# Launch the universal script for the launcher
-			system "";
 		}
 		else
 		{
@@ -140,7 +155,7 @@ sub main
 	elsif($OS =~ /darwin/)
 	{
 		# Run a check to see if the mac libraries are installed
-		#checkformaclibs();
+		checkformaclibs();
 		
 		# Launch the launcher for mac osx
 		system "$cwd/bin/rsu-query-darwin @ARGV";
@@ -148,6 +163,29 @@ sub main
 	# Else
 	else
 	{
+		# If no arguments are passed
+		if ("@ARGV" eq '')
+		{
+			# Make a variable that tells if wx is loaded or not (by default it should be installed)
+			my $wxloaded = 1;
+			
+			# Test if Wx can be loaded and put $wxloaded to 0 if it fails
+			eval "use Wx"; $wxloaded = 0 if $@;
+			
+			# If wx is loaded
+			if ($wxloaded eq '1')
+			{
+				# Add the client launcher api call to the parameters
+				push(@ARGV, "client.launch.launcher");
+			}
+			# Else add the parameters to just run runescape
+			else
+			{
+				# Add the runescape launch api call to the parameters
+				push(@ARGV, "client.launch.runescape");
+			}
+		}
+		
 		# Run in fallback mode
 		fallbackmode();
 	}
@@ -157,10 +195,13 @@ sub main
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub fetchmaclibs
+sub fetchbinary
 {
-	# Download the perl bundle containing the libraries and extract the archive inside the modules folder
-	system "cd \"$cwd/modules\" && curl -o \"$cwd/modules/darwin.tar.gz\" $maclib_url && tar -zxvf \"$cwd/modules/darwin.tar.gz\" && rm \"$cwd/modules/darwin.tar.gz\"";
+	# Require the query_bin module
+	require updater::extract::query_bin;
+	
+	# Download and extract the rsu-query binary
+	updater::extract::query_bin::update(1);
 }
 
 #
@@ -170,29 +211,37 @@ sub fetchmaclibs
 sub checkformaclibs
 {
 	# Make a variable to contain the directory list
-	my $maclibs;
+	my @maclibs;
+	
+	# Require the files grep module
+	require rsu::files::grep;
+	
+	# Require the query_bin module
+	require updater::extract::query_bin;
 	
 	if ($OS =~ /darwin/)
 	{
-		# Get a list of files in the client directory
-		$maclibs = `ls "$cwd/modules"`;
+		# Check if rsu-query-darwin is installed
+		@maclibs = rsu::files::grep::dirgrep("$cwd/bin");
 	}
 	
 	# If we are running on darwin/MacOSX and the darwin folder does not exist
-	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
+	if ($OS =~ /darwin/ && "@maclibs" !~ /rsu-query-darwin/)
 	{
 		# Display a message prompting the user to download an archive file containing the rsu-settings_mac loader(self contained minimal wxperl) and the wxWidgets libraries.
-		print "The rsu-query requires extra libraries on MacOSX
-(because apple broke their own in 10.5 and up)
-So i have packaged a custom loader with a working version of wxWidgets
-for use by this script to save you 1 - 2 hours of your life
-compiling it yourself.
+		print "The rsu-query a working version of wxperl for MacOSX
+I would have used the one on the system if Apple did not break it in 10.5
+and not even try to fix it! So I have packaged a custom loader with
+a working version of wxperl for use by this script to save you
+1 - 2 hours of your life compiling it yourself.
+
+The download is on around 15mb
 
 NOTE: If you want the sourcecode for the loader,
-go to $cwd/modules/$OS/rsu-launcher/rsu-launcher-$OS
-and add .zip behind the \"rsu-launcher-$OS\" and extract the archive.
+go to $cwd/bin/
+and add .zip behind the \"rsu-query-$OS\" and extract the archive.
 
-Is it ok for me to download these libraries into the client directory?
+Is it ok for me to download this file and store it in $cwd/bin?
 Answer with yes or no (default = yes):";
 
 		# Wait for users answer
@@ -206,7 +255,7 @@ Answer with yes or no (default = yes):";
 		}
 		else
 		{
-			fetchmaclibs();
+			fetchbinary();
 		}
 	}
 }
