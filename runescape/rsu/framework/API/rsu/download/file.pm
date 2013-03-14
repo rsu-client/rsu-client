@@ -60,7 +60,7 @@ else
 	my $location = "$clientdir/.download";
 	
 	# If a 2nd parameter is passed
-	if ($ARGV[2] ne '')
+	if (defined $ARGV[2] && $ARGV[2] ne '')
 	{
 		# If the parameter starts with a full path or variable
 		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/)/i)
