@@ -136,7 +136,7 @@ sub fetch
 	my @binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name\$");
 				
 	# Copy the binary
-	rsu::files::copy::print_cp($binary[0],"$clientdir/rsu/bin/$name");
+	rsu::files::copy::print_cp($binary[0],"$cwd/rsu/bin/$name");
 	
 	# If $nogui = 1 then
 	if ($nogui eq '1')
