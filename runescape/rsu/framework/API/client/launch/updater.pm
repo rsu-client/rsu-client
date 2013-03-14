@@ -409,7 +409,7 @@ sub update_clicked
 		}
 		
 		# Show a message that we are done
-		Wx::MessageBox("jagexappletviewer.jar should now be the newest version.", "Done updating jagexappletviewer");
+		Wx::MessageBox("jagexappletviewer.jar should now be the newest version.", "Done updating jagexappletviewer", wxOK, $self);
 	}
 	# Else if the caller was the api button
 	elsif($caller =~ /^api$/)
