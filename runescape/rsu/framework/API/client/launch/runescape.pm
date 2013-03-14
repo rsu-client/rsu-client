@@ -144,7 +144,7 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	if ("@localcheck" =~ /$clientdir\/share\/runescape\.prm/)
 	{
 		# Copy the example file to clientdir as runescape.prm
-		rsu::files::copy::print_cp($rsu_data->clientdir."/share/runescape.prm", $rsu_data->clientdir."/share/prms/runescape.prm");
+		rsu::files::copy::print_mv($rsu_data->clientdir."/share/runescape.prm", $rsu_data->clientdir."/share/prms/runescape.prm");
 		
 		# Add file to the localcheck
 		push(@localcheck, "$clientdir\/share\/prms\/runescape.prm");
@@ -153,7 +153,7 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	if ("@localcheck" =~ /$clientdir\/share\/oldschool\.prm/)
 	{
 		# Copy the oldschool.prm file to clientdir
-		rsu::files::copy::print_cp($rsu_data->clientdir."/share/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
+		rsu::files::copy::print_mv($rsu_data->clientdir."/share/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
 		
 		# Add file to the localcheck
 		push(@localcheck, "$clientdir\/share\/prms\/oldschool.prm");
@@ -171,10 +171,10 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 		rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
 	}
 	# If settings.conf exists in the old directory format
-	if ("@localcheck" !~ /$clientdir\/share\/settings\.conf/)
+	if ("@localcheck" =~ /$clientdir\/share\/settings\.conf/)
 	{
 		# Copy the oldschool.prm file to clientdir
-		rsu::files::copy::print_cp($rsu_data->clientdir."/share/settings.conf", $rsu_data->clientdir."/share/configs/settings.conf");
+		rsu::files::copy::print_mv($rsu_data->clientdir."/share/settings.conf", $rsu_data->clientdir."/share/configs/settings.conf");
 	}
 }
 
