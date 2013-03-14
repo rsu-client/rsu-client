@@ -107,9 +107,6 @@ require rsu::files::grep;
 # Require the files copy module
 require rsu::files::copy;
 
-# Require the download file module
-require updater::download::file;
-
 # Require the extract query_bin module
 require updater::extract::query_bin;
 
@@ -401,13 +398,13 @@ sub update_clicked
 		# If we are on windows
 		if ($OS =~ /MSWin32/)
 		{
-			# Launch the client downloader
+			# Launch the client downloader in a new process for extra resources for this task
 			system ("$cwd/rsu/rsu-query.exe rsu.download.client $jardir $caller");
 		}
 		# Else we are on a unix platform
 		else
 		{
-			# Launch the client downloader
+			# Launch the client downloader in a new process for extra resources for this task
 			system ("$cwd/rsu/rsu-query rsu.download.client $jardir $caller");
 		}
 		
@@ -417,14 +414,20 @@ sub update_clicked
 	# Else if the caller was the api button
 	elsif($caller =~ /^api$/)
 	{
+		# Check if binary is installed and update it
+		updater::extract::query_bin::update(0);
+		
 		# Get the download link
-		my $callerconfig = rsu::files::IO::readconf("api_button", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)", "updater.conf", "$resourcedir/configs");
+		my $callerconfig = rsu::files::IO::readconf("api_button", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)", "buttons.conf", "$resourcedir/configs");
 		
 		# Split the config
 		my @callerdata = split /;/, $callerconfig;
 		
-		# Download the api
+		# Download the api in a new process
 		system("$clientdir/rsu/rsu-query rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		
+		# Intended function, however can only be used once per script, kept incase i manage to fix the problem
+		#updater::download::file::from("$callerdata[1]", "$clientdir/.download/rsu-api-latest.tar.gz");
 		
 		# Extract the api
 		rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/");
@@ -438,11 +441,8 @@ sub update_clicked
 		# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
 		rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape", "$clientdir", 0);
 		
-		# Check if binary is installed and update it
-		updater::extract::query_bin::update();
-		
 		# Show a message that we are done
-		Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api");
+		Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api", wxOK, $self);
 	}
 	
 	# Remove the update directory
@@ -475,7 +475,10 @@ sub update_addon_clicked
 	# Split the config into sections by ;
 	my @addon_info = split /;/, $config;
 	
-	# If we are on windows
+	# Make the download directory
+	make_path("$clientdir/.download");
+	
+	## If we are on windows
 	if ($OS =~ /MSWin32/)
 	{
 		# Download the archive file
@@ -627,7 +630,5 @@ package main;
 
 my $app = application->new;
 $app->MainLoop;
-
-
 
 1;
