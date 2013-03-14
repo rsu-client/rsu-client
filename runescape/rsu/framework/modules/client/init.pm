@@ -10,6 +10,7 @@ package client::init;
 	require rsu::mains;
 	require rsu::files::clientdir;
 	require client::env;
+	require rsu::files::copy;
 	require rsu::files::dirs;
 	require rsu::files::grep;
 
