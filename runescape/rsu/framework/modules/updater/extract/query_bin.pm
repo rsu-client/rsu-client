@@ -1,7 +1,16 @@
 package updater::extract::query_bin;
+
+# Use the Cwd module so we can get the current working directory
+use Cwd;
+
+# Get the cwd
+my $cwd = getcwd;
 	
 # Include Config module for checking system values
 use Config;
+
+# Use the File::Path module so we can make and remove paths
+use File::Path qw(make_path remove_tree);
 
 # Require the files grep module
 require rsu::files::grep;
@@ -105,13 +114,16 @@ sub fetch
 		# Set $nogui to 1 so that we do not have to rely on a gui
 		$nogui = $install;
 		
+		# Make the download directory
+		make_path("$clientdir/.download");
+		
 		# Download the archive file containing the binary
 		updater::download::file::from("https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz", "$clientdir/.download/$name-latest.tar.gz", $nogui);
 	}
 	else
 	{
 		# Download the archive file containing the new binary in a new process
-		system("\"$clientdir/rsu/rsu-query\" rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz \"$clientdir/.download\"");
+		system("\"$cwd/rsu/rsu-query\" rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz \"$clientdir/.download\"");
 	}
 				
 	# Extract the archive
@@ -125,12 +137,18 @@ sub fetch
 				
 	# Copy the binary
 	rsu::files::copy::print_cp($binary[0],"$clientdir/rsu/bin/$name");
+	
+	# If $nogui = 1 then
+	if ($nogui eq '1')
+	{
+		# Remove the download directory
+		remove_tree("$clientdir/.download");
+	}
+	
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
-
-
 
 1; 

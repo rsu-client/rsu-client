@@ -424,7 +424,7 @@ sub update_clicked
 		my @callerdata = split /;/, $callerconfig;
 		
 		# Download the api in a new process
-		system("$clientdir/rsu/rsu-query rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		system("$cwd/rsu/rsu-query rsu.download.file $callerdata[1] \"$clientdir/.download\"");
 		
 		# Intended function, however can only be used once per script, kept incase i manage to fix the problem
 		#updater::download::file::from("$callerdata[1]", "$clientdir/.download/rsu-api-latest.tar.gz");
