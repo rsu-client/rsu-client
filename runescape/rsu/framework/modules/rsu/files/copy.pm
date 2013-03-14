@@ -1,7 +1,7 @@
 package rsu::files::copy;
 
 # Use the File::Copy module
-use File::Copy qw(cp);
+use File::Copy qw(cp mv);
 
 # Use the recursive version of copy too
 use File::Copy::Recursive qw(dircopy dirmove);
@@ -40,7 +40,7 @@ sub print_cpr
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub print_mv
+sub print_mvr
 {
 	# Get the passed data
 	my ($from,$to,$replace) = @_;
@@ -93,6 +93,34 @@ sub print_cp
 	
 	# Copy file $from $to
 	cp("$from", "$to");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub print_mv
+{
+	# Get the passed data
+	my ($from,$to) = @_;
+	
+	# Make a variable that we will remove the filename from
+	my $dir = $to;
+	
+	# Split the path by /
+	my @filename = split /\//, $dir;
+	
+	# Remove the filename from the $dir
+	$dir =~ s/\/$filename[-1]$//;
+	
+	# Make the path to where we copy the file
+	make_path($dir);
+	
+	# Tell user what we are doing
+	print "mv: \"$from\" -> \"$to\"\n";
+	
+	# Copy file $from $to
+	mv("$from", "$to");
 }
 
 1; 
