@@ -126,6 +126,9 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	# Make the client folders
 	make_path($rsu_data->clientdir."/bin", $rsu_data->clientdir."/share/img", $rsu_data->clientdir."/share/configs", $rsu_data->clientdir."/share/prms");
 	
+	# Tell user what we are doing
+	print "Symlinking icon and updating examples\n\n";
+	
 	# Symlink or Copy needed resources to the clientdir
 	system "ln -sf \"".$rsu_data->cwd."/share/img/jagexappletviewer.png\" \"".$rsu_data->clientdir."/share/img/jagexappletviewer.png\"";
 	
@@ -140,42 +143,56 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	my @localcheck = rsu::files::dirs::rlist("$clientdir/share");
 	#my $prmfile_exists = `ls -la $clientdir/share|grep -P \"runescape.prm\$\"`;
 	
-	# If runescape.prm exists in old directory format
-	if ("@localcheck" =~ /$clientdir\/share\/runescape\.prm/)
+	# Tell what we are doing
+	print "Checking if any known files are still using the old folder structure\n";
+	
+	# For each value in the @localcheck array
+	foreach my $checkfile (@localcheck)
 	{
-		# Copy the example file to clientdir as runescape.prm
-		rsu::files::copy::print_mv($rsu_data->clientdir."/share/runescape.prm", $rsu_data->clientdir."/share/prms/runescape.prm");
-		
-		# Add file to the localcheck
-		push(@localcheck, "$clientdir\/share\/prms\/runescape.prm");
+		# If runescape.prm exists in old directory format
+		if ($checkfile =~ /$clientdir\/share\/runescape\.prm$/)
+		{
+			# Copy the example file to clientdir as runescape.prm
+			rsu::files::copy::print_mv($rsu_data->clientdir."/share/runescape.prm", $rsu_data->clientdir."/share/prms/runescape.prm");
+		}
+		# If oldschool.prm exists in old directory format
+		if ($checkfile =~ /$clientdir\/share\/oldschool\.prm$/)
+		{
+			# Copy the oldschool.prm file to clientdir
+			rsu::files::copy::print_mv($rsu_data->clientdir."/share/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
+		}
+		# If settings.conf exists in the old directory format
+		if ($checkfile =~ /$clientdir\/share\/settings\.conf$/)
+		{
+			# Copy the oldschool.prm file to clientdir
+			rsu::files::copy::print_mv($rsu_data->clientdir."/share/settings.conf", $rsu_data->clientdir."/share/configs/settings.conf");
+		}
 	}
-	# If oldschool.prm exists in old directory format
-	if ("@localcheck" =~ /$clientdir\/share\/oldschool\.prm/)
-	{
-		# Copy the oldschool.prm file to clientdir
-		rsu::files::copy::print_mv($rsu_data->clientdir."/share/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
-		
-		# Add file to the localcheck
-		push(@localcheck, "$clientdir\/share\/prms\/oldschool.prm");
-	}
+	
+	# Tell user what we are doing
+	print "\nChecking if any default configurations are missing\n";
+	
 	# If runescape.prm do not exist
-	if ("@localcheck" !~ /$clientdir\/share\/prms\/runescape\.prm/)
+	if (!-e "$clientdir/share/prms/runescape.prm")
 	{
 		# Copy the example file to clientdir as runescape.prm
 		rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/runescape.prm.example", $rsu_data->clientdir."/share/prms/runescape.prm");
 	}
 	# If oldschool.prm do not exist
-	if ("@localcheck" !~ /$clientdir\/share\/prms\/oldschool\.prm/)
+	if (!-e "$clientdir/share/prms/oldschool.prm")
 	{
 		# Copy the oldschool.prm file to clientdir
 		rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/oldschool.prm", $rsu_data->clientdir."/share/prms/oldschool.prm");
 	}
-	# If settings.conf exists in the old directory format
-	if ("@localcheck" =~ /$clientdir\/share\/settings\.conf/)
+	# If addons_updater.conf do not exist
+	if (!-e "$clientdir/share/configs/addons_updater.conf")
 	{
 		# Copy the oldschool.prm file to clientdir
-		rsu::files::copy::print_mv($rsu_data->clientdir."/share/settings.conf", $rsu_data->clientdir."/share/configs/settings.conf");
+		rsu::files::copy::print_cp($rsu_data->cwd."/share/configs/addons_updater.conf", $rsu_data->clientdir."/share/configs/addons_updater.conf");
 	}
+	
+	# Add a newline for tidyness
+	print "\n";
 }
 
 # Due to legal reasons the file jagexappletviewer.jar is no longer included by default so we need to check if it exists
