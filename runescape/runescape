@@ -20,6 +20,12 @@ if ($scriptname =~ /^runescape$/ && "@ARGV" eq '')
 	# Try launch the launcher (if not it will fallback to starting runescape directly)
 	system "$scriptdir/rsu/rsu-query";
 }
+# Else if scriptname is runescape and parameters are passed and the parameters do not start with - then
+elsif($scriptname =~ /^runescape$/ && "@ARGV" ne '' && "@ARGV" !~ /^-/)
+{
+	# Do an rsu-query
+	system "$scriptdir/rsu/rsu-query @ARGV";
+}
 # Else
 else
 {
