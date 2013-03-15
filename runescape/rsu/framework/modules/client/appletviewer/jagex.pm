@@ -8,18 +8,9 @@ package client::appletviewer::jagex;
 		# Pass the data to some variables that can be used in commands
 		my $cwd = $rsu_data->cwd;
 		my $clientdir = $rsu_data->clientdir;
-		
-		# Require the grep module
-		require rsu::files::grep;
-		
-		# Run a dirgrep query to see if jagexappletviewer.jar exists
-		my @jarfileexistcheck = rsu::files::grep::dirgrep("$clientdir/bin", "^jagexappletviewer.jar\$");
-
-		# Transfer the result to a new variable
-		my $jarcheckresult = "@jarfileexistcheck";
 
 		# If jagexappletviewer.jar do not exist then
-		if ($jarcheckresult !~ /jagexappletviewer.jar/)
+		if (!-e "$clientdir/bin/jagexappletviewer.jar")
 		{
 			# If we are on windows
 			if ($rsu_data->OS =~ /MSWin32/)
@@ -32,7 +23,7 @@ package client::appletviewer::jagex;
 			else
 			{
 				# Run the update-runescape-client inside this script process
-				require client::launch::updater; #"$cwd/update-runescape-client";
+				system "\"$cwd/rsu/rsu-query\" client.launch.updater";
 			}
 		}
 	}
