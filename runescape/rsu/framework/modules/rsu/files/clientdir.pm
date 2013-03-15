@@ -8,6 +8,12 @@ sub getclientdir
 	# Get the current working directory
 	my $cwd = getcwd;
 	
+	# Use the FileBin module to get the running scripts directory
+	use FindBin;
+	
+	# Get the script directory
+	my $scriptdir = $FindBin::RealBin;
+	
 	# Require the module that lets us get the users home folder
 	require client::env;
 	
@@ -18,7 +24,7 @@ sub getclientdir
 	my $clientdir = $cwd;
 	
 	# If this script have been installed systemwide
-	if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
+	if ($scriptdir =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	{
 		# Change $clientdir to ~/.config/runescape
 		$clientdir = "$HOME/.config/runescape";
