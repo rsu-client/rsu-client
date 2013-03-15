@@ -21,9 +21,6 @@ want it in the StartMenu.\n"
 if $OS =~ /(MSWin32)/;
 # End of the unsupported platform check
 
-# URL for the maclibs download
-my $maclib_url = "https://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/modules/darwin.tar.gz";
-
 # Check if we are root 
 my $isroot = `whoami`;
 
@@ -158,7 +155,7 @@ sub make_osx_app
 	print "\nMaking symlinks to the runescape script and RSU icon\n";
 	
 	# Make symlinks to the RSU icon and the runescape script
-	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s rsu-launcher script && ln -s share/runescape.icns runescape.icns";
+	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s rsu/rsu-query script && ln -s share/img/runescape.icns runescape.icns";
 	
 	# Tell user what we are doing
 	print "\nCreating a symlink to Resource folder so that the client files are easily accessable.\n";
@@ -182,11 +179,8 @@ sub make_osx_app
 
 sub fetchmacbin
 {
-	# Require the query_bin module
-	require updater::extract::query_bin;
-	
 	# Download and extract the rsu-query binary
-	updater::extract::query_bin::update(1);
+	system "$cwd/rsu/bin/rsu-query-unix install_binary";
 }
 
 #
