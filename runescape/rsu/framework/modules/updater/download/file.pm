@@ -7,6 +7,8 @@ sub from
 	
 	# Try and load Wx
 	eval "use Wx";
+	# Try to use functions from perl 5.012
+	eval "use 5.012";
 	
 	# Remove warnings as the dependent modules of LWP outputs quite a few which can be ignored
 	no strict;
