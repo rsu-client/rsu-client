@@ -462,7 +462,8 @@ sub fetch_rssnews
 		else
 		{
 			# Fix the & on unix
-			$rssDescription =~ s/(&amp;)/&&&&&&&&/gi;
+			$rssDescription =~ s/(&amp;)/&&&&&&&&/gi if "@INC" !~ /(par-|\s{1,1}CODE\()/;
+			$rssDescription =~ s/(&amp;)/&&/gi if "@INC" =~ /(par-|\s{1,1}CODE\()/;
 		}
 		
 		# Make a date label for the news
