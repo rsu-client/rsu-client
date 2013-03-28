@@ -109,19 +109,25 @@ sub wxsysupdate_progressbar
 	my ($data, $dialog, $fetchcommand) = @_;
 	
 	# Get how many % is downloaded
-	$data =~ s/^ *[0-9]*K[ .]*([0-9]*)%.*\n/$1/;
+	$data =~ s/^ *[0-9]*K[ .]*([0-9]*%).*\n/$1/;
+
+	# Make a variable that will contain only the percentage numbers
+	my $percent = $data;
+
+	# Remove the % sign
+	$percent =~ s/%$//;
 	
-	# Update the title
-	$dialog->SetTitle("Downloading [$data%]") if $data =~ /^[0-9]/;
+	# Update the title if $data ends with %
+	$dialog->SetTitle("Downloading [$percent%]") if $data =~ /%$/;
 	
 	# Make a variable that contains status of the download
 	my $status;
 	
-	# Update the progressbar and get the status if the $data is a numeric value
-	$status = $dialog->Update($data) if $data =~ /^[0-9]/;
+	# Update the progressbar and get the status if $data ends with %
+	$status = $dialog->Update($percent) if $data =~ /%$/;
 	
 	# If the user aborted the download (then there will not be anything in continue
-	if (!$status)
+	if (!$status && $data =~ /%$/)
 	{
 		# Set aborted to 1
 		$abort = 1;
