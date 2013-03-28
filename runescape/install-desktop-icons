@@ -55,6 +55,12 @@ else
 
 sub install_desktop_files
 {
+	# Make a variable which indicates if Wx is installed
+	my $wxloaded = 1;
+
+	# Test to see if Wx can be used and set $wxloaded to 0 if we cannot use Wx
+	eval "use Wx"; $wxloaded = 0 if $@;
+	
 	# Prepare an uninstall header
 	system "echo \"#!/bin/sh\" > /tmp/$settings->{uninstaller}";
 	
@@ -122,6 +128,27 @@ sub install_desktop_files
 		
 		# Increase the counter by 1
 		$desktopcounter += 1;
+	}
+	
+	if ($isroot =~ /root/)
+	{
+		# If Wx is able to be loaded
+		if ($wxloaded eq '1')
+		{
+			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/oldschool-runescape.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/runescape-update-client.desktop';
+		}
+	}
+	else
+	{
+		# If Wx is able to be loaded
+		if ($wxloaded eq '1')
+		{
+			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/oldschool-runescape.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-update-client.desktop';
+		}
 	}
 	
 	# Copy the uninstallscript to $cwd and make it executable
