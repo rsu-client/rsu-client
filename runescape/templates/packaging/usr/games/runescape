@@ -3,33 +3,41 @@
 # Use the FindBin module so we can get the scriptname
 use FindBin;
 
-# Open the /opt directory
-opendir(my $opt, "/opt");
+# Get the script name
+my $scriptname = $FindBin::Script;
 
-# While there is unprocessed contents in /opt
-while(readdir $opt)
+# Remove legacy names (and rsu-query)
+$scriptname =~ s/rsu-(|query)//;
+$scriptname =~ s/-runescape-client/r/;
+
+# If the runescape folder is found
+if (-d "/opt/runescape")
 {
-	# If the current folder is not runescape or extras.ubuntu.com then go to next loop
-	next if $_ !~ /^(runescape|extras.ubuntu.com)$/;
-	
-	# Put $_ to a variable so we dont lose it
-	my $dir = $_;
-	
-	# If the runescape folder is found
-	if ($dir =~ /^runescape$/ && -d "/opt/runescape")
+	# If scriptname is runescape and no parameters are passed
+	if ($sciptname =~ /^runescape$/ && "@ARGV" eq '')
 	{
-		# Tell what we are doing
-		print "Executing\n/opt/runescape/".$FindBin::Script." @ARGV\n";
-		
-		# Run the script the user is calling
-		system "/opt/runescape/".$FindBin::Script." @ARGV";
+		# Run the rsu launcher or fall back to launching runescape directly
+		system "/opt/runescape/rsu/rsu-query @ARGV";
 	}
-	elsif ($dir =~ /^extras\.ubuntu\.com$/ && -d "/opt/extras.ubuntu.com/rsu-client")
+	# Else
+	else
 	{
-		# Tell what we are doing
-		print "Executing\n/opt/extras.ubuntu.com/rsu-client/".$FindBin::Script." @ARGV\n";
-		
-		# Run the script the user is calling
-		system "/opt/extras.ubuntu.com/rsu-client/".$FindBin::Script." @ARGV";
-	}	
+		# Run the script the user is calling through rsu-query
+		system "/opt/runescape/rsu/rsu-query client.launch.$scriptname @ARGV";
+	}
+}
+elsif (-d "/opt/extras.ubuntu.com/rsu-client")
+{
+	# If scriptname is runescape and no parameters are passed
+	if ($sciptname =~ /^runescape$/ && "@ARGV" eq '')
+	{
+		# Run the rsu launcher or fall back to launching runescape directly
+		system "/opt/extras.ubuntu.com/rsu-client/rsu/rsu-query @ARGV";
+	}
+	# Else
+	else
+	{
+		# Run the script the user is calling through rsu-query
+		system "/opt/extras.ubuntu.com/rsu-client/rsu/rsu-query client.launch.$scriptname @ARGV";
+	}
 }

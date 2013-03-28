@@ -1,3 +1,0 @@
-Place the files of the command line version of 7-zip for
-windows in this directory to be able to use the client updater
-on windows!

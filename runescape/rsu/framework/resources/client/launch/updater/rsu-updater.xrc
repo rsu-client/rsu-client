@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxFrame" name="mainwindow">
+		<style>wxCAPTION|wxCLOSE_BOX|wxTAB_TRAVERSAL</style>
+		<size>597,356</size>
+		<title>Client Updater</title>
+		<centered>1</centered>
+		<aui_managed>0</aui_managed>
+		<object class="wxPanel" name="mainpanel">
+			<style>wxTAB_TRAVERSAL</style>
+			<object class="wxGridSizer">
+				<rows>0</rows>
+				<cols>1</cols>
+				<vgap>0</vgap>
+				<hgap>0</hgap>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxEXPAND | wxALL</flag>
+					<border>5</border>
+					<object class="wxNotebook" name="m_notebook1">
+						<object class="notebookpage">
+							<label>Client Updater</label>
+							<selected>0</selected>
+							<object class="wxPanel" name="clientpage">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxFlexGridSizer">
+									<rows>2</rows>
+									<cols>1</cols>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+									<growablecols>0</growablecols>
+									<growablerows>1</growablerows>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER|wxALL|wxBOTTOM</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="legalnote">
+											<style>wxALIGN_CENTRE</style>
+											<label>Due to Legal Reasons the file jagexappletviewer.jar is not\navailable/downloadable in certain locations. For this client\nto work you must be able to download the\nOfficial RuneScape Clients so we can extract the jagexappletviewer.jar!\n</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>What do you want to do?</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND | wxALL</flag>
+												<border>5</border>
+												<object class="wxScrolledWindow" name="scrolledlist">
+													<style>wxHSCROLL|wxVSCROLL</style>
+													<scrollrate>5,5</scrollrate>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="notebookpage">
+							<label>Addon Updater</label>
+							<selected>0</selected>
+							<object class="wxPanel" name="addonpage">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxFlexGridSizer">
+									<rows>2</rows>
+									<cols>1</cols>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+									<growablecols>0</growablecols>
+									<growablerows>1</growablerows>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER|wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="addonnotice">
+											<style>wxALIGN_CENTRE</style>
+											<label>All addons that have added their entry to the updater will be listed here.\nNOTE: The launcher must be restarted to detect new addons!\n</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>Which addon do you want to download/update?</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND | wxALL</flag>
+												<border>5</border>
+												<object class="wxScrolledWindow" name="addonlist">
+													<style>wxHSCROLL|wxVSCROLL</style>
+													<scrollrate>5,5</scrollrate>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

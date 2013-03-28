@@ -1,3 +1,35 @@
+runescape (4.0.0) precise; urgency=low
+
+  * Rewrote the client into an API/Framework
+  * New Wx based download dialog
+  * Official support for addons! (still needs a gui for adding addons to the updater)
+  * Removed dependency for grep, wget and curl
+  * Improved the speed on deleting the maincache on windows
+  * Changed internal file structure for more organization
+  * Legacy scripts for launching parts of the client (ex: rsu-settings)
+    are provided in this version until version 4.0.2 or 4.0.5
+  * Download progress dialog for windows and mac
+  * Client launcher now uses the runescape news rssfeed so dependency for
+    libwebkitgtk1 is removed
+  * Launcher works on Wx2.8 now
+  * If wxperl is installed, the launcher will start if rsu-query is called
+    without any parameters. If wxperl is not installed, it will start runescape.
+  * Removed dependency for p7zip/7zip on mac and windows (using native tools instead)
+  * Improved the look of the updater.
+  * Fixed memory leak in the client launcher.
+  * Let addons with info.conf at their root add themself to the updater!
+  * Add support for using the download gui with wget and curl
+  * Add support for running the launcher on older versions of perl (proper support for ubuntu10.04+)
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Mon, 28 Jan 2013 09:18:10 +0200
+
+runescape (3.9.10) oneiric; urgency=low
+
+  * Added oldschool.prm by ivan_p however I added it to the changelog hence why
+    I am mentioned below, but credits are given! :)
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Thu, 28 Feb 2013 18:18:10 +0200
+
 runescape (3.9.9) oneiric; urgency=low
 
   * Added support for addons in the rsu-launcher and the rsu-client
