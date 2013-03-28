@@ -15,8 +15,7 @@ sub wxsysdownload
 	if(`ls /usr/bin | grep wget` =~  /wget/)
 	{
 		# Use wget command to fetch files
-		#$fetchcommand = "wget -O";
-		$fetchcommand = "curl -L -# -o";
+		$fetchcommand = "wget -O";
 	}
 	# Else if /usr/bin contains curl
 	elsif(`ls /usr/bin | grep curl` =~  /curl/)
@@ -110,16 +109,16 @@ sub wxsysupdate_progressbar
 	my ($data, $dialog, $fetchcommand) = @_;
 	
 	# Get how many % is downloaded
-	$data =~ s/^ *[0-9]*K[ .]*([0-9]*)%.*\n/$1/ if $fetchcommand =~ /^wget/;
+	$data =~ s/^ *[0-9]*K[ .]*([0-9]*)%.*\n/$1/;
 	
 	# Update the title
-	$dialog->SetTitle("Downloading [$data%]") if $fetchcommand =~ /^wget/;
+	$dialog->SetTitle("Downloading [$data%]") if $data =~ /^[0-9]/;
 	
 	# Make a variable that contains status of the download
 	my $status;
 	
-	# Update the progressbar and get the status depending if we are using wget or curl
-	$status = $dialog->Update($data) if $fetchcommand =~ /^wget/;
+	# Update the progressbar and get the status if the $data is a numeric value
+	$status = $dialog->Update($data) if $data =~ /^[0-9]/;
 	
 	# If the user aborted the download (then there will not be anything in continue
 	if (!$status)
