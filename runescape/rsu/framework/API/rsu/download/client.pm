@@ -76,7 +76,7 @@ else
 	my $url = "http://www.runescape.com/downloads/runescape.msi";
 	
 	# If we are on Mac or we are on linux and dmg is passed
-	if (($OS =~ /darwin/) || ($OS =~ /linux/ && $ARGV[1] =~ /^dmg$/i) || ($OS =~ /linux/ && $ARGV[2] =~ /^dmg$/i))
+	if (($OS =~ /darwin/) || ($OS =~ /linux/ && defined $ARGV[1] && $ARGV[1] =~ /^dmg$/i) || ($OS =~ /linux/ && defined $ARGV[2] && $ARGV[2] =~ /^dmg$/i))
 	{
 		# Download the dmg file instead
 		$url = "http://www.runescape.com/downloads/runescape.dmg";
