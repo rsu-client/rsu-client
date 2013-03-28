@@ -7,12 +7,6 @@ sub sysdownload
 	# Get the passed data
 	my ($url, $downloadto) = @_;
 	
-	# Require the clientdir module
-	require rsu::files::clientdir;
-	
-	# Get the client directory
-	my $clientdir = rsu::files::clientdir::getclientdir();
-	
 	# Make a variable which will contain the download command we will use
 	my $fetchcommand = "wget -O";
 	
