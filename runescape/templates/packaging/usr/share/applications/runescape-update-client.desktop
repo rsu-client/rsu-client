@@ -17,10 +17,10 @@ Comment=Update the runescape client
 Icon=/opt/runescape/share/img/update-runescape.png
 
 # Show terminal?
-Terminal=false
+Terminal=true
 
 # Executable binary file
-Exec=/opt/runescape/update-runescape-client
+Exec=/opt/runescape/rsu/rsu-query rsu.download.client
 
 # Menu cathegory (GTK, Development, IDE, Office, Application,
 # AudioVideo, Audio, Video, AudioVideoEditing, GNOME, Utility, 
