@@ -6,12 +6,12 @@ Version=1.0
 Type=Application
 
 # Name displayed in the menus and on shortcuts
-Name=RuneScape
+Name=RuneScape OldSchool
 # Same as above but for KDE only
-GenericName=RuneScape
+GenericName=RuneScape 2007
 
 # A hint about what the application is
-Comment=The RuneScape Unix Client
+Comment=Play OldSchool RuneScape
 
 # Which icon file to use
 Icon=/opt/runescape/share/img/runescape.png
