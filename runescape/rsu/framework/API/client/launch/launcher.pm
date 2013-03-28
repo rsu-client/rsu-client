@@ -242,22 +242,19 @@ sub set_layout
 	# If we are on linux, darwin/mac or windows (which supports addons)
 	if ($OS =~ /(linux|darwin|MSWin32)/)
 	{
-		# Check whats is inside the modules folder
-		opendir(my $modulefolders, "$clientdir/share");
+		# Check if there is any addons folder inside the clients share folder
+		my @addoncheck = rsu::files::dirgrep("$clientdir/share". "^addons\$");
 		
-		# While there is still content inside the folder
-		while (readdir $modulefolders)
+		# For each file/folder found
+		foreach my $addondir (@addoncheck)
 		{
 			# If the current content is the addons folder
-			if ($_ =~ /^addons$/ && -d "$clientdir/share/$_")
+			if ($addondir =~ /^addons$/ && -d "$clientdir/share/$addondir")
 			{
 				# Add the addons/module page
 				create_addons_page($self);
 			}
 		}
-		
-		# Close the directory to free up memory
-		closedir($modulefolders);
 	}
 	
 	# Set the events
