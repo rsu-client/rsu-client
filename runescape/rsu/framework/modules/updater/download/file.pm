@@ -5,8 +5,8 @@ sub from
 	# Get the passed data
 	my ($url, $location, $nogui) = @_;
 	
-	# Try and load Wx
-	eval "use Wx";
+	# Try and load Wx and set $nogui to 1 if Wx cannot be loaded
+	eval "use Wx"; $nogui = 1 if $@;
 	# Try to use functions from perl 5.012
 	eval "use 5.012";
 	
@@ -17,11 +17,24 @@ sub from
 	# If Wx is not loaded or $nogui is 1 then
 	if (($@) || (defined $nogui && $nogui eq '1'))
 	{
-		# Use the fallback download using LWP and output only to STDOUT
-		require updater::download::sysdload;
+		# If no use of gui is demanded then
+		if (defined $nogui && $nogui eq '1')
+		{
+			# Use the fallback download using LWP and output only to STDOUT
+			require updater::download::sysdload;
 
-		# Run the commands download the file
-		updater::download::sysdload::sysdownload($url,$location);
+			# Run the commands download the file
+			updater::download::sysdload::sysdownload($url,$location);
+		}
+		# Else
+		else
+		{
+			# Use the fallback Wx Download dialog which uses wget or curl
+			require updater::download::wxsysdload;
+
+			# Run the commands download the file
+			updater::download::wxsysdload::wxsysdownload($url,$location);
+		}
 	}
 	# Else if Wx is loaded successfully (no errors reported)
 	else
