@@ -275,7 +275,7 @@ sub set_layout
 	$self->{mainsizer}->Fit($self);
 	
 	# Set default size
-	$self->SetSize(700,450);
+	$self->SetSize(710,450);
 	$self->SetMinSize($self->GetSize);
 	
 	# Set the layout
