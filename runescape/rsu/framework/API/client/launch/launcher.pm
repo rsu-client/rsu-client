@@ -327,22 +327,19 @@ sub create_addons_page
 	# Add the gridsizer to the vertical boxsizer
 	$self->{addonsvertical}->Add($self->{addonscontainer},1,wxEXPAND|wxALL,0);
 	
-	# Open the addons directory
-	opendir(my $addondirs, "$clientdir/share/addons/");
+	# Get the addon directories which are supported by this platform
+	my @addondirs = rsu::files::grep::dirgrep("$clientdir/share/addons/","^(universal|$OS)\$");
 	
-	# While there is still content in the folder
-	while (readdir $addondirs)
+	# For each addon directory found
+	foreach my $addondir (@addondirs)
 	{
 		# If the current content is either named universal or the same as $OS
-		if (($_ =~ /^universal$/ && -d "$clientdir/share/addons/$_") || ($_ =~ /^$OS$/ && -d "$clientdir/share/addons/$_"))
+		if (($addondir =~ /^universal$/ && -d "$clientdir/share/addons/$addondir") || ($addondir =~ /^$OS$/ && -d "$clientdir/share/addons/$addondir"))
 		{
 			# Make the addons buttons
-			make_addon_buttons($self, "$clientdir/share/addons/$_");
+			make_addon_buttons($self, "$clientdir/share/addons/$addondir");
 		}
 	}
-	
-	# Close the directory to free memory
-	closedir($addondirs);
 	
 	# Make sure the layout is displayed properly
 	$self->{addonspage}->SetSizer($self->{addonsvertical});
