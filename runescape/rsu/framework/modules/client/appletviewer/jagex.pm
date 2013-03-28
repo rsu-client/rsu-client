@@ -15,15 +15,14 @@ package client::appletviewer::jagex;
 			# If we are on windows
 			if ($rsu_data->OS =~ /MSWin32/)
 			{
-				# Start the update-runescape-client.exe inside a new cmd window
-				#system "start cmd /c \"$cwd/update-runescape-client.exe\"";
-				system "\"$cwd/rsu/rsu-query.exe\" client.launch.updater";
+				# Download and extract the client
+				system "\"$cwd/rsu/rsu-query.exe\" rsu.download.client";
 			}
 			# Else we are on unix
 			else
 			{
-				# Run the update-runescape-client inside this script process
-				system "\"$cwd/rsu/rsu-query\" client.launch.updater";
+				# Download and extract the client that is best suited for this platform
+				system "\"$cwd/rsu/rsu-query\" rsu.download.client";
 			}
 		}
 	}
