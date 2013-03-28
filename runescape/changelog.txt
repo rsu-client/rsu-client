@@ -18,6 +18,8 @@ runescape (4.0.0) precise; urgency=low
   * Improved the look of the updater.
   * Fixed memory leak in the client launcher.
   * Let addons with info.conf at their root add themself to the updater!
+  * Add support for using the download gui with wget and curl
+  * Add support for running the launcher on older versions of perl (proper support for ubuntu10.04+)
     
  -- HikariKnight <mu.antilag@gmail.com>  Mon, 28 Jan 2013 09:18:10 +0200
 
