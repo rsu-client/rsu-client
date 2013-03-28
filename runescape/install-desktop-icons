@@ -139,7 +139,7 @@ sub install_desktop_files
 		if ($wxloaded eq '1')
 		{
 			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
-			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/oldschool-runescape.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/runescape-oldschool.desktop';
 			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/runescape-update-client.desktop';
 		}
 	}
@@ -149,7 +149,7 @@ sub install_desktop_files
 		if ($wxloaded eq '1')
 		{
 			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
-			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/oldschool-runescape.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-oldschool.desktop';
 			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-update-client.desktop';
 		}
 	}
