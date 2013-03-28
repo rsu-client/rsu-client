@@ -12,6 +12,9 @@ require rsu::files::clientdir;
 # Get the clientdir
 my $clientdir = rsu::files::clientdir::getclientdir();
 
+# Require the files grep module
+require rsu::files::grep;
+
 # Use the files copy module
 require rsu::files::copy;
 
@@ -113,17 +116,24 @@ sub p7zip_msi
 	# Extract the msi using p7zip
 	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y runescape.msi";
 	
-	# Open the directory
-	opendir(my $msi_dir, "$clientdir/.download/extracted_files");
+	# Check for the files we are looking for
+	my @files = rsu::files::grep::dirgrep("$clientdir/.download/extracted_files", "^(rslauncher.cab|JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+");
 	
-	# While there are still stuff we have not gone through in the folder
-	while (readdir $msi_dir)
+	# If rslauncher.cab is found
+	if ("@files" =~ /rslauncher.cab/)
+	{
+		# Extract the rslauncher.cab using p7zip
+		system "cd \"$clientdir/.download/extracted_files\" && 7z e -y rslauncher.cab";
+		
+		# Rerun the dirgrep without the check for rslauncher.cab
+		@files = rsu::files::grep::dirgrep("$clientdir/.download/extracted_files", "^(JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+");
+	}
+	
+	# For each file found by grep
+	foreach my $file (@files)
 	{
 		# Go to next file if the current file is not one we are looking for
-		next if $_ !~ /^(JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+/i;
-		
-		# Place $_ into a variable so we dont lose it
-		my $file = $_;
+		next if $file !~ /^(JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+/i;
 		
 		# If current file is the appletviewer then
 		if ($file =~ /^JagexAppletViewerJarFile/i)
