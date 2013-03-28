@@ -61,6 +61,9 @@ sub install_desktop_files
 	# Test to see if Wx can be used and set $wxloaded to 0 if we cannot use Wx
 	eval "use Wx"; $wxloaded = 0 if $@;
 	
+	# Make the folder we are going to place the files inside
+	system "mkdir -p $homedir/.local/share/applications";
+	
 	# Prepare an uninstall header
 	system "echo \"#!/bin/sh\" > /tmp/$settings->{uninstaller}";
 	
@@ -83,7 +86,7 @@ sub install_desktop_files
 		if ($isroot =~ /root/)
 		{
 			# Replace Icon= with Icon={PATH TO ICONS}
-			$content =~ s/Icon=/Icon=$cwd\/share\//;
+			$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
 			
 			# Replace Exec= with Exec={PATH TO BINARY}
 			$content =~ s/Exec=/Exec=$cwd\//;
@@ -95,7 +98,7 @@ sub install_desktop_files
 		else
 		{
 			# Replace Icon= with Icon={PATH TO ICONS}
-			$content =~ s/Icon=/Icon=$cwd\/share\//;
+			$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
 			
 			# Replace Exec= with Exec={PATH TO BINARY}
 			$content =~ s/Exec=/Exec=$cwd\//;
