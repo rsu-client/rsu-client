@@ -1,4 +1,4 @@
-package updater::download::wxsysdload 
+package updater::download::wxsysdload;
 
 sub wxsysdownload
 {
