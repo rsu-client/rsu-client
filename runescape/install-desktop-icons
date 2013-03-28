@@ -21,11 +21,13 @@ want it in the StartMenu.\n"
 if $OS =~ /(MSWin32)/;
 # End of the unsupported platform check
 
-# URL for the maclibs download
-my $maclib_url = "https://dl.dropbox.com/u/11631899/opensource/Perl/runescape_unix_client/modules/darwin.tar.gz";
-
 # Check if we are root 
-my $isroot = `whoami`; 
+my $isroot = `whoami`;
+
+# Add the rsu module paths (so we can use parts of the api if we need to)
+unshift @INC, "$cwd/framework/API";
+unshift @INC, "$cwd/framework/modules";
+unshift @INC, "$cwd/framework/Perl5lib";
 
 # Settings Start
 my $settings = {
@@ -53,6 +55,15 @@ else
 
 sub install_desktop_files
 {
+	# Make a variable which indicates if Wx is installed
+	my $wxloaded = 1;
+
+	# Test to see if Wx can be used and set $wxloaded to 0 if we cannot use Wx
+	eval "use Wx"; $wxloaded = 0 if $@;
+	
+	# Make the folder we are going to place the files inside
+	system "mkdir -p $homedir/.local/share/applications";
+	
 	# Prepare an uninstall header
 	system "echo \"#!/bin/sh\" > /tmp/$settings->{uninstaller}";
 	
@@ -75,7 +86,7 @@ sub install_desktop_files
 		if ($isroot =~ /root/)
 		{
 			# Replace Icon= with Icon={PATH TO ICONS}
-			$content =~ s/Icon=/Icon=$cwd\/share\//;
+			$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
 			
 			# Replace Exec= with Exec={PATH TO BINARY}
 			$content =~ s/Exec=/Exec=$cwd\//;
@@ -87,7 +98,7 @@ sub install_desktop_files
 		else
 		{
 			# Replace Icon= with Icon={PATH TO ICONS}
-			$content =~ s/Icon=/Icon=$cwd\/share\//;
+			$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
 			
 			# Replace Exec= with Exec={PATH TO BINARY}
 			$content =~ s/Exec=/Exec=$cwd\//;
@@ -122,52 +133,35 @@ sub install_desktop_files
 		$desktopcounter += 1;
 	}
 	
+	if ($isroot =~ /root/)
+	{
+		# If Wx is able to be loaded
+		if ($wxloaded eq '1')
+		{
+			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/oldschool-runescape.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/runescape-update-client.desktop';
+		}
+	}
+	else
+	{
+		# If Wx is able to be loaded
+		if ($wxloaded eq '1')
+		{
+			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/oldschool-runescape.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-update-client.desktop';
+		}
+	}
+	
 	# Copy the uninstallscript to $cwd and make it executable
 	system("mv /tmp/$settings->{uninstaller} \"$cwd/\" && chmod 755 \"$cwd/$settings->{uninstaller}\"");
 }
 
 sub make_osx_app
 {
-	# Make a variable to contain the directory list
-	my $maclibs;
-	
-	if ($OS =~ /darwin/)
-	{
-		# Get a list of files in the client directory
-		$maclibs = `ls "$cwd/modules"`;
-	}
-	
-	# If we are running on darwin/MacOSX and the darwin folder does not exist
-	if ($OS =~ /darwin/ && $maclibs !~ /darwin/)
-	{
-		# Display a message prompting the user to download an archive file containing the rsu-settings_mac loader(self contained minimal wxperl) and the wxWidgets libraries.
-		print "The rsu-launcher requires extra libraries on MacOSX
-(because apple broke their own in 10.5 and up)
-So i have packaged a custom loader with a working version of wxWidgets
-for use by this script to save you 1 - 2 hours of your life
-compiling it yourself.
-
-NOTE: If you want the sourcecode for the loader,
-go to $cwd/modules/$OS/rsu-launcher/rsu-launcher-$OS
-and add .zip behind the \"rsu-launcher-$OS\" and extract the archive.
-
-Is it ok for me to download these libraries into the client directory?
-Answer with yes or no (default = yes):";
-
-		# Wait for users answer
-		my $answer = <STDIN>;
-		
-		# If the user answers no
-		if ($answer =~ /(no|n)/i)
-		{
-			# Exit the script
-			exit;
-		}
-		else
-		{
-			fetchmaclibs();
-		}
-	}
+	# Download the rsu-query binary for MacOSX
+	fetchmacbin();
 	
 	# Tell user what we are doing
 	print "Making application directory.\n";
@@ -191,7 +185,7 @@ Answer with yes or no (default = yes):";
 	print "\nMaking symlinks to the runescape script and RSU icon\n";
 	
 	# Make symlinks to the RSU icon and the runescape script
-	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s rsu-launcher script && ln -s share/runescape.icns runescape.icns";
+	system "cd /Applications/RuneScape_Unix/RuneScape.app/Contents/Resources/ && ln -s rsu/rsu-query script && ln -s share/img/runescape.icns runescape.icns";
 	
 	# Tell user what we are doing
 	print "\nCreating a symlink to Resource folder so that the client files are easily accessable.\n";
@@ -213,10 +207,10 @@ Answer with yes or no (default = yes):";
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub fetchmaclibs
+sub fetchmacbin
 {
-	# Download the perl bundle containing the libraries and extract the archive inside the modules folder
-	system "cd \"$cwd/modules\" && curl -o \"$cwd/modules/darwin.tar.gz\" $maclib_url && tar -zxvf \"$cwd/modules/darwin.tar.gz\" && rm \"$cwd/modules/darwin.tar.gz\"";
+	# Download and extract the rsu-query binary
+	system "$cwd/rsu/bin/rsu-query-unix install_binary";
 }
 
 #

@@ -1,0 +1,264 @@
+#!/usr/bin/perl -w
+
+# Be strict to avoid messy code
+use strict;
+
+# Include the byte encryption so that the script will work on all localizations of windows or other systems
+# Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
+use Encode::Byte;
+
+# Include the module for extracting archives
+use Archive::Extract;
+
+# Include Config module for checking system values
+use Config;
+
+# Use FindBin module to get script directory
+use FindBin;
+
+# Get script directory
+my $cwd = $FindBin::RealBin;
+# Get script filename
+my $scriptname = $FindBin::Script;
+# Detect the current OS
+my $OS = "$^O";
+
+# Add the rsu module paths (so we can use parts of the api if we need to)
+unshift @INC, "$cwd/framework/API";
+unshift @INC, "$cwd/framework/modules";
+unshift @INC, "$cwd/framework/Perl5lib";
+
+# require the files grep module
+require rsu::files::grep;
+	
+# run the script
+main();
+
+sub main
+{
+	# Get the architecture
+	my $arch = $Config{archname};
+	
+	# If we are not on windows or mac
+	if ($OS !~ /(MSWin32|darwin)/)
+	{
+		# If we are on 64bit
+		if ($arch =~ /(x86_64|amd64)/ && $OS =~ /linux/)
+		{
+			# Use x86_64 as architecture
+			$arch = "x86_64";
+		}
+		# Else if we are on 32bit
+		elsif($arch =~ /i\d{1,1}86/ && $OS =~ /linux/)
+		{
+			# Use i386 as architecture
+			$arch = "i386";
+		}
+		# Else we are on an architecture that does not support the launcher
+		else
+		{
+			# Run in fallback mode
+			fallbackmode();
+			
+			# Exit once we are done so we dont trigger the launcher
+			exit;
+		}
+	}
+	
+	# If we are not on windows and --unixquery was passed
+	if ($OS !~ /MSWin32/ && "@ARGV" =~ /--unixquery/)
+	{
+		# Run in fallback mode
+		fallbackmode();
+		
+		# Exit once we are done so we dont trigger the launcher
+		exit;
+	}
+	
+	# If we are on Linux
+	if($OS =~ /linux/)
+	{
+		if ("@ARGV" eq '')
+		{
+			# Check if the binary exists in the bin folder
+			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch\$");
+			
+			# Make a variable that tells if wx is loaded or not (by default it should be installed)
+			my $wxloaded = 1;
+			
+			# Test if Wx can be loaded and put $wxloaded to 0 if it fails
+			eval "use Wx"; $wxloaded = 0 if $@;
+			
+			# Make a variable to see if binary launched
+			my $binlaunched = 0;
+			
+			# For each matching file we found
+			foreach my $file (@binfile)
+			{
+				# Next if not rsu-query-linux-$arch
+				next if $file !~ /^rsu-query-linux-$arch$/;
+				
+				# Launch the binary
+				system "$cwd/bin/rsu-query-linux-$arch client.launch.launcher";
+				
+				# Set binlaunched to 1
+				$binlaunched = 1;
+			}
+			
+			# If binlaunched is 0
+			if ($binlaunched =~ /^0$/)
+			{
+				# If wx is loaded
+				if ($wxloaded eq '1')
+				{
+					# Add the client launcher api call to the parameters
+					push(@ARGV, "client.launch.launcher");
+				}
+				# Else add the parameters to just run runescape
+				else
+				{
+					# Add the runescape launch api call to the parameters
+					push(@ARGV, "client.launch.runescape");
+				}
+				
+				# Launch the fallback mode
+				fallbackmode();
+			}
+		}
+		else
+		{
+			# Check if the binary exists in the bin folder
+			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch\$");
+			
+			# Make a variable to see if binary launched
+			my $binlaunched = 0;
+			
+			# For each matching file we found
+			foreach my $file (@binfile)
+			{
+				# Next if not rsu-query-linux-$arch
+				next if $file !~ /^rsu-query-linux-$arch$/;
+				
+				# Launch the binary
+				system "$cwd/bin/rsu-query-linux-$arch @ARGV";
+				
+				# Set binlaunched to 1
+				$binlaunched = 1;
+			}
+			
+			# If binlaunched is 0
+			if ($binlaunched =~ /^0$/)
+			{
+				# Launch the fallback mode
+				fallbackmode();
+			}
+		}
+	}
+	# Else if we are on darwin/osx
+	elsif($OS =~ /darwin/)
+	{
+		# Run a check to see if the mac libraries are installed
+		checkformaclibs();
+		
+		# If no arguments are passed then
+		if ("@ARGV" eq '')
+		{
+			
+			# Add the client launcher api call to the parameters
+			push(@ARGV, "client.launch.launcher");
+		}
+		
+		
+		# Launch the launcher for mac osx
+		system "$cwd/bin/rsu-query-darwin @ARGV";
+	}
+	# Else
+	else
+	{
+		# If no arguments are passed
+		if ("@ARGV" eq '')
+		{
+			# Make a variable that tells if wx is loaded or not (by default it should be installed)
+			my $wxloaded = 1;
+			
+			# Test if Wx can be loaded and put $wxloaded to 0 if it fails
+			eval "use Wx"; $wxloaded = 0 if $@;
+			
+			# If wx is loaded
+			if ($wxloaded eq '1')
+			{
+				# Add the client launcher api call to the parameters
+				push(@ARGV, "client.launch.launcher");
+			}
+			# Else add the parameters to just run runescape
+			else
+			{
+				# Add the runescape launch api call to the parameters
+				push(@ARGV, "client.launch.runescape");
+			}
+		}
+		
+		# Run in fallback mode
+		fallbackmode();
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub fetchbinary
+{
+	# Require the query_bin module
+	require updater::extract::query_bin;
+	
+	# Download and extract the rsu-query binary
+	updater::extract::query_bin::update(1);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub checkformaclibs
+{
+	# Make a variable to contain the directory list
+	my $maclibs;
+	
+	# Require the files grep module
+	require rsu::files::grep;
+	
+	# Require the query_bin module
+	require updater::extract::query_bin;
+	
+	if ($OS =~ /darwin/)
+	{
+		# Check if rsu-query-darwin is installed
+		$maclibs = `ls "$cwd/bin" | grep "rsu-query-darwin"`;
+	}
+	
+	# If we are running on darwin/MacOSX and the darwin binary is missing
+	if ($OS =~ /darwin/ && "$maclibs" !~ /rsu-query-darwin/)
+	{
+		# Download the missing binary
+		system "$cwd/bin/rsu-query-unix install_binary";
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub fallbackmode
+{
+	# Print to STDERR that we are running on an unknown system
+	print STDERR "WARNING: Running in fallback mode!\nrsu-queries will use the system perl so some API calls\nmay not work until you install certain modules\n" if "@ARGV" !~ /--unixquery/;
+		
+	# Install the menu icons and launch runescape
+	system "$cwd/bin/rsu-query-unix @ARGV";
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
