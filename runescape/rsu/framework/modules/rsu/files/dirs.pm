@@ -9,7 +9,7 @@ sub list
 	my $fallback = 0;
 	
 	# Check if functions we need are supported and put fallback to 1 if they are not supported
-	eval "use 5.0.12"; $fallback = 1 if $@;
+	eval "use 5.012"; $fallback = 1 if $@;
 	
 	# Make an array to contain the files inside
 	my @list;
@@ -67,7 +67,7 @@ sub rlist
 	my $fallback = 0;
 	
 	# Check if functions we need are supported and put fallback to 1 if they are not supported
-	eval "use 5.0.12"; $fallback = 1 if $@;
+	eval "use 5.012"; $fallback = 1 if $@;
 	
 	# Make an array to contain the files inside
 	my @list;
