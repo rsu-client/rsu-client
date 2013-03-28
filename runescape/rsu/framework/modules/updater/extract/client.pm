@@ -117,7 +117,7 @@ sub p7zip_msi
 	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y runescape.msi";
 	
 	# Check for the files we are looking for
-	my @files = rsu::files::grep::dirgrep("$clientdir/.download/extracted_files", "^(rslauncher.cab|JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+");
+	my @files = rsu::files::grep::dirgrep("$clientdir/.download/extracted_files", "^(rslauncher|JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+");
 	
 	# If rslauncher.cab is found
 	if ("@files" =~ /rslauncher.cab/)
