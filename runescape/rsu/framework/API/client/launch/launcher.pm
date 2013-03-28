@@ -243,7 +243,7 @@ sub set_layout
 	if ($OS =~ /(linux|darwin|MSWin32)/)
 	{
 		# Check if there is any addons folder inside the clients share folder
-		my @addoncheck = rsu::files::dirgrep("$clientdir/share". "^addons\$");
+		my @addoncheck = rsu::files::grep::dirgrep("$clientdir/share". "^addons\$");
 		
 		# For each file/folder found
 		foreach my $addondir (@addoncheck)
