@@ -46,7 +46,7 @@ sub rdirgrep
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub	strgrep
+sub strgrep
 {
 	# Get the passed data
 	my ($string, $grepfor) = @_;

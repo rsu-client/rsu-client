@@ -27,6 +27,9 @@ my $OS = "$^O";
 unshift @INC, "$cwd/framework/API";
 unshift @INC, "$cwd/framework/modules";
 unshift @INC, "$cwd/framework/Perl5lib";
+
+# require the files grep module
+require rsu::files::grep;
 	
 # run the script
 main();
@@ -77,8 +80,8 @@ sub main
 	{
 		if ("@ARGV" eq '')
 		{
-			# Open the bin directory
-			opendir(my $bindir, "$cwd/bin");
+			# Check if the binary exists in the bin folder
+			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch$");
 			
 			# Make a variable that tells if wx is loaded or not (by default it should be installed)
 			my $wxloaded = 1;
@@ -89,11 +92,11 @@ sub main
 			# Make a variable to see if binary launched
 			my $binlaunched = 0;
 			
-			# While there is stuff we havent checked
-			while (readdir $bindir)
+			# For each matching file we found
+			foreach my $file (@binfile)
 			{
 				# Next if not rsu-query-linux-$arch
-				next if $_ !~ /^rsu-query-linux-$arch$/;
+				next if $file !~ /^rsu-query-linux-$arch$/;
 				
 				# Launch the binary
 				system "$cwd/bin/rsu-query-linux-$arch client.launch.launcher";
@@ -124,17 +127,17 @@ sub main
 		}
 		else
 		{
-			# Open the bin directory
-			opendir(my $bindir, "$cwd/bin");
+			# Check if the binary exists in the bin folder
+			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch$");
 			
 			# Make a variable to see if binary launched
 			my $binlaunched = 0;
 			
-			# While there is stuff we havent checked
-			while (readdir $bindir)
+			# For each matching file we found
+			foreach my $file (@binfile)
 			{
 				# Next if not rsu-query-linux-$arch
-				next if $_ !~ /^rsu-query-linux-$arch$/;
+				next if $file !~ /^rsu-query-linux-$arch$/;
 				
 				# Launch the binary
 				system "$cwd/bin/rsu-query-linux-$arch @ARGV";
