@@ -81,7 +81,7 @@ sub main
 		if ("@ARGV" eq '')
 		{
 			# Check if the binary exists in the bin folder
-			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch$");
+			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch\$");
 			
 			# Make a variable that tells if wx is loaded or not (by default it should be installed)
 			my $wxloaded = 1;
@@ -128,7 +128,7 @@ sub main
 		else
 		{
 			# Check if the binary exists in the bin folder
-			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch$");
+			my @binfile = rsu::files::grep::dirgrep("$cwd/bin", "^rsu-query-linux-$arch\$");
 			
 			# Make a variable to see if binary launched
 			my $binlaunched = 0;
