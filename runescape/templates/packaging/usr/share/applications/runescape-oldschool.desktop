@@ -6,15 +6,15 @@ Version=1.0
 Type=Application
 
 # Name displayed in the menus and on shortcuts
-Name=RuneScape - Old School
+Name=RuneScape OldSchool
 # Same as above but for KDE only
-GenericName=RuneScape Old School
+GenericName=RuneScape 2007
 
 # A hint about what the application is
-Comment=The RuneScape Unix Client
+Comment=Play OldSchool RuneScape
 
 # Which icon file to use
-Icon=/opt/runescape/share/runescape.png
+Icon=/opt/runescape/share/img/runescape.png
 
 # Show terminal?
 Terminal=false
@@ -28,11 +28,18 @@ Exec=/opt/runescape/runescape --prmfile=oldschool.prm
 # Settings, DesktopSettings, Filesystem)
 Categories=GNOME;GTK;Game;
 
+# Display the menu entry
+NoDisplay=false
+
 # Unity only support
 X-Ayatana-Desktop-Shortcuts=UpdateClient;
 
 [UpdateClient Shortcut Group]
 Name=Update Runescape Client
-Exec=xterm -e "/opt/runescape/update-runescape-client"
+Exec=/opt/runescape/update-runescape-client
 #TargetEnvironment=Unity
 
+[UpdateClient Shortcut Group]
+Name=RSU-Client Settings
+Exec=/opt/runescape/rsu-settings
+#TargetEnvironment=Unity
