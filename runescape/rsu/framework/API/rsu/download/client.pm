@@ -101,13 +101,13 @@ else
 	my $placejar = "bin";
 	
 	# If the first parameter is not a full path but does contain / or \ then
-	if($ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && defined $ARGV[1] && $ARGV[1] =~ /(.\/.+|.\\.+)/i)
+	if(defined $ARGV[1] && $ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] =~ /(.\/.+|.\\.+)/i)
 	{
 		# Use $clientdir as the base location and add the parameter at the end
 		$placejar = "$ARGV[1]";
 	}
 	# Else if the first parameter is not a full path, does not contain / or \ and is not dmg or msi then
-	elsif($ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && defined $ARGV[1] && $ARGV[1] !~ /(.\/.+|.\\.+)/i && $ARGV[1] !~ /^(dmg|msi)$/i)
+	elsif(defined $ARGV[1] && $ARGV[1] !~ /^(\$|\%|[a-z]:|\/)/i && $ARGV[1] !~ /(.\/.+|.\\.+)/i && $ARGV[1] !~ /^(dmg|msi)$/i)
 	{
 		# Use the parameter as foldername
 		$placejar = "$ARGV[1]";
