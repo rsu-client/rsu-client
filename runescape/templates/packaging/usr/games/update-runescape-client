@@ -14,7 +14,7 @@ $scriptname =~ s/-runescape-client/r/;
 if (-d "/opt/runescape")
 {
 	# If scriptname is runescape and no parameters are passed
-	if ($sciptname =~ /^runescape$/ && "@ARGV" eq '')
+	if ($scriptname =~ /^runescape$/ && "@ARGV" eq '')
 	{
 		# Run the rsu launcher or fall back to launching runescape directly
 		system "/opt/runescape/rsu/rsu-query @ARGV";
@@ -29,7 +29,7 @@ if (-d "/opt/runescape")
 elsif (-d "/opt/extras.ubuntu.com/rsu-client")
 {
 	# If scriptname is runescape and no parameters are passed
-	if ($sciptname =~ /^runescape$/ && "@ARGV" eq '')
+	if ($scriptname =~ /^runescape$/ && "@ARGV" eq '')
 	{
 		# Run the rsu launcher or fall back to launching runescape directly
 		system "/opt/extras.ubuntu.com/rsu-client/rsu/rsu-query @ARGV";
