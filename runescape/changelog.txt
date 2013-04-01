@@ -1,3 +1,13 @@
+runescape (4.0.1) precise; urgency=low
+
+  * Fixed typos in the launcher scripts located in /usr/games - Ker Laeda/ivan_p
+  * Increased width of launcher by 30pixels, hopefully fixing the oddities
+    caused by resizing the window
+  * Made launcher fetch news and do other time consuming operations in
+    new threads.
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Mon, 1 Apr 2013 08:50:10 +0200
+ 
 runescape (4.0.0) precise; urgency=low
 
   * Rewrote the client into an API/Framework
