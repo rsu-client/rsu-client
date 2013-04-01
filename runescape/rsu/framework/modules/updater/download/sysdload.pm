@@ -34,4 +34,60 @@ sub sysdownload
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub readurl
+{
+	# Get the passed data
+	my ($url) = @_;
+	
+	# Get the current OS
+	my $OS = "$^O";
+	
+	# Make a variable to contain the output
+	my $output;
+	
+	# If we are on Windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Use LWP::Simple
+		eval "use LWP::Simple";
+		
+		# Get the content of $url
+		$output = get("$url");
+	}
+	# Else
+	else
+	{
+		# Make a variable which will contain the download command we will use
+		my $fetchcommand = "wget -q -O-";
+		
+		# If /usr/bin contains wget
+		if(`ls /usr/bin | grep wget` =~  /wget/)
+		{
+			# Use wget command to fetch files
+			$fetchcommand = "wget -q -O-";
+		}
+		# Else if /usr/bin contains curl
+		elsif(`ls /usr/bin | grep curl` =~  /curl/)
+		{
+			# Curl command equalent to the wget command to fetch files
+			$fetchcommand = "curl -L -#";
+		}
+		
+		# Read the contents of url
+		$output = `$fetchcommand $url`;
+		
+		# Remove any newlines
+		$output =~ s/(\n|\r|\r\n)//g;
+	}
+	
+	# Return the content of $url
+	return $output;
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+
+
 1; 
