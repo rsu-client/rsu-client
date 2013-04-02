@@ -22,8 +22,8 @@ eval "use Wx::WebView"; print STDERR "Wx::WebView module not found, API calls us
 #use Wx::XRC;
 #use Wx::WebView; #print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
 
-# Use LWP::Simple module to get website content (crossplatform)
-use LWP::Simple;
+# Use LWP::Simple module to get website content (crossplatform) if it is available
+eval "use LWP::Simple"; print STDERR "LWP::Simple module not found, API calls using LWP::Simple will either use alternative methods\n" if $@ && "@ARGV" !~ /--unixquery/;
 
 # Include the byte encryption so that the script will work on all localizations of windows or other systems
 # Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
