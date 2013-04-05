@@ -5,6 +5,12 @@ sub from
 	# Get the passed data
 	my ($url, $location, $nogui) = @_;
 	
+	# Make a variable to tell if there is no LWP module available
+	my $nolwp = 0;
+	
+	# Test to see if LWP::UserAgent is available on the system and set $nolwp to 1 if LWP is not available
+	eval "use LWP::UserAgent"; $nolwp = 1 if $@;
+	
 	# Try and load Wx and set $nogui to 1 if Wx cannot be loaded
 	eval "use Wx"; $nogui = 1 if $@;
 	# Try to use functions from perl 5.012
@@ -14,8 +20,8 @@ sub from
 	no strict;
 	no warnings;
 	
-	# If Wx is not loaded or $nogui is 1 then
-	if (($@) || (defined $nogui && $nogui eq '1'))
+	# If Wx is not loaded or $nogui is 1 or $nolwp is 1 then
+	if (($@) || (defined $nogui && $nogui eq '1') || $nolwp eq '1')
 	{
 		# If no use of gui is demanded then
 		if (defined $nogui && $nogui eq '1')
