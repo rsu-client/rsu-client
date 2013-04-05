@@ -66,8 +66,8 @@ eval "use Wx::WebView";
 # Use XML::RSSLite if it exists
 eval "use XML::RSSLite";
 
-# Use LWP::Simple module to get website content (crossplatform)
-use LWP::Simple;
+# Require sysdload which containd a readurl function
+require updater::download::sysdload;
 
 use base qw(Wx::Frame Wx::ScrolledWindow);
 
@@ -364,7 +364,7 @@ sub fetch_rssnews
 	$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
 	
 	# Fetch the recent activity rss feed
-	my $rssfeed = get($rssurl);
+	my $rssfeed = updater::download::sysdload::readurl($rssurl);
 	
 	# Make a hash reference for the RSSLite parser
 	my %rssnews;

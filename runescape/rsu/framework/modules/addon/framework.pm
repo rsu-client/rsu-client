@@ -1,13 +1,13 @@
 package addon::framework;
 
-# Use LWP::Simple so that people can read text from the web
-use LWP::Simple;
-
 # Load some default API modules
 require rsu::files::clientdir;
 require updater::download::file;
 require rsu::extract::archive;
 require rsu::files::IO;
+
+# Require sysdload which containd a readurl function
+require updater::download::sysdload;
 
 
 # Framework functions #
