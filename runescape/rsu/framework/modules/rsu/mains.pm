@@ -168,6 +168,8 @@ sub unix_main
 		$rsu_data->javabin = "$javalibpath ".$rsu_data->javabin;
 	}
 	
+	# Set the cachedir location
+	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
@@ -219,17 +221,20 @@ sub windows_main
 	# Adjust the parameters abit
 	$params =~ s/jagexappletviewer\.jar/bin\/jagexappletviewer\.jar/;
 	
+	# Split the clientdir path into sections so we can get the parent folder name (so we can get a window icon)
+	my @parentfolder = split /(\\|\/)/, $rsu_data->clientdir;
+	
+	# Set the cachedir location
+	$win32javabin = "\"$win32javabin\" -Duser.home=\"".$rsu_data->cachedir."\"";
+	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params /share\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which i dont know why appears
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
-	# Split the clientdir path into sections so we can get the parent folder name (so we can get a window icon)
-	my @parentfolder = split /(\\|\/)/, $rsu_data->clientdir;
-	
 	# Run the jar file
-	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
 }
 
 #
@@ -251,7 +256,7 @@ sub checkcompabilitymode
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
 		# Launch client through wine
-		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\rsu\\\\3rdParty\\\\Win32\\\\jawt;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -cp $params /share/img && exit\"";
+		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\\\rsu\\\\3rdParty\\\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"".$rsu_data->cachedir."\" -cp $params /share/img && exit\"";
 		
 		# Once the client is closed we need to do some cleanup (bug when running commands through shell to wine cmd
 		# Make a variable to contain the pids of cmd (from wine)
