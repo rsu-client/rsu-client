@@ -13,6 +13,7 @@ package client::init;
 	require rsu::files::copy;
 	require rsu::files::dirs;
 	require rsu::files::grep;
+	require client::settings::cache;
 
 	# End of core modules, add custom modules below this line
 
