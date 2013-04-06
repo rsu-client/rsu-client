@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxFrame" name="mainwindow">
-		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
-		<size>463,647</size>
-		<title>RuneScape Config Editor</title>
-		<object class="wxPanel" name="m_panel1">
-			<style>wxTAB_TRAVERSAL</style>
+		<style>wxCAPTION|wxCLOSE_BOX|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL</style>
+		<size>538,651</size>
+		<title>RuneScape Settings Editor</title>
+		<aui_managed>0</aui_managed>
+		<object class="wxScrolledWindow" name="scrolledWindow">
+			<style>wxHSCROLL|wxVSCROLL</style>
+			<scrollrate>5,5</scrollrate>
 			<object class="wxBoxSizer">
 				<orient>wxVERTICAL</orient>
 				<object class="sizeritem">
@@ -18,20 +20,21 @@
 							<selected>1</selected>
 							<object class="wxScrolledWindow" name="scriptwindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
+								<scrollrate>10,10</scrollrate>
 								<object class="wxFlexGridSizer">
 									<rows>6</rows>
 									<cols>1</cols>
 									<vgap>0</vgap>
 									<hgap>0</hgap>
 									<growablecols>0</growablecols>
-									<growablerows>3</growablerows>
+									<growablerows></growablerows>
 									<object class="sizeritem">
-										<option>1</option>
+										<option>0</option>
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
 										<object class="wxStaticBoxSizer">
 											<orient>wxVERTICAL</orient>
-											<label>Java (All platforms)</label>
+											<label>Java (All Platforms)</label>
 											<object class="sizeritem">
 												<option>1</option>
 												<flag>wxEXPAND</flag>
@@ -47,8 +50,9 @@
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText91">
+														<object class="wxStaticText" name="label_prmfile">
 															<label>Parameter File: </label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -64,8 +68,9 @@
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText11">
+														<object class="wxStaticText" name="label_preferredjava">
 															<label>Preferred Java to use: </label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -102,10 +107,53 @@
 										<option>0</option>
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label>JagexCache Directory (All Platforms)</label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxFlexGridSizer">
+													<rows>0</rows>
+													<cols>2</cols>
+													<vgap>0</vgap>
+													<hgap>0</hgap>
+													<growablecols>1</growablecols>
+													<growablerows></growablerows>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER|wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="label_cachedir">
+															<label>JagexCache Location:</label>
+															<wrap>-1</wrap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxChoice" name="cachedir">
+															<selection>0</selection>
+															<content>
+																<item>Let RSU choose automatically (default)</item>
+																<item>$clientdir/share/cache (portable)</item>
+															</content>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
 										<object class="wxRadioBox" name="soundsystem">
 											<style>wxRA_SPECIFY_COLS</style>
-											<label>Tell Java which sound system to use</label>
-											<selection>0</selection>
+											<label>Tell Java which sound system to use (Unix Only)</label>
+											<selection>1</selection>
 											<content>
 												<item>Let Java decide by itself</item>
 												<item>PulseAudio (All Unixes)</item>
@@ -116,19 +164,19 @@
 										</object>
 									</object>
 									<object class="sizeritem">
-										<option>1</option>
+										<option>0</option>
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
 										<object class="wxStaticBoxSizer">
 											<orient>wxVERTICAL</orient>
-											<label>Nvidia Optimus / Bumblebee</label>
+											<label>Nvidia Optimus / Bumblebee (Linux Only)</label>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxALL</flag>
+												<flag>wxALIGN_LEFT|wxALL</flag>
 												<border>5</border>
 												<object class="wxCheckBox" name="primusmode">
 													<style>wxALIGN_RIGHT</style>
-													<label>Tell the script to use primusrun if it is available</label>
+													<label>Tell the script to launch java with primusrun if it is available.</label>
 													<checked>0</checked>
 												</object>
 											</object>
@@ -136,15 +184,16 @@
 												<option>0</option>
 												<flag>wxALL</flag>
 												<border>5</border>
-												<object class="wxStaticText" name="m_staticText112">
-													<label>Using primusrun will let RuneScape be able to access\nOpenGL Display Mode while the game uses the\nNvidia graphic card instead of the Intel Graphic\ncard to increase game performance.</label>
+												<object class="wxStaticText" name="label_nvidia">
+													<label>Using primusrun will let RuneScape access\nthe OpenGL Display Mode on Linux Computers\nwith Nvidia Optimus Graphics.</label>
+													<wrap>-1</wrap>
 												</object>
 											</object>
 											<object class="sizeritem">
 												<option>0</option>
 												<flag>wxALL</flag>
 												<border>5</border>
-												<object class="wxHyperlinkCtrl" name="m_hyperlink1">
+												<object class="wxHyperlinkCtrl" name="primusrunlink">
 													<label>Click here for more information about primusrun</label>
 													<url>http://www.webupd8.org/2012/11/primus-better-performance-and-less.html</url>
 													<style>wxHL_DEFAULT_STYLE</style>
@@ -153,15 +202,15 @@
 										</object>
 									</object>
 									<object class="sizeritem">
-										<option>1</option>
+										<option>0</option>
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
 										<object class="wxStaticBoxSizer">
 											<orient>wxVERTICAL</orient>
-											<label>Compability</label>
+											<label>Compatibility (Run in Wine)</label>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxALL</flag>
+												<flag>wxALIGN_LEFT|wxALL</flag>
 												<border>5</border>
 												<object class="wxCheckBox" name="winemode">
 													<style>wxALIGN_RIGHT</style>
@@ -173,29 +222,28 @@
 												<option>0</option>
 												<flag>wxALL</flag>
 												<border>5</border>
-												<object class="wxStaticText" name="m_staticText111">
-													<label>Running the game through wine will let you play RuneScape\non some Unix platforms that are not supported natively by\nthis script or on platforms that Java no longer supports.\nREQUIRES THAT WINE IS COMPILED WITH OPENGL SUPPORT!</label>
+												<object class="wxStaticText" name="label_winemode">
+													<label>Running the game through wine will let you play RuneScape\non some Unix platforms that are not supported natively by\nthis script or on platforms that Java no longer supports.\nREQUIRES THAT WINE IS COMPILED WITH OPENGL SUPPORT\nAND THAT ORACLE JAVA FOR WINDOWS IS INSTALLED IN WINE!</label>
+													<wrap>-1</wrap>
 												</object>
 											</object>
 										</object>
 									</object>
-									<object class="spacer">
-										<option>1</option>
-										<flag>wxEXPAND</flag>
-										<border>5</border>
-										<size>0,0</size>
-									</object>
 									<object class="sizeritem">
-										<option>1</option>
+										<option>0</option>
 										<flag>wxEXPAND</flag>
 										<border>5</border>
-										<object class="wxFlexGridSizer">
-											<rows>1</rows>
-											<cols>3</cols>
-											<vgap>0</vgap>
-											<hgap>0</hgap>
-											<growablecols>0</growablecols>
-											<growablerows></growablerows>
+										<object class="wxBoxSizer">
+											<orient>wxHORIZONTAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxButton" name="open_clientdir">
+													<label>Open $clientdir</label>
+													<default>0</default>
+												</object>
+											</object>
 											<object class="spacer">
 												<option>1</option>
 												<flag>wxEXPAND</flag>
@@ -230,6 +278,7 @@
 							<selected>0</selected>
 							<object class="wxScrolledWindow" name="rswindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
+								<scrollrate>10,10</scrollrate>
 								<object class="wxFlexGridSizer">
 									<rows>5</rows>
 									<cols>1</cols>
@@ -242,9 +291,8 @@
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
 										<object class="wxTextCtrl" name="configfilepath">
-											<style>wxTE_DONTWRAP</style>
-											<value>~/.config/runescape/share/runescape.prm</value>
-											<maxlength>0</maxlength>
+											<style>wxTE_READONLY</style>
+											<value>~/.config/runescape/share/prms/runescape.prm</value>
 										</object>
 									</object>
 									<object class="sizeritem">
@@ -269,15 +317,16 @@
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText3">
+														<object class="wxStaticText" name="label_minheap">
 															<label>Minimum Java Heap Allocation(MB):</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
-														<option>5</option>
+														<option>1</option>
 														<flag>wxEXPAND</flag>
 														<border>5</border>
-														<size>50,0</size>
+														<size>0,0</size>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
@@ -287,22 +336,23 @@
 															<style>wxSP_ARROW_KEYS</style>
 															<value>0</value>
 															<min>0</min>
-															<max>4096</max>
+															<max>2048</max>
 														</object>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText6">
+														<object class="wxStaticText" name="label_maxheap">
 															<label>Maximum Java Heap Allocation(MB):</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
-														<option>5</option>
+														<option>1</option>
 														<flag>wxEXPAND</flag>
 														<border>5</border>
-														<size>50,0</size>
+														<size>0,0</size>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
@@ -312,15 +362,16 @@
 															<style>wxSP_ARROW_KEYS</style>
 															<value>512</value>
 															<min>256</min>
-															<max>4096</max>
+															<max>2048</max>
 														</object>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText71">
+														<object class="wxStaticText" name="label_stacksize">
 															<label>Java Stack Size(MB):</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
@@ -364,10 +415,11 @@
 													<growablerows></growablerows>
 													<object class="sizeritem">
 														<option>0</option>
-														<flag>wxALL</flag>
+														<flag>wxALIGN_CENTER|wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText7">
+														<object class="wxStaticText" name="label_classpath">
 															<label>ClassPath:</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -377,15 +429,15 @@
 														<object class="wxTextCtrl" name="classpath">
 															<enabled>0</enabled>
 															<value>jagexappletviewer.jar</value>
-															<maxlength>0</maxlength>
 														</object>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
-														<flag>wxALL</flag>
+														<flag>wxALIGN_CENTER|wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText10">
+														<object class="wxStaticText" name="label_configurl">
 															<label>Config URL:</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -393,9 +445,7 @@
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<object class="wxTextCtrl" name="configurl">
-															<tooltip>it works</tooltip>
 															<value></value>
-															<maxlength>0</maxlength>
 														</object>
 													</object>
 												</object>
@@ -414,8 +464,8 @@
 												<flag>wxEXPAND</flag>
 												<border>5</border>
 												<object class="wxFlexGridSizer">
-													<rows>1</rows>
-													<cols>1</cols>
+													<rows>0</rows>
+													<cols>2</cols>
 													<vgap>0</vgap>
 													<hgap>0</hgap>
 													<growablecols>0</growablecols>
@@ -427,7 +477,6 @@
 														<object class="wxTextCtrl" name="prms">
 															<style>wxTE_MULTILINE</style>
 															<value></value>
-															<maxlength>0</maxlength>
 														</object>
 													</object>
 												</object>
@@ -474,6 +523,7 @@
 							<selected>0</selected>
 							<object class="wxScrolledWindow" name="cachewindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
+								<scrollrate>10,10</scrollrate>
 								<object class="wxBoxSizer">
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">
@@ -498,19 +548,20 @@
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText9">
+														<object class="wxStaticText" name="label_maincache">
 															<label>Clear the cache and turn RuneScape&apos;s\nsettings back to default:</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
 														<option>1</option>
 														<flag>wxEXPAND</flag>
 														<border>5</border>
-														<size>20,0</size>
+														<size>0,0</size>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
-														<flag>wxALIGN_RIGHT|wxALL</flag>
+														<flag>wxALL</flag>
 														<border>5</border>
 														<object class="wxButton" name="clear_main">
 															<label>Clear Main Cache</label>
@@ -527,7 +578,7 @@
 										<border>5</border>
 										<object class="wxStaticBoxSizer">
 											<orient>wxVERTICAL</orient>
-											<label>BETA Cache</label>
+											<label>Old School Cache</label>
 											<object class="sizeritem">
 												<option>1</option>
 												<flag>wxEXPAND</flag>
@@ -543,22 +594,23 @@
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_staticText101">
-															<label>Clear the BETA cache and turn \nRuneScape&apos;s settings back to default:</label>
+														<object class="wxStaticText" name="label_oldschoolcache">
+															<label>Clear the Old School cache and turn \nRuneScape&apos;s settings back to default:</label>
+															<wrap>-1</wrap>
 														</object>
 													</object>
 													<object class="spacer">
 														<option>1</option>
 														<flag>wxEXPAND</flag>
 														<border>5</border>
-														<size>13,0</size>
+														<size>0,0</size>
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
 														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxButton" name="clear_beta">
-															<label>Clear BETA Cache</label>
+														<object class="wxButton" name="clear_oldschool">
+															<label>Clear OldSchool Cache</label>
 															<default>0</default>
 														</object>
 													</object>
@@ -567,7 +619,7 @@
 										</object>
 									</object>
 									<object class="sizeritem">
-										<option>3</option>
+										<option>1</option>
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
 										<object class="wxStaticBoxSizer">
@@ -577,11 +629,13 @@
 												<option>1</option>
 												<flag>wxEXPAND</flag>
 												<border>5</border>
-												<object class="wxGridSizer">
+												<object class="wxFlexGridSizer">
 													<rows>1</rows>
 													<cols>1</cols>
 													<vgap>0</vgap>
 													<hgap>0</hgap>
+													<growablecols>0</growablecols>
+													<growablerows>0</growablerows>
 													<object class="sizeritem">
 														<option>0</option>
 														<flag>wxALL|wxEXPAND</flag>
@@ -589,7 +643,6 @@
 														<object class="wxTextCtrl" name="terminal_output">
 															<style>wxTE_MULTILINE</style>
 															<value></value>
-															<maxlength>0</maxlength>
 														</object>
 													</object>
 												</object>
