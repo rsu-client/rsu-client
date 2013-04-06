@@ -58,3 +58,11 @@ compabilitymode=false
 # ignore the setting.
 # for more info check http://www.webupd8.org/2012/11/primus-better-performance-and-less.html
 useprimusrun=false
+
+# Set the client to store/use the cache inside the users
+# $HOME folder if it exists (if jagexcache does not exist inside
+# $HOME then it will be generated inside $clientdir/share/cache)
+# 
+# default = use the cache inside the users HOME directory if it exists
+# portable = use the portable jagexcache stored inside $clientdir/share/cache
+clientdir=default

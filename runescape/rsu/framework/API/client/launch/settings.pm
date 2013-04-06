@@ -86,6 +86,9 @@ my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "sett
 # Read the preferred java in the config file, if nothing is found then use default-java
 my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
 
+# Read the cachedir setting in the conf file, if nothing is found then use default
+my $cachedir = rsu::files::IO::readconf("cachedir", "default", "settings.conf");
+
 # If we are running on windows then
 if ($OS =~ /MSWin32/)
 {
@@ -169,6 +172,9 @@ use base qw(Wx::Frame Wx::ScrolledWindow);
 # Use the File::Path module so we can make and remove folders
 use File::Path qw(make_path remove_tree);
 
+# Require the client::settings::cache module
+require client::settings::cache;
+
 sub new
 {
 	# Create a class
@@ -248,11 +254,13 @@ sub set_events
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('saveconf'), \&saveconf_clicked);
 	EVT_CHOICE($self, Wx::XmlResource::GetXRCID('preferredjava'), \&preferredjava_changed);
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('clear_main'), \&delete_maincache);
-	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('clear_beta'), \&delete_betacache);
+	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('clear_oldschool'), \&delete_oldschoolcache);
+	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('open_clientdir'), \&open_clientdir);
 	EVT_NOTEBOOK_PAGE_CHANGED($self, Wx::XmlResource::GetXRCID('tab_box1'), \&tab_box1_changepage);
 	
 	# Find the widgets
 	$self->{classpath} = $self->FindWindow('classpath');
+	$self->{cachedir} = $self->FindWindow('cachedir');
 	$self->{Xms} = $self->FindWindow('Xms');
 	$self->{Xmx} = $self->FindWindow('Xmx');
 	$self->{Xss} = $self->FindWindow('Xss');
@@ -316,7 +324,7 @@ sub set_events
 
 	# Set scrollbar properties on these widgets
 	setScrollBars(
-			$self->FindWindow('scriptwindow'),
+			#$self->FindWindow('scriptwindow'),
 			$self->FindWindow('rswindow'),
 			$self->FindWindow('cachewindow'),
 	);
@@ -778,7 +786,7 @@ sub writeprmfile
 	$Xss = $Xss."m";
 	
 	# Write .prm file
-	rsu::files::IO::WriteFile("-Djava.class.path=".$self->{classpath}->GetValue, ">", "$settingsfile");
+	rsu::files::IO::WriteFile("-Djava.class.path=jagexappletviewer.jar", ">", "$settingsfile");
 	rsu::files::IO::WriteFile("-Dcom.jagex.config=".$self->{configurl}->GetValue, ">>", "$settingsfile");
 	rsu::files::IO::WriteFile("-Xmx$Xmx", ">>", "$settingsfile");
 	rsu::files::IO::WriteFile("-Xss$Xss", ">>", "$settingsfile");
@@ -892,7 +900,13 @@ sub loadconfig
 		# Make the checkbox for primusmode checked
 		$self->{primusmode}->SetValue(1);
 	}
-		
+	
+	# If cachedir is set to portable in the config then
+	if ($cachedir =~ /^portable$/)
+	{
+		# Set the cachedir dropdown to portable
+		$self->{cachedir}->SetSelection(1);
+	}
 }
 
 #
@@ -1142,10 +1156,48 @@ sub parse_plist
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub open_clientdir
+{
+	# Get the pointers
+	my ($self,$event) = @_;
+	
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Replace all / with \
+		$clientdir =~ s/\//\\/g;
+		
+		# Open the $clientdir
+		system (1,"explorer.exe \"$clientdir\"");
+	}
+	# Else if we are on darwin/mac
+	elsif($OS =~ /darwin/)
+	{
+		# Open the $clientdir
+		system "open \"$clientdir/\"";
+	}
+	# Else
+	else
+	{
+		# Open the $clientdir
+		system "xdg-open \"$clientdir/\"";
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
 sub delete_maincache
 {
 	# Get the pointers
 	my ($self, $event) = @_;
+	
+	# Get the cachedir setting
+	my $cachelocation = rsu::files::IO::readconf("cachedir", "default", "settings.conf");
+	
+	# Get the path to the cachedir
+	$cachelocation = client::settings::cache::getcachedir($cachelocation);
 	
 	# If we are on windows
 	if ($OS =~ /MSWin32/)
@@ -1155,8 +1207,9 @@ sub delete_maincache
 		my $WINDIR = $ENV{"WINDIR"};
 		
 		# Delete the cache
-		remove_dir($self, "$HOME/jagexcache/runescape/LIVE", 1);
-		remove_dir($self, "$HOME/jagexcache1/runescape/LIVE", 1);
+		remove_dir($self, "$cachelocation/jagexcache/runescape/LIVE", 1);
+		remove_dir($self, "$cachelocation/jagexcache1/runescape/LIVE", 1);
+		remove_dir($self, "$cachelocation/.jagex_cache_32", 1);
 		remove_dir($self, "$HOME/.jagex_cache_32", 1);
 		remove_dir($self, "$HOMEDRIVE/.jagex_cache_32", 1);
 		remove_dir($self, "$ENV{WINDIR}/.jagex_cache_32", 1);
@@ -1165,8 +1218,8 @@ sub delete_maincache
 	else
 	{
 		# Delete the cache
-		remove_dir($self, "$HOME/jagexcache/runescape/LIVE", 1);
-		remove_dir($self, "$HOME/.jagex_cache_32", 1);
+		remove_dir($self, "$cachelocation/jagexcache/runescape/LIVE", 1);
+		remove_dir($self, "$cachelocation/.jagex_cache_32", 1);
 		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
@@ -1175,37 +1228,41 @@ sub delete_maincache
 			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE", 1);
 		}
 	}
-	
-	
 }
 
 #
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub delete_betacache
+sub delete_oldschoolcache
 {
 	# Get the pointers
 	my ($self, $event) = @_;
+	
+	# Get the cachedir setting
+	my $cachelocation = rsu::files::IO::readconf("cachedir", "default", "settings.conf");
+	
+	# Get the path to the cachedir
+	$cachelocation = client::settings::cache::getcachedir($cachelocation);
 	
 	# If we are on windows
 	if ($OS =~ /MSWin32/)
 	{
 		# Delete the cache
-		remove_dir($self, "$HOME/jagexcache/runescape/LIVE_BETA", 1);
-		remove_dir($self, "$HOME/jagexcache1/runescape/LIVE_BETA", 1);
+		remove_dir($self, "$cachelocation/jagexcache/oldschool/LIVE", 1);
+		remove_dir($self, "$cachelocation/jagexcache1/oldschool/LIVE", 1);
 	}
 	# Else we are on UNIX
 	else
 	{
 		# Delete the cache
-		remove_dir($self, "$HOME/jagexcache/runescape/LIVE_BETA", 1);
+		remove_dir($self, "$cachelocation/jagexcache/oldschool/LIVE", 1);
 		
 		# If we are on darwin/MacOSX
 		if ($OS =~ /darwin/)
 		{
 			# The cache can appear on another location so we delete that too
-			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE_BETA", 1);
+			remove_dir($self, "$HOME/Library/Caches/jagexcache/oldschool/LIVE", 1);
 		}
 	}
 }
@@ -1278,6 +1335,7 @@ sub saveconf_clicked
 	my $primusmode_setting = $self->{primusmode}->GetValue;
 	my $old_win32java = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
 	my $old_unixjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
+	my $cachedir_setting = $self->{cachedir}->GetSelection;
 	
 	# Prepare a message that will be shown once all settings are saved
 	my $savemessage = "Configurations Saved!";
@@ -1357,7 +1415,6 @@ sub saveconf_clicked
 		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$conf_file");
 	}
 	
-	
 	## Write compabilitymode/winemode setting
 	# If winemode is checked/enabled
 	if ($winemode_setting =~ /1/)
@@ -1370,6 +1427,20 @@ sub saveconf_clicked
 	{
 		# Write compabilitymode=false to settings.conf
 		rsu::files::IO::WriteFile("compabilitymode=false", ">>", "$conf_file");
+	}
+	
+	## Write cachedir setting
+	# If cachedir is set to default then
+	if ($cachedir_setting =~ /0/)
+	{
+		# Write cachedir=default to settings.conf
+		rsu::files::IO::WriteFile("cachedir=default", ">>", "$conf_file");
+	}
+	# Else
+	else
+	{
+		# Write cachedir=portable to settings.conf
+		rsu::files::IO::WriteFile("cachedir=portable", ">>", "$conf_file");
 	}
 	
 	## Write primusmode setting

@@ -35,7 +35,7 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "4.0.1";
+my $scriptversion = "4.0.2";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -58,7 +58,7 @@ my $rsu_data = {};
 bless $rsu_data;
 
 # Create mutators and add them to the variable
-$rsu_data->create_mutator(qw(version OS cwd clientdir javabin javaversion HOME args verboseprms compabilitymode preferredjava forcepulseaudio forcealsa prmfile useprimusrun));
+$rsu_data->create_mutator(qw(version OS cwd clientdir javabin javaversion HOME args verboseprms compabilitymode preferredjava forcepulseaudio forcealsa prmfile useprimusrun cachedir));
 
 # Add clientdir data to the data container
 $rsu_data->clientdir = rsu::files::clientdir::getclientdir();
@@ -228,6 +228,10 @@ $rsu_data->prmfile = parseargs("prmfile", "runescape.prm");
 
 # Check if useprimusrun is enabled
 $rsu_data->useprimusrun = parseargs("useprimusrun", "false");
+
+# Get the cachedir setting then convert it to the path to the cachedir
+$rsu_data->cachedir = parseargs("cachedir", "default");
+$rsu_data->cachedir = client::settings::cache::getcachedir($rsu_data->cachedir);
 
 ########################################################################
 #DO NOT EDIT THE CODE BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!
