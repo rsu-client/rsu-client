@@ -22,7 +22,7 @@ package rsu::java::opengl;
 		#$lddresult =~ s/\n//g;
 		
 		# Return the library path for java
-		return "LD_LIBRARY_PATH=$lddresult";
+		return "LD_LIBRARY_PATH=$lddresult:\$LD_LIBRARY_PATH";
 	}
 
 	#
