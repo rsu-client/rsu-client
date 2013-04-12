@@ -42,7 +42,7 @@
             <property name="minimum_size"></property>
             <property name="name">mainwindow</property>
             <property name="pos"></property>
-            <property name="size">602,426</property>
+            <property name="size">663,395</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass"></property>
             <property name="title">Client Updater</property>
