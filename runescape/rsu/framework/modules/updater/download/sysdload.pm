@@ -77,7 +77,7 @@ sub readurl
 		$output = `$fetchcommand $url`;
 		
 		# Remove any newlines
-		$output =~ s/(\n|\r|\r\n)//g;
+		#$output =~ s/(\n|\r|\r\n)//g;
 	}
 	
 	# Return the content of $url
@@ -87,7 +87,5 @@ sub readurl
 #
 #---------------------------------------- *** ----------------------------------------
 #
-
-
 
 1; 
