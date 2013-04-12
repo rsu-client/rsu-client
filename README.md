@@ -11,6 +11,7 @@ from one of the following repositories:
 * [ArchLinux AUR Repository](https://aur.archlinux.org/packages.php?ID=59362 "ArchLinux AUR Repository")
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
 * [Universal tar.gz Archive](https://dl.dropbox.com/u/11631899/opensource/Perl/unix-runescape-client.tar.gz "Universal tar.gz Archive")
+* [Universal zip Archive](https://github.com/HikariKnight/rsu-client/archive/master.zip "Universal zip Archive")
 
 __RuneScape is a registred trademark of Jagex Inc.__
 
@@ -70,3 +71,4 @@ Developers, Contributors and people that have helped the project
 * Jmb71 - _findjavalib regex_
 * Test6125 - _stacksize fix in prm_
 * [Fallen_Unia](https://github.com/Unia) - Zenity support in the Updater
+* Kalio - Portable jagexcache

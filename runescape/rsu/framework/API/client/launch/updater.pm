@@ -207,7 +207,7 @@ sub set_layout
 	$self->{addongrid}->AddGrowableCol(1);
 	
 	# Make the addonlist
-	create_addon_list($self);
+	create_addon_page($self);
 	
 	# Set the sizer for scrolledlist
 	$self->{scrolledlist}->SetSizer($self->{listgrid});
@@ -217,7 +217,7 @@ sub set_layout
 	
 	# Set minimum size and maximum size of the window
 	$self->SetMinSize($self->GetSize);
-	$self->SetMaxSize($self->GetSize);
+	#$self->SetMaxSize($self->GetSize);
 	
 	# If the icon exists
 	if (-e "$cwd/share/img/runescape.png")
@@ -334,16 +334,32 @@ sub make_addon_button
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub create_addon_list
+sub create_addon_page
 {
 	# Get the pointers
 	my $self = shift;
 	
+	# Generate list of RSU verified addons
+	generate_addon_list($self, "$cwd/rsu/framework/resources/client/launch/updater/configs", "repos.conf");
+	
+	# Generate list of player added addons
+	generate_addon_list($self, "$clientdir/share/configs", "addons_updater.conf");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub generate_addon_list
+{
+	# Get the passed data
+	my ($self, $location, $file) = @_;
+	
 	# Get the content of the addons
-	my $addons_conf = rsu::files::IO::getcontent("$clientdir/share/configs", "addons_updater.conf");
+	my $addons_conf = rsu::files::IO::getcontent("$location", "$file");
 	
 	# Get all addons that are universal or specific to our platform
-	my @addons = rsu::files::grep::strgrep($addons_conf, "^(".$OS."_|universal_)");
+	my @addons = rsu::files::grep::strgrep($addons_conf, "^(".$OS."_|universal_|repo_)");
 	
 	# For each of the addons we found
 	foreach (@addons)
@@ -352,7 +368,7 @@ sub create_addon_list
 		my @addon_id = split /=|;/, $_;
 		
 		# Get the config data for the addon
-		my $config = rsu::files::IO::readconf($addon_id[0],"0","addons_updater.conf");
+		my $config = rsu::files::IO::readconf($addon_id[0],"0","$addons_conf", "string://");
 		
 		# Next if config is 0
 		next if $config eq '0';
@@ -360,8 +376,21 @@ sub create_addon_list
 		# Split the config into sections
 		my @addon_data = split /;/, $config;
 		
+		# If this is a repository then
+		if ($addon_id[0] =~ /^repo_/i)
+		{
+			# Run the generation again but against the remote file
+			generate_addon_list($self,$addon_data[0],$addon_data[1]);
+			
+			# Jump to next entry
+			next;
+		}
+		
 		# Make an addon button
 		make_addon_button($self, $addon_id[0], $addon_data[0]);
+		
+		# Replace \\n with \n in the description
+		$addon_data[2] =~ s/\\n/\n/g;
 		
 		# Make a description
 		$self->{$addon_id[0]."_label"} = Wx::StaticText->new($self->{addonlist}, -1, "$addon_data[2]", wxDefaultPosition, wxDefaultSize);

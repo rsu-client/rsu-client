@@ -65,13 +65,13 @@ else
 	if ($ARGV[2] ne '')
 	{
 		# If the parameter starts with a full path or variable
-		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/)/i)
+		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/|http:\/\/|https:\/\/)/i)
 		{
 			# Use parameter as location
 			$location = $ARGV[2];
 		}
 		# Else if the parameter ends with .conf
-		elsif($ARGV[2] =~ /\.conf$/)
+		elsif($ARGV[2] =~ /\.(conf|md|ini|txt|dat|config|readme|update|info|inf|nfo|data|html|php|ws|aspx|pl|py)$/i)
 		{
 			# Use the parameter as file
 			$file = $ARGV[2];
@@ -80,7 +80,7 @@ else
 			if ($ARGV[3] ne '')
 			{
 				# If the parameter starts with a full path or variable
-				if ($ARGV[3] =~ /^(\$|\%|[a-z]:|\/)/i)
+				if ($ARGV[3] =~ /^(\$|\%|[a-z]:|\/|http:\/\/|https:\/\/)/i)
 				{
 					# Use parameter as location
 					$location = $ARGV[3];
