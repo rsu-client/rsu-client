@@ -493,8 +493,11 @@ sub update_addon_clicked
 	my $config = rsu::files::IO::readconf($caller, "0", "addons_updater.conf");
 	
 	# If the config cannot be found
-	if ($config eq '')
+	if ($config eq '0')
 	{
+		# Get locate the correct config for the repo addon
+		$config = locate_repo_download($caller, "$clientdir/share/configs", "addons_updater.conf");
+		
 		Wx::MessageBox("Found no addon config for $caller inside\n$clientdir/share/configs/addons.conf", "Error! No Config");
 		
 		# Return to call
@@ -556,6 +559,30 @@ sub update_addon_clicked
 	
 	# Remove the .download folder
 	remove_tree("$clientdir/.download");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub locate_repo_download
+{
+	# Get the passed data
+	my ($caller, $location, $file) = @_;
+	
+	my $config = rsu::files::IO::getcontent("$location", "$file");
+	
+	# Get all addons that are universal or specific to our platform
+	my @repos = rsu::files::grep::strgrep($config, "^($caller|repo_)");
+	
+	# For each value in the array
+	foreach my $repo (@repos)
+	{
+		# need to do some magic here
+	}
+	
+	# Return the config line
+	return $config;
 }
 
 #
