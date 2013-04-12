@@ -80,6 +80,12 @@ sub readconf
 		# Read the conf from url
 		$confcontent = updater::download::sysdload::readurl($basedir."/$conf_file");
 	}
+	# Else if dir is string://
+	elsif($basedir =~ /^string:\/\//)
+	{
+		# Use the $conf_file as $confcontent
+		$confcontent = $conf_file;
+	}
 	# Else
 	else
 	{
@@ -171,8 +177,6 @@ sub getcontent
 	
 	# Make a variable to hold the content
 	my $content;
-	
-	print "$cwd\n";
 	
 	# If this is a url then
 	if ($cwd =~ /^(http|https):\/\//)
