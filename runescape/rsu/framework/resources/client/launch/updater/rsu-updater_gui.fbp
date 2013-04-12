@@ -43,7 +43,7 @@
             <property name="name">mainwindow</property>
             <property name="pos"></property>
             <property name="size">597,356</property>
-            <property name="style">wxCAPTION|wxCLOSE_BOX</property>
+            <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass"></property>
             <property name="title">Client Updater</property>
             <property name="tooltip"></property>
