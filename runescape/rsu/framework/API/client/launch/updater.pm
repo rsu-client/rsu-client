@@ -217,7 +217,7 @@ sub set_layout
 	
 	# Set minimum size and maximum size of the window
 	$self->SetMinSize($self->GetSize);
-	$self->SetMaxSize($self->GetSize);
+	#$self->SetMaxSize($self->GetSize);
 	
 	# If the icon exists
 	if (-e "$cwd/share/img/runescape.png")
