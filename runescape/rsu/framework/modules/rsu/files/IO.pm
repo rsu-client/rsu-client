@@ -55,34 +55,62 @@ sub readconf
 	# Get the passed data from function call
 	my ($key, $default, $conf_file, $dir) = @_;
 	
+	# Require the sysdload module
+	require updater::download::sysdload;
+	
 	# Require the clientdir module
 	require rsu::files::clientdir;
 	
 	# Make a variable to hold the basedir
 	my $basedir = rsu::files::clientdir::getclientdir()."/share/configs";
 	
-	# If a directory is passed
+	# If a directory is passed and it is not empty or a url
 	if (defined $dir && $dir ne '')
 	{
 		# Use the passed directory as the basedir
 		$basedir = $dir;
 	}
 	
-	# Get the content from the settings file
-	my $confcontent = rsu::files::IO::ReadFile($basedir."/$conf_file");
+	# Make a variable to contain the conf contents
+	my $confcontent;
 	
-	# If no file is found or error reading the file
-	if ($confcontent =~ /error reading file/)
+	# If $basedir is a url then
+	if ($basedir =~ /^(http|https):\/\//)
 	{
-		# Print debug info
-		print STDERR "Error reading $conf_file, using default value: $default\n";
+		# Read the conf from url
+		$confcontent = updater::download::sysdload::readurl($basedir."/$conf_file");
+	}
+	# Else if dir is string://
+	elsif($basedir =~ /^string:\/\//)
+	{
+		# Use the $conf_file as $confcontent
+		$confcontent = $conf_file;
+	}
+	# Else
+	else
+	{
+		# Get the content from the settings file
+		$confcontent = rsu::files::IO::ReadFile($basedir."/$conf_file");
 		
-		# Then return default value
-		return $default;
+		# If no file is found or error reading the file
+		if ($confcontent =~ /error reading file/)
+		{
+			# Print debug info
+			print STDERR "Error reading $conf_file, using default value: $default\n";
+			
+			# Then return default value
+			return $default;
+		}
+		# Else
+		else
+		{
+			# Pass the array reference to a string
+			$confcontent = "@$confcontent";
+		}
 	}
 	
 	# Split the conf file content by newline
-	my @settings = split /(\n|\r\n|\r)/, "@$confcontent";
+	my @settings = split /(\n|\r\n|\r)/, "$confcontent";
 	
 	# Make a container for the value of the key we are looking for
 	my $value = '';
@@ -144,23 +172,41 @@ sub getcontent
 	# Get the passed data
 	my ($cwd, $file) = @_;
 	
-	# Get the content of the file
-	my $content = rsu::files::IO::ReadFile($cwd."/$file");
+	# Require the sysdload module
+	require updater::download::sysdload;
 	
-	# If no file is found or error reading the file
-	if ($content =~ /error reading file/)
+	# Make a variable to hold the content
+	my $content;
+	
+	# If this is a url then
+	if ($cwd =~ /^(http|https):\/\//)
 	{
-		# Print debug info
-		print STDERR "Error reading $file, file not found";
-		
-		# Empty the content variable
-		$content = "\n";
+		# Read the content from remote file
+		$content = updater::download::sysdload::readurl($cwd."/$file");
 	}
 	# Else
 	else
 	{
-		$content = "@$content";
-		$content =~ s/(\n|\n\r|\r)\s+/\n/g;
+		# Get the content of the file
+		$content = rsu::files::IO::ReadFile($cwd."/$file");
+		
+		# If no file is found or error reading the file
+		if ($content =~ /error reading file/)
+		{
+			# Print debug info
+			print STDERR "Error reading $file, file not found";
+			
+			# Empty the content variable
+			$content = "\n";
+		}
+		# Else
+		else
+		{
+			# Convert the array reference to a string
+			$content = "@$content";
+			# Fix all lines starting with space
+			$content =~ s/(\n|\n\r|\r)\s+/\n/g;
+		}
 	}
 	
 	# Return the content
