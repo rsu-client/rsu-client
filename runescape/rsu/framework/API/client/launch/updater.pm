@@ -496,12 +496,24 @@ sub update_addon_clicked
 	if ($config eq '0')
 	{
 		# Get locate the correct config for the repo addon
-		$config = locate_repo_download($caller, "$clientdir/share/configs", "addons_updater.conf");
-		
-		Wx::MessageBox("Found no addon config for $caller inside\n$clientdir/share/configs/addons.conf", "Error! No Config");
-		
-		# Return to call
-		return;
+		$config = locate_repo_download($caller, "$cwd/rsu/framework/resources/client/launch/updater/configs", "repos.conf");
+
+		# If $config is 0 then
+		if ($config eq '0')
+		{
+			# Get locate the correct config for the repo addon
+			$config = locate_repo_download($caller, "$clientdir/share/configs", "addons_updater.conf");
+			
+			# If $config is 0 then
+			if ($config eq '0')
+			{
+				# Show an error message
+				Wx::MessageBox("Found no addon config for $caller in any of the config files!", "Error! No Config");
+				
+				# Return to call
+				return;
+			}
+		}
 	}
 	
 	# Split the config into sections by ;
@@ -570,19 +582,53 @@ sub locate_repo_download
 	# Get the passed data
 	my ($caller, $location, $file) = @_;
 	
+	# Tell what we are doing
+	print "Scanning through repositories in $location/$file for $caller\n\n";
+	
+	# Get the contents from the passed location and file
 	my $config = rsu::files::IO::getcontent("$location", "$file");
 	
-	# Get all addons that are universal or specific to our platform
+	# Get all addons matches the addon call or is a repository
 	my @repos = rsu::files::grep::strgrep($config, "^($caller|repo_)");
 	
 	# For each value in the array
-	foreach my $repo (@repos)
+	foreach (@repos)
 	{
-		# need to do some magic here
+		# Split the config so we can get the info
+		my @repo = split /=|;/, $_;
+		
+		# If an entry matches the addon call then
+		if ($repo[0] =~ /^$caller$/)
+		{
+			# Tell that the caller was found
+			print "$caller was found! Data is:\n$repo[1];$repo[2];$repo[3];\n\n";
+			
+			# Merge the config info
+			$config = "$repo[1];$repo[2];$repo[3];";
+			
+			# Return the config
+			return $config;
+		}
+		# Else
+		else
+		{
+			# Run this command again on the repo we found
+			$config = locate_repo_download($caller, $repo[1], $repo[2]);
+			
+			# If nothing was found then
+			if ($config !~ /;/)
+			{
+				# return 0
+				return "0";
+			}
+			# Else
+			else
+			{
+				# Return the config
+				return $config
+			}
+		}
 	}
-	
-	# Return the config line
-	return $config;
 }
 
 #
