@@ -1,3 +1,11 @@
+runescape (4.0.3) precise; urgency=low
+
+  * Added support for adding repositories of addons instead of single entries for each addon
+  * Included Archive::Extract
+  * Changed the size of the updater and launcher
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Mon, 14 Apr 2013 13:56:10 +0200
+
 runescape (4.0.2) precise; urgency=low
 
   * Disabled the maximize button on the settings interface.
