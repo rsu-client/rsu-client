@@ -428,13 +428,13 @@ sub update_clicked
 		if ($OS =~ /MSWin32/)
 		{
 			# Launch the client downloader in a new process for extra resources for this task
-			system ("$cwd/rsu/rsu-query.exe rsu.download.client $jardir $caller");
+			system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.client $jardir $caller");
 		}
 		# Else we are on a unix platform
 		else
 		{
 			# Launch the client downloader in a new process for extra resources for this task
-			system ("$cwd/rsu/rsu-query rsu.download.client $jardir $caller");
+			system ("\"$cwd/rsu/rsu-query\" rsu.download.client $jardir $caller");
 		}
 		
 		# Show a message that we are done
@@ -453,7 +453,7 @@ sub update_clicked
 		my @callerdata = split /;/, $callerconfig;
 		
 		# Download the api in a new process
-		system("$cwd/rsu/rsu-query rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		system("\"$cwd/rsu/rsu-query\" rsu.download.file $callerdata[1] \"$clientdir/.download\"");
 		
 		# Intended function, however can only be used once per script, kept incase i manage to fix the problem
 		#updater::download::file::from("$callerdata[1]", "$clientdir/.download/rsu-api-latest.tar.gz");
@@ -526,13 +526,13 @@ sub update_addon_clicked
 	if ($OS =~ /MSWin32/)
 	{
 		# Download the archive file
-		system ("$cwd/rsu/rsu-query.exe rsu.download.file $addon_info[1]");
+		system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.file $addon_info[1]");
 	}
 	# Else we are on a unix platform
 	else
 	{
 		# Download the archive file
-		system ("$cwd/rsu/rsu-query rsu.download.file $addon_info[1]");
+		system ("\"$cwd/rsu/rsu-query\" rsu.download.file $addon_info[1]");
 	}
 	
 	# Find out the filename
