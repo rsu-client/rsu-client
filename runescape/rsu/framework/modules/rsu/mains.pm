@@ -4,6 +4,7 @@ package rsu::mains;
 require rsu::java::jre;
 require client::settings::prms;
 require rsu::files::clientdir;
+require rsu::java::optimizer;
 
 sub unix_main
 {
@@ -174,27 +175,13 @@ sub unix_main
 	{
 		# Apply some optimization parameters if the user have not specified them in the prm file
 		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseCompressedOops" if $params !~ /-XX:+UseCompressedOops/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts" if $params !~ /-XX:+AggressiveOpts/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+UnlockExperimentalVMOptions" if $params !~ /-XX:+UnlockExperimentalVMOptions/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+DisableExplicitGC" if $params !~ /-XX:+DisableExplicitGC/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+TieredCompilation" if $params !~ /-XX:+TieredCompilation/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseAdaptiveGCBoundary" if $params !~ /-XX:+UseAdaptiveGCBoundary/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseParallelGC" if $params !~ /-XX:+UseParallelGC/;
-	}
-	else
-	{
-		# Apply some optimization parameters if the user have not specified them in the prm file
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts" if $params !~ /-XX:+AggressiveOpts/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+UnlockExperimentalVMOptions" if $params !~ /-XX:+UnlockExperimentalVMOptions/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+DisableExplicitGC" if $params !~ /-XX:+DisableExplicitGC/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+TieredCompilation" if $params !~ /-XX:+TieredCompilation/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseAdaptiveGCBoundary" if $params !~ /-XX:+UseAdaptiveGCBoundary/;
-		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseParallelGC" if $params !~ /-XX:+UseParallelGC/;
 	}
 	
+	# Run the java auto optimizer
+	$rsu_data->javabin = rsu::java::optimizer::run($rsu_data->javabin, $params);
 	
 	# Set the cachedir location
-	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
+	$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
@@ -249,8 +236,11 @@ sub windows_main
 	# Split the clientdir path into sections so we can get the parent folder name (so we can get a window icon)
 	my @parentfolder = split /(\\|\/)/, $rsu_data->clientdir;
 	
+	# Run the java auto optimizer
+	$win32javabin = rsu::java::optimizer::run($win32javabin, $params);
+	
 	# Set the cachedir location
-	$win32javabin = "\"$win32javabin\" -Duser.home=\"".$rsu_data->cachedir."\"";
+	$win32javabin = "\"$win32javabin\" -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
