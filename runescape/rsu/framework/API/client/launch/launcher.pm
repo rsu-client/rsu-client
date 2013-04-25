@@ -242,7 +242,7 @@ sub set_layout
 		setScrollBars($self->{rssview});
 		
 		# Fetch rssfeed
-		#fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
 	}
 	
 	# Add the sizers and panels together to form the layout
