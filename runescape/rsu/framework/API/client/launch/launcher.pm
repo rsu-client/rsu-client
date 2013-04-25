@@ -219,11 +219,32 @@ sub set_layout
 		# Add the rssview to the layout sizer
 		$self->{layoutsizer}->Add($self->{rssview},4,wxEXPAND|wxALL,5);
 		
+		# Make a vertical box sizer for use to organize the rss
+		$self->{rss_container} = Wx::BoxSizer->new(wxVERTICAL);
+		
+		# Make a refresh button
+		$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News");
+			
+		# Add a tooltip to the button
+		$self->{rssRefresh}->SetToolTip("Click here to refresh the news RSS feed.");
+		
+		# Make an event for the refresh button
+		EVT_BUTTON($self, $self->{rssRefresh}, \&refreshnews_clicked);
+		
+		# Add the button to the sizer
+		$self->{rss_container}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
+		
+		# Use the rss_container as the sizer for rssview
+		$self->{rssview}->SetSizer($self->{rss_container});
+		
+		# Create a newslist
+		make_newslist($self);
+		
+		# Set scrollbars on the rssview
+		setScrollBars($self->{rssview});
+		
 		# Fetch rssfeed
 		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
-		
-		# Add scrollbars to the rssview if needed
-		setScrollBars($self->{rssview});
 	}
 	
 	# Add the sizers and panels together to form the layout
@@ -355,16 +376,94 @@ sub create_addons_page
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub make_newslist
+{
+	# Get the passed data
+	my ($self) = @_;
+	
+	# Make a vertical box sizer for use to organize the rss
+	$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
+	
+	# For each value in the array
+	for (my $counter = 1; $counter <= 15; $counter++)
+	{
+		##### Generate Title #####
+		# Make a title label for the news
+		$self->{newsTitle_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "Dummy Title");
+		
+		# Make font bigger
+		$self->{newsTitle_.$counter}->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
+		
+		# Change the title color to the same color that Jagex use on news articles
+		$self->{newsTitle_.$counter}->SetForegroundColour(Wx::Colour->new(243,177,63));
+		
+		# Add label to the sizer
+		$self->{rss_sizer}->Add($self->{newsTitle_.$counter}, 0, wxEXPAND|wxALL, 5);
+		
+		##### Generate Date #####
+		# Make a date label for the news
+		$self->{newsDate_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "\tPublished: Sometime");
+		
+		# Change the text color to the same color that Jagex use on news articles
+		$self->{newsDate_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
+		
+		# Make font bigger
+		$self->{newsDate_.$counter}->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
+		
+		# Add label to the sizer
+		$self->{rss_sizer}->Add($self->{newsDate_.$counter}, 0, wxEXPAND|wxLEFT, 5);
+		
+		##### Generate Description #####
+		# Make a date label for the news
+		$self->{newsDescription_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "Dummy description");
+		
+		# Change the text color to the same color that Jagex use on news articles
+		$self->{newsDescription_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
+		
+		$self->{newsDescription_.$counter}->Wrap(480);
+		
+		# Add label to the sizer
+		$self->{rss_sizer}->Add($self->{newsDescription_.$counter}, 0, wxEXPAND|wxALL, 5);
+		
+		##### Generate Link #####
+		# Make a hyperlink
+		$self->{rssLink_.$counter} = Wx::Button->new($self->{rssview}, wxID_ANY, "Read More..");
+		
+		# Add a tooltip showing the url to the article
+		$self->{rssLink_.$counter}->SetToolTip("");
+		
+		# Connect the hyperlink to an event named hyperlink_clicked
+		EVT_BUTTON($self->{rssLink_.$counter}, -1, \&hyperlink_clicked);
+		
+		# Add a link to the article to the sizer
+		$self->{rss_sizer}->Add($self->{rssLink_.$counter}, 0, wxALL, 0);
+		
+		##### Generate Static Line #####
+		# Make a static line to the sizer to nicely split the newsposts
+		$self->{rssLine_.$counter} = Wx::StaticLine->new($self->{rssview}, -1);
+		
+		# Add the static line to the sizer
+		$self->{rss_sizer}->Add($self->{rssLine_.$counter}, 0, wxEXPAND|wxALL, 5);
+	}
+	
+	# Add the sizer to the rssview
+	$self->{rss_container}->Add($self->{rss_sizer});
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
 sub fetch_rssnews
 {
 	# Get the passed data
 	my ($self, $rssurl) = @_;
 	
 	# Make a vertical box sizer for use to organize the rss
-	$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
+	#$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
 	
-	# Fetch the recent activity rss feed
-	my $rssfeed = updater::download::sysdload::readurl($rssurl);
+	# Fetch the recent activity rss feed (timeout after 5 seconds)
+	my $rssfeed = updater::download::sysdload::readurl($rssurl,5);
 	
 	# Make a hash reference for the RSSLite parser
 	my %rssnews;
@@ -372,13 +471,16 @@ sub fetch_rssnews
 	# Parse the RSSfeed
 	parseRSS(\%rssnews, \$rssfeed);
 	
+	# Make a counter to keep track of the news
+	my $counter = 1;
+	
 	# For each value in the array
 	foreach my $item (@{$rssnews{'item'}})
 	{
 		##### Generate Title #####
 		
 		# Get the news title text so we can format it
-		$rssTitle = "$item->{'title'}";
+		my $rssTitle = "$item->{'title'}";
 		
 		# Fix some formating issues from html
 		$rssTitle =~ s/(&#8217;|&APOS;)/'/gi;
@@ -399,16 +501,13 @@ sub fetch_rssnews
 		}
 		
 		# Make a title label for the news
-		my $newsTitle = Wx::StaticText->new($self->{rssview}, -1, "\n$rssTitle");
+		$self->{newsTitle_.$counter}->SetLabel("$rssTitle");
 		
 		# Make font bigger
-		$newsTitle->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
+		$self->{newsTitle_.$counter}->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
 		
 		# Change the title color to the same color that Jagex use on news articles
-		$newsTitle->SetForegroundColour(Wx::Colour->new(243,177,63));
-		
-		# Add label to the sizer
-		$self->{rss_sizer}->Add($newsTitle, 0, wxEXPAND|wxALL, 5);
+		$self->{newsTitle_.$counter}->SetForegroundColour(Wx::Colour->new(243,177,63));
 		
 		##### Generate Date #####
 		
@@ -419,16 +518,13 @@ sub fetch_rssnews
 		$rssDate =~ s/\s+\d{2,2}:\d{2,2}:\d{2,2}\s+GMT//g;
 		
 		# Make a date label for the news
-		my $newsDate = Wx::StaticText->new($self->{rssview}, -1, "Published: $rssDate");
+		$self->{newsDate_.$counter}->SetLabel("\tPublished: $rssDate");
 		
 		# Change the text color to the same color that Jagex use on news articles
-		$newsDate->SetForegroundColour(Wx::Colour->new(184,184,184));
+		$self->{newsDate_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
 		
 		# Make font bigger
-		$newsDate->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
-		
-		# Add label to the sizer
-		$self->{rss_sizer}->Add($newsDate, 0, wxEXPAND|wxLEFT, 25);
+		$self->{newsDate_.$counter}->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
 		
 		##### Generate Description #####
 		
@@ -461,38 +557,52 @@ sub fetch_rssnews
 		}
 		
 		# Make a date label for the news
-		my $newsDescription = Wx::StaticText->new($self->{rssview}, -1, "$rssDescription");
+		$self->{newsDescription_.$counter}->SetLabel("$rssDescription");
 		
 		# Change the text color to the same color that Jagex use on news articles
-		$newsDescription->SetForegroundColour(Wx::Colour->new(184,184,184));
+		$self->{newsDescription_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
 		
-		$newsDescription->Wrap(480);
+		$self->{newsDescription_.$counter}->Wrap(480);
 		
-		# Add label to the sizer
-		$self->{rss_sizer}->Add($newsDescription, 0, wxEXPAND|wxALL, 5);
-		
-		##### Generate Link #####
-		
-		# Make a hyperlink
-		my $rssLink = Wx::Button->new($self->{rssview}, wxID_ANY, "Read More..");
-		
+		##### Generate Link #####		
 		# Add a tooltip showing the url to the article
-		$rssLink->SetToolTip("$item->{'link'}");
+		$self->{rssLink_.$counter}->SetToolTip("$item->{'link'}");
 		
 		# Connect the hyperlink to an event named hyperlink_clicked
-		EVT_BUTTON($rssLink, -1, \&hyperlink_clicked);
+		#EVT_BUTTON($rssLink, -1, \&hyperlink_clicked);
 		
 		# Add a link to the article to the sizer
-		$self->{rss_sizer}->Add($rssLink, 0, wxALL, 0);
+		#$self->{rss_sizer}->Add($rssLink, 0, wxALL, 0);
 		
 		##### Generate Static Line #####
 		
 		# Add a static line to the sizer to nicely split the newsposts
-		$self->{rss_sizer}->Add(Wx::StaticLine->new($self->{rssview}, -1), 0, wxEXPAND|wxALL, 5);
+		#$self->{rss_sizer}->Add(Wx::StaticLine->new($self->{rssview}, -1), 0, wxEXPAND|wxALL, 5);
+		
+		$counter += 1;
 	}
 	
 	# Add the sizer to the rssview
-	$self->{rssview}->SetSizer($self->{rss_sizer});
+	#$self->{rssview}->SetSizer($self->{rss_sizer});
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub refreshnews_clicked
+{
+	# Get pointers
+	my ($self, $event) = @_;
+	
+	$self->{rss_sizer}->Clear(1);
+	$self->{rss_container}->Remove($self->{rss_sizer});
+	$self->{rss_container}->FitInside($self->{rssview});
+	
+	
+	# Refresh the rssfeed
+	make_newslist($self);
+	fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
 }
 
 #
@@ -647,7 +757,7 @@ sub setScrollBars
 	my $pixelsPerUnitY = 15; 
 	
 	# If we are using the rssfeed
-	if ("@ARGV" =~ /--rssfeed/)
+	if ("@ARGV" !~ /--webview/)
 	{
 		# Scroll more pixels on the Y axis
 		$pixelsPerUnitY = 30;
