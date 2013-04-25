@@ -249,7 +249,7 @@ sub windows_main
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
 	# Run the jar file
-	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
 }
 
 #
