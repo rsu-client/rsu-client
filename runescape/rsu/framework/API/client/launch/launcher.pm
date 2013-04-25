@@ -219,13 +219,30 @@ sub set_layout
 		# Add the rssview to the layout sizer
 		$self->{layoutsizer}->Add($self->{rssview},4,wxEXPAND|wxALL,5);
 		
-		generate_empty_newslist($self);
+		# Make a vertical box sizer for use to organize the rss
+		$self->{rss_container} = Wx::BoxSizer->new(wxVERTICAL);
+		
+		# Make a refresh button
+		$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News");
+			
+		# Add a tooltip to the button
+		$self->{rssRefresh}->SetToolTip("Click here to refresh the news RSS feed.");
+		
+		# Make an event for the refresh button
+		EVT_BUTTON($self, $self->{rssRefresh}, \&refreshnews_clicked);
+		
+		# Add the button to the sizer
+		$self->{rss_container}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
+		
+		$self->{rssview}->SetSizer($self->{rss_container});
+		
+		# Create a newslist
+		make_newslist($self);
+		
+		setScrollBars($self->{rssview});
 		
 		# Fetch rssfeed
-		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
-		
-		# Add scrollbars to the rssview if needed
-		setScrollBars($self->{rssview});
+		#fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
 	}
 	
 	# Add the sizers and panels together to form the layout
@@ -357,7 +374,7 @@ sub create_addons_page
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub generate_empty_newslist
+sub make_newslist
 {
 	# Get the passed data
 	my ($self) = @_;
@@ -365,25 +382,12 @@ sub generate_empty_newslist
 	# Make a vertical box sizer for use to organize the rss
 	$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
 	
-	# Make a refresh button
-	$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News");
-		
-	# Add a tooltip to the button
-	$self->{rssRefresh}->SetToolTip("Click here to refresh the news RSS feed.");
-	
-	# Make an event for the refresh button
-	EVT_BUTTON($self, $self->{rssRefresh}, \&refreshnews_clicked);
-	
-	# Add the button to the sizer
-	$self->{rss_sizer}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
-	
 	# For each value in the array
 	for (my $counter = 1; $counter <= 15; $counter++)
 	{
 		##### Generate Title #####
 		# Make a title label for the news
 		$self->{newsTitle_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "Dummy Title");
-		$self->{newsTitle_.$counter}->SetName("Test");
 		
 		# Make font bigger
 		$self->{newsTitle_.$counter}->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
@@ -433,14 +437,15 @@ sub generate_empty_newslist
 		$self->{rss_sizer}->Add($self->{rssLink_.$counter}, 0, wxALL, 0);
 		
 		##### Generate Static Line #####
-		# Add a static line to the sizer to nicely split the newsposts
-		$self->{rss_sizer}->Add(Wx::StaticLine->new($self->{rssview}, -1), 0, wxEXPAND|wxALL, 5);
+		# Make a static line to the sizer to nicely split the newsposts
+		$self->{rssLine_.$counter} = Wx::StaticLine->new($self->{rssview}, -1);
+		
+		# Add the static line to the sizer
+		$self->{rss_sizer}->Add($self->{rssLine_.$counter}, 0, wxEXPAND|wxALL, 5);
 	}
 	
 	# Add the sizer to the rssview
-	$self->{rssview}->SetSizer($self->{rss_sizer});
-	
-	return $self;
+	$self->{rss_container}->Add($self->{rss_sizer});
 }
 
 #
@@ -455,8 +460,8 @@ sub fetch_rssnews
 	# Make a vertical box sizer for use to organize the rss
 	#$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
 	
-	# Fetch the recent activity rss feed
-	my $rssfeed = updater::download::sysdload::readurl($rssurl);
+	# Fetch the recent activity rss feed (timeout after 5 seconds)
+	my $rssfeed = updater::download::sysdload::readurl($rssurl,5);
 	
 	# Make a hash reference for the RSSLite parser
 	my %rssnews;
@@ -494,7 +499,7 @@ sub fetch_rssnews
 		}
 		
 		# Make a title label for the news
-		$self->{newsTitle_.$counter}->SetLabel("\n$rssTitle");
+		$self->{newsTitle_.$counter}->SetLabel("$rssTitle");
 		
 		# Make font bigger
 		$self->{newsTitle_.$counter}->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
@@ -576,7 +581,7 @@ sub fetch_rssnews
 	}
 	
 	# Add the sizer to the rssview
-	$self->{rssview}->SetSizer($self->{rss_sizer});
+	#$self->{rssview}->SetSizer($self->{rss_sizer});
 }
 
 #
@@ -588,7 +593,13 @@ sub refreshnews_clicked
 	# Get pointers
 	my ($self, $event) = @_;
 	
+	$self->{rss_sizer}->Clear(1);
+	$self->{rss_container}->Remove($self->{rss_sizer});
+	$self->{rss_container}->FitInside($self->{rssview});
+	
+	
 	# Refresh the rssfeed
+	make_newslist($self);
 	fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
 }
 
@@ -744,7 +755,7 @@ sub setScrollBars
 	my $pixelsPerUnitY = 15; 
 	
 	# If we are using the rssfeed
-	if ("@ARGV" =~ /--rssfeed/)
+	if ("@ARGV" !~ /--webview/)
 	{
 		# Scroll more pixels on the Y axis
 		$pixelsPerUnitY = 30;
