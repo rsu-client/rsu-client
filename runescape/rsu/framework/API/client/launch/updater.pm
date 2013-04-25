@@ -259,7 +259,7 @@ sub create_button_list
 	}
 	
 	# If clientdir is not $HOME/.config/runescape
-	if ($clientdir !~ /$HOME\/\.config\/runescape/)
+	if ($OS =~ /MSWin32/ || $clientdir !~ /$HOME\/\.config\/runescape/)
 	{
 		# Generate an update entry for windows
 		generate_update_entry($self, "api", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)");
