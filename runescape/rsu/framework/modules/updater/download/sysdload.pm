@@ -64,14 +64,14 @@ sub readurl
 		if(`ls /usr/bin | grep wget` =~  /wget/)
 		{
 			# Use wget command to fetch files
-			$fetchcommand = "wget -q -O-" if !defined $timeout;
+			$fetchcommand = "wget -q --connect-timeout=30 -O-" if !defined $timeout;
 			$fetchcommand = "wget -q --connect-timeout=$timeout --timeout=$timeout -O-" if defined $timeout;
 		}
 		# Else if /usr/bin contains curl
 		elsif(`ls /usr/bin | grep curl` =~  /curl/)
 		{
 			# Curl command equalent to the wget command to fetch files
-			$fetchcommand = "curl -L -#" if !defined $timeout;
+			$fetchcommand = "curl -L --connect-timeout 30 -#" if !defined $timeout;
 			$fetchcommand = "curl -L --connect-timeout $timeout -m $timeout -#" if defined $timeout;
 		}
 
