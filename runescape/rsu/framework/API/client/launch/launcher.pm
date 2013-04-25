@@ -234,11 +234,13 @@ sub set_layout
 		# Add the button to the sizer
 		$self->{rss_container}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
 		
+		# Use the rss_container as the sizer for rssview
 		$self->{rssview}->SetSizer($self->{rss_container});
 		
 		# Create a newslist
 		make_newslist($self);
 		
+		# Set scrollbars on the rssview
 		setScrollBars($self->{rssview});
 		
 		# Fetch rssfeed
@@ -400,7 +402,7 @@ sub make_newslist
 		
 		##### Generate Date #####
 		# Make a date label for the news
-		$self->{newsDate_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "Published: Sometime");
+		$self->{newsDate_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "\tPublished: Sometime");
 		
 		# Change the text color to the same color that Jagex use on news articles
 		$self->{newsDate_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
@@ -409,7 +411,7 @@ sub make_newslist
 		$self->{newsDate_.$counter}->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
 		
 		# Add label to the sizer
-		$self->{rss_sizer}->Add($self->{newsDate_.$counter}, 0, wxEXPAND|wxLEFT, 25);
+		$self->{rss_sizer}->Add($self->{newsDate_.$counter}, 0, wxEXPAND|wxLEFT, 5);
 		
 		##### Generate Description #####
 		# Make a date label for the news
@@ -516,7 +518,7 @@ sub fetch_rssnews
 		$rssDate =~ s/\s+\d{2,2}:\d{2,2}:\d{2,2}\s+GMT//g;
 		
 		# Make a date label for the news
-		$self->{newsDate_.$counter}->SetLabel("Published: $rssDate");
+		$self->{newsDate_.$counter}->SetLabel("\tPublished: $rssDate");
 		
 		# Change the text color to the same color that Jagex use on news articles
 		$self->{newsDate_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
