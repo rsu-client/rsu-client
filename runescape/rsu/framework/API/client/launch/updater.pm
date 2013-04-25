@@ -264,6 +264,11 @@ sub create_button_list
 		# Generate an update entry for windows
 		generate_update_entry($self, "api", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)");
 	}
+	
+	# Set the layout
+	$self->Layout;
+	# Refresh window
+	$self->Refresh;
 }
 
 #
