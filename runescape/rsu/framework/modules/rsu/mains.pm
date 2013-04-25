@@ -74,12 +74,12 @@ sub unix_main
 	# Pass the java binary to a variable so we can use it in commands
 	my $javabin = $rsu_data->javabin;
 	
+	# Run the java -version command and check if it is openjdk or java (or to check if its 32bit or 64bit)
+	$rsu_data->javaversion = `$javabin -version 2>&1`;
+	
 	# If user enabled alsa sounds and OS is linux
 	if ($rsu_data->forcealsa =~ /(1|true)/i && $rsu_data->OS =~ /linux/)
 	{
-		# Run the java -version command and check if it is openjdk or java (both uses different alsa fixes)
-		$rsu_data->javaversion = `$javabin -version 2>&1`;
-		
 		# Pass the result to a new variable
 		my $javaused_result = $rsu_data->javaversion;
 		
@@ -167,6 +167,31 @@ sub unix_main
 		# Add the library path to the java binary command
 		$rsu_data->javabin = "$javalibpath ".$rsu_data->javabin;
 	}
+	
+	# Check if the binary will be launcher with the -client parameter and if the java used is 64bit
+	# If the -client parameter is not used (lack of support) and we are using a 64-bit java then
+	if ($rsu_data->javabin !~ /-client/ && $rsu_data->javaversion =~ /64-bit/i)
+	{
+		# Apply some optimization parameters if the user have not specified them in the prm file
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseCompressedOops" if $params !~ /-XX:+UseCompressedOops/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts" if $params !~ /-XX:+AggressiveOpts/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UnlockExperimentalVMOptions" if $params !~ /-XX:+UnlockExperimentalVMOptions/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+DisableExplicitGC" if $params !~ /-XX:+DisableExplicitGC/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+TieredCompilation" if $params !~ /-XX:+TieredCompilation/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseAdaptiveGCBoundary" if $params !~ /-XX:+UseAdaptiveGCBoundary/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseParallelGC" if $params !~ /-XX:+UseParallelGC/;
+	}
+	else
+	{
+		# Apply some optimization parameters if the user have not specified them in the prm file
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts" if $params !~ /-XX:+AggressiveOpts/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UnlockExperimentalVMOptions" if $params !~ /-XX:+UnlockExperimentalVMOptions/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+DisableExplicitGC" if $params !~ /-XX:+DisableExplicitGC/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+TieredCompilation" if $params !~ /-XX:+TieredCompilation/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseAdaptiveGCBoundary" if $params !~ /-XX:+UseAdaptiveGCBoundary/;
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseParallelGC" if $params !~ /-XX:+UseParallelGC/;
+	}
+	
 	
 	# Set the cachedir location
 	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
