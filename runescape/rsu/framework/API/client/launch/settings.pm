@@ -73,7 +73,7 @@ else
 }
 
 # If the clientdir is inside $HOME/.config/runescape then we might be installed systemwide
-if ($clientdir =~ /$HOME\/\.config\/runescape/)
+if ($OS !~ /MSWin32/ && $clientdir =~ /$HOME\/\.config\/runescape/)
 {		
 	# Make the client folders
 	make_path("$clientdir/bin", "$clientdir/share/img", "$clientdir/share/configs", "$clientdir/share/prms");

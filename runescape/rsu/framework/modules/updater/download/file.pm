@@ -11,6 +11,9 @@ sub from
 	# Test to see if LWP::UserAgent is available on the system and set $nolwp to 1 if LWP is not available
 	eval "use LWP::UserAgent"; $nolwp = 1 if $@;
 	
+	# If we are not running on a PAR Packaged version then disable lwp
+	$nolwp = 1 if "@INC" !~ /par-/;
+	
 	# Try and load Wx and set $nogui to 1 if Wx cannot be loaded
 	eval "use Wx"; $nogui = 1 if $@;
 	# Try to use functions from perl 5.012

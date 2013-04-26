@@ -37,7 +37,7 @@ sub sysdownload
 sub readurl
 {
 	# Get the passed data
-	my ($url) = @_;
+	my ($url, $timeout) = @_;
 	
 	# Get the current OS
 	my $OS = "$^O";
@@ -49,10 +49,30 @@ sub readurl
 	if ($OS =~ /MSWin32/)
 	{
 		# Use LWP::Simple
-		eval "use LWP::Simple";
+		eval "use LWP::UserAgent";
+		
+		# Make a handle for LWP
+		my $lwp = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+		
+		# Set the timeout
+		$lwp->timeout(30) if !defined $timeout;
+		$lwp->timeout($timeout) if defined $timeout;
 		
 		# Get the content of $url
-		$output = get("$url");
+		my $response = $lwp->get("$url");
+		
+		# If we successfully got the content
+		if ($response->is_success)
+		{
+			# Decode the content
+			$output = $response->decoded_content;
+		}
+		# Else
+		else
+		{
+			# Make output empty
+			$output = "";
+		}
 	}
 	# Else
 	else
@@ -64,15 +84,17 @@ sub readurl
 		if(`ls /usr/bin | grep wget` =~  /wget/)
 		{
 			# Use wget command to fetch files
-			$fetchcommand = "wget -q -O-";
+			$fetchcommand = "wget -q --connect-timeout=30 -O-" if !defined $timeout;
+			$fetchcommand = "wget -q --connect-timeout=$timeout --timeout=$timeout -O-" if defined $timeout;
 		}
 		# Else if /usr/bin contains curl
 		elsif(`ls /usr/bin | grep curl` =~  /curl/)
 		{
 			# Curl command equalent to the wget command to fetch files
-			$fetchcommand = "curl -L -#";
+			$fetchcommand = "curl -L --connect-timeout 30 -#" if !defined $timeout;
+			$fetchcommand = "curl -L --connect-timeout $timeout -m $timeout -#" if defined $timeout;
 		}
-		
+
 		# Read the contents of url
 		$output = `$fetchcommand $url`;
 		

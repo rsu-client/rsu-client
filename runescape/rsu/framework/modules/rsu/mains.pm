@@ -4,6 +4,7 @@ package rsu::mains;
 require rsu::java::jre;
 require client::settings::prms;
 require rsu::files::clientdir;
+require rsu::java::optimizer;
 
 sub unix_main
 {
@@ -74,12 +75,12 @@ sub unix_main
 	# Pass the java binary to a variable so we can use it in commands
 	my $javabin = $rsu_data->javabin;
 	
+	# Run the java -version command and check if it is openjdk or java (or to check if its 32bit or 64bit)
+	$rsu_data->javaversion = `$javabin -version 2>&1`;
+	
 	# If user enabled alsa sounds and OS is linux
 	if ($rsu_data->forcealsa =~ /(1|true)/i && $rsu_data->OS =~ /linux/)
 	{
-		# Run the java -version command and check if it is openjdk or java (both uses different alsa fixes)
-		$rsu_data->javaversion = `$javabin -version 2>&1`;
-		
 		# Pass the result to a new variable
 		my $javaused_result = $rsu_data->javaversion;
 		
@@ -168,8 +169,19 @@ sub unix_main
 		$rsu_data->javabin = "$javalibpath ".$rsu_data->javabin;
 	}
 	
+	# Check if the binary will be launcher with the -client parameter and if the java used is 64bit
+	# If the -client parameter is not used (lack of support) and we are using a 64-bit java then
+	if ($rsu_data->javabin !~ /-client/ && $rsu_data->javaversion =~ /64-bit/i)
+	{
+		# Apply some optimization parameters if the user have not specified them in the prm file
+		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseCompressedOops" if $params !~ /-XX:+UseCompressedOops/;
+	}
+	
+	# Run the java auto optimizer
+	$rsu_data->javabin = rsu::java::optimizer::run($rsu_data->javabin, $params);
+	
 	# Set the cachedir location
-	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
+	$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
@@ -224,8 +236,11 @@ sub windows_main
 	# Split the clientdir path into sections so we can get the parent folder name (so we can get a window icon)
 	my @parentfolder = split /(\\|\/)/, $rsu_data->clientdir;
 	
+	# Run the java auto optimizer
+	$win32javabin = rsu::java::optimizer::run("\"$win32javabin\"", $params);
+	
 	# Set the cachedir location
-	$win32javabin = "\"$win32javabin\" -Duser.home=\"".$rsu_data->cachedir."\"";
+	$win32javabin = "$win32javabin -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
