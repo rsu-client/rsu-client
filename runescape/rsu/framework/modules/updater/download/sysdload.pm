@@ -49,10 +49,30 @@ sub readurl
 	if ($OS =~ /MSWin32/)
 	{
 		# Use LWP::Simple
-		eval "use LWP::Simple";
+		eval "use LWP::UserAgent";
+		
+		# Make a handle for LWP
+		my $lwp = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+		
+		# Set the timeout
+		$lwp->timeout(30) if !defined $timeout;
+		$lwp->timeout($timeout) if defined $timeout;
 		
 		# Get the content of $url
-		$output = get("$url");
+		my $response = $lwp->get("$url");
+		
+		# If we successfully got the content
+		if ($response->is_success)
+		{
+			# Decode the content
+			$output = $response->decoded_content;
+		}
+		# Else
+		else
+		{
+			# Make output empty
+			$output = "";
+		}
 	}
 	# Else
 	else

@@ -415,7 +415,7 @@ sub make_newslist
 		
 		##### Generate Description #####
 		# Make a date label for the news
-		$self->{newsDescription_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "Dummy description");
+		$self->{newsDescription_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "If you see this then the newsfeed might have timed out...\nPress the refresh button to try reload the newsfeed.");
 		
 		# Change the text color to the same color that Jagex use on news articles
 		$self->{newsDescription_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
@@ -568,22 +568,17 @@ sub fetch_rssnews
 		# Add a tooltip showing the url to the article
 		$self->{rssLink_.$counter}->SetToolTip("$item->{'link'}");
 		
-		# Connect the hyperlink to an event named hyperlink_clicked
-		#EVT_BUTTON($rssLink, -1, \&hyperlink_clicked);
-		
-		# Add a link to the article to the sizer
-		#$self->{rss_sizer}->Add($rssLink, 0, wxALL, 0);
-		
-		##### Generate Static Line #####
-		
-		# Add a static line to the sizer to nicely split the newsposts
-		#$self->{rss_sizer}->Add(Wx::StaticLine->new($self->{rssview}, -1), 0, wxEXPAND|wxALL, 5);
-		
+		# Increase counter by 1
 		$counter += 1;
 	}
 	
-	# Add the sizer to the rssview
-	#$self->{rssview}->SetSizer($self->{rss_sizer});
+	# If we are running inside a PAR Packed script then
+	if ("@INC" =~ /par-/)
+	{
+		# Redraw the rssview
+		$self->{rss_container}->Layout();
+		setScrollBars($self->{rssview});
+	}
 }
 
 #

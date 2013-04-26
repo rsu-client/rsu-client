@@ -212,8 +212,14 @@ sub set_layout
 	# Set the sizer for scrolledlist
 	$self->{scrolledlist}->SetSizer($self->{listgrid});
 	
+	# Make sure the grid fits inside the scrolled list
+	$self->{listgrid}->FitInside($self->{scrolledlist});
+	
 	# Set the sizer for addonlist
 	$self->{addonlist}->SetSizer($self->{addongrid});
+	
+	# Make sure the grid fits inside the scrolled list
+	$self->{addongrid}->FitInside($self->{addonlist});
 	
 	# Set minimum size and maximum size of the window
 	$self->SetMinSize($self->GetSize);
@@ -225,6 +231,11 @@ sub set_layout
 		# Set the window icon
 		$self->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 	}
+	
+	# Set the layout
+	$self->Layout;
+	# Refresh window
+	$self->Refresh;
 }
 
 #
@@ -259,16 +270,11 @@ sub create_button_list
 	}
 	
 	# If clientdir is not $HOME/.config/runescape
-	if ($clientdir !~ /$HOME\/\.config\/runescape/)
+	if ($OS =~ /MSWin32/ || $clientdir !~ /$HOME\/\.config\/runescape/)
 	{
 		# Generate an update entry for windows
 		generate_update_entry($self, "api", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)");
 	}
-	
-	# Set the layout
-	$self->Layout;
-	# Refresh window
-	$self->Refresh;
 }
 
 #

@@ -43,7 +43,7 @@ modules:
 	client::appletviewer::jagex	= 100% # Complete
 	client::modes::verbose		= 100% # Complete
 	rsu::mains					= 100% # Complete
-	client::init				= ?% # No way to track atm
+	client::init				= 100% # No way to track atm
 	
 TODO:
 	* add a gui to manage addons_updater.conf from the settings editor
