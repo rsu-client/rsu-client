@@ -225,6 +225,11 @@ sub set_layout
 		# Set the window icon
 		$self->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 	}
+	
+	# Set the layout
+	$self->Layout;
+	# Refresh window
+	$self->Refresh;
 }
 
 #
@@ -264,11 +269,6 @@ sub create_button_list
 		# Generate an update entry for windows
 		generate_update_entry($self, "api", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)");
 	}
-	
-	# Set the layout
-	$self->Layout;
-	# Refresh window
-	$self->Refresh;
 }
 
 #
