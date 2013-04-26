@@ -212,8 +212,14 @@ sub set_layout
 	# Set the sizer for scrolledlist
 	$self->{scrolledlist}->SetSizer($self->{listgrid});
 	
+	# Make sure the grid fits inside the scrolled list
+	$self->{listgrid}->FitInside($self->{scrolledlist});
+	
 	# Set the sizer for addonlist
 	$self->{addonlist}->SetSizer($self->{addongrid});
+	
+	# Make sure the grid fits inside the scrolled list
+	$self->{addongrid}->FitInside($self->{addonlist});
 	
 	# Set minimum size and maximum size of the window
 	$self->SetMinSize($self->GetSize);
