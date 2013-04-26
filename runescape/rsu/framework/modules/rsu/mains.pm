@@ -237,10 +237,10 @@ sub windows_main
 	my @parentfolder = split /(\\|\/)/, $rsu_data->clientdir;
 	
 	# Run the java auto optimizer
-	$win32javabin = rsu::java::optimizer::run($win32javabin, $params);
+	$win32javabin = rsu::java::optimizer::run("\"$win32javabin\"", $params);
 	
 	# Set the cachedir location
-	$win32javabin = "\"$win32javabin\" -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
+	$win32javabin = "$win32javabin -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
@@ -249,7 +249,7 @@ sub windows_main
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
 	# Run the jar file
-	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
 }
 
 #
