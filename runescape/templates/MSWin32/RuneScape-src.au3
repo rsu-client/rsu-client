@@ -17,22 +17,28 @@
 $url = "https://github.com/HikariKnight/rsu-launcher/archive/rsu-query-MSWin32.zip"
 
 ; Get the size of the old zip file
-$zip_size = IniRead(@ScriptDir & "\share\configs\MSWin32-bin_info.conf","rsu-query","zip_size","0")
+$zip_size = IniRead(@ScriptDir & "\share\configs\MSWin32-bin_info.conf","rsu-query","zip_size","-1")
+
+; Get the size of the remote zipfile
+$remote_size = InetGetSize($url)
 
 ; If the rsu-query.exe exists
 If FileExists(@ScriptDir & "\rsu\rsu-query.exe") Then
 	; If the existing rsu-query.exe is a different size than the remote one
-	If $zip_size <> InetGetSize($url) Then
-		; Tell the user we need to update the API too
-		$update = MsgBox(4, "Update available!", "A newer version of rsu-query.exe is available!" & @CRLF & "Do you want me to launch the updater then download the new rsu-query.exe?" & @CRLF & 'NOTE: Click "Update rsu-api" inside the updater.' & @CRLF & "Clicking No will launch the client normally")
+	If $zip_size <> $remote_size Then
+		; And if the remote file is not 0 bytes
+		If $remote_size <> 0 Then
+			; Tell the user we need to update the API too
+			$update = MsgBox(4, "Update available!", "A newer version of rsu-query.exe is available!" & @CRLF & "Do you want me to launch the updater then download the new rsu-query.exe?" & @CRLF & 'NOTE: Click "Update rsu-api" inside the updater.' & @CRLF & "Clicking No will launch the client normally")
 
-		; If yes then
-		If $update = 6 Then
-			; Run the updater and hide the cmd window
-			RunWait(@ScriptDir & "\rsu\rsu-query.exe client.launch.updater --showcmd=false", @ScriptDir, @SW_HIDE)
+			; If yes then
+			If $update = 6 Then
+				; Run the updater and hide the cmd window
+				RunWait(@ScriptDir & "\rsu\rsu-query.exe client.launch.updater --showcmd=false", @ScriptDir, @SW_HIDE)
 
-			; Update rsu-query.exe
-			do_update("Updat")
+				; Update rsu-query.exe
+				do_update("Updat")
+			EndIf
 		EndIf
 	EndIf
 
@@ -47,7 +53,7 @@ Run(@ScriptDir & "\rsu\rsu-query.exe --showcmd=false",@ScriptDir,@SW_HIDE);
 
 func do_update($text)
 	#Region ### START Koda GUI section ###
-	$Form1 = GUICreate($text & "ing rsu-query.exe", 350, 42, -1, -1, BitOR($WS_SYSMENU,$WS_CAPTION,$WS_POPUP,$WS_POPUPWINDOW,$WS_BORDER,$WS_CLIPSIBLINGS), 0)
+	$Form1 = GUICreate($text & "ing the rsu-query runtime.", 350, 42, -1, -1, BitOR($WS_SYSMENU,$WS_CAPTION,$WS_POPUP,$WS_POPUPWINDOW,$WS_BORDER,$WS_CLIPSIBLINGS), 0)
 	$Progress = GUICtrlCreateProgress(0, 0, 348, 17)
 	$Button = GUICtrlCreateButton($text & "ing rsu-query.exe", 0, 16, 348, 25, $WS_GROUP)
 	GUICtrlSetState(-1, $GUI_DISABLE)
