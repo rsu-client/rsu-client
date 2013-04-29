@@ -8,19 +8,19 @@ sub sysdownload
 	my ($url, $downloadto) = @_;
 	
 	# Make a variable which will contain the download command we will use
-	my $fetchcommand = "wget -O";
+	my $fetchcommand = "wget --connect-timeout=10 -O";
 	
 	# If /usr/bin contains wget
 	if(`ls /usr/bin | grep wget` =~  /wget/)
 	{
 		# Use wget command to fetch files
-		$fetchcommand = "wget -O";
+		$fetchcommand = "wget --connect-timeout=10 -O";
 	}
 	# Else if /usr/bin contains curl
 	elsif(`ls /usr/bin | grep curl` =~  /curl/)
 	{
 		# Curl command equalent to the wget command to fetch files
-		$fetchcommand = "curl -L -# -o";
+		$fetchcommand = "curl -L --connect-timeout 10 -# -o";
 	}
 	
 	# Split the url by /
@@ -97,9 +97,6 @@ sub readurl
 
 		# Read the contents of url
 		$output = `$fetchcommand $url`;
-		
-		# Remove any newlines
-		#$output =~ s/(\n|\r|\r\n)//g;
 	}
 	
 	# Return the content of $url
