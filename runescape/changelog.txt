@@ -1,3 +1,11 @@
+runescape (4.0.5) precise; urgency=low
+
+  * Fixed a bug where RuneScape.exe said there was an update to the
+    rsu-query.exe if it failed to connect to github.com
+  * Added connection timeouts to sysdload
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Fri, 26 Apr 2013 09:53:00 +0200
+
 runescape (4.0.4) precise; urgency=low
 
   * Added a refresh button for news
