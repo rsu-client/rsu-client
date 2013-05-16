@@ -109,6 +109,9 @@ my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.con
 # Read from the config file if the user have told the script to use primusrun or not if it is available
 my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "settings.conf");
 
+# Read from the config file if the user have enabled Automatic Java Optimization
+my $optimizejava = rsu::files::IO::readconf("optimizejava", "true", "settings.conf");
+
 # Define a text inside the script for use
 my $plist_template = << "plist_template";
 <?xml version="1.0" encoding="UTF-8"?>
@@ -279,6 +282,7 @@ sub set_events
 	$self->{winemode} = $self->FindWindow('winemode');
 	$self->{tab_box1} = $self->FindWindow('tab_box1');
 	$self->{primusmode} = $self->FindWindow('primusmode');
+	$self->{optimizejava} = $self->FindWindow('optimizejava');
 	
 	# If we are on linux, darwin/mac or windows (which supports addons)
 	#if ($OS =~ /(linux|darwin|MSWin32)/)
@@ -907,6 +911,13 @@ sub loadconfig
 		# Set the cachedir dropdown to portable
 		$self->{cachedir}->SetSelection(1);
 	}
+	
+	# If Automatic Java Optimization is disabled  (its enabled by default)
+	if ($optimizejava =~ /false|0/i)
+	{
+		# Make the checkbox for compabilitymode checked
+		$self->{optimizejava}->SetValue(0);
+	}
 }
 
 #
@@ -1336,6 +1347,7 @@ sub saveconf_clicked
 	my $old_win32java = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
 	my $old_unixjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
 	my $cachedir_setting = $self->{cachedir}->GetSelection;
+	my $optimizejava_setting = $self->{optimizejava}->GetValue;
 	
 	# Prepare a message that will be shown once all settings are saved
 	my $savemessage = "Configurations Saved!";
@@ -1457,6 +1469,20 @@ sub saveconf_clicked
 	{
 		# Write useprimusrun=false to settings.conf
 		rsu::files::IO::WriteFile("useprimusrun=false", ">>", "$conf_file");
+	}
+	
+	## Write optimizejava setting
+	# If optimizejava is checked/enabled
+	if ($optimizejava_setting =~ /1/)
+	{
+		# Write optimizejava=true to settings.conf
+		rsu::files::IO::WriteFile("optimizejava=true", ">>", "$conf_file");
+	}
+	# Else
+	else
+	{
+		# Write optimizejava=false to settings.conf
+		rsu::files::IO::WriteFile("optimizejava=false", ">>", "$conf_file");
 	}
 	
 	# Display a messagebox to notify that the function is done

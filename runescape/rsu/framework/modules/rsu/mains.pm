@@ -177,11 +177,15 @@ sub unix_main
 		$rsu_data->javabin = $rsu_data->javabin." -XX:+UseCompressedOops" if $params !~ /-XX:+UseCompressedOops/;
 	}
 	
-	# Run the java auto optimizer
-	$rsu_data->javabin = rsu::java::optimizer::run($rsu_data->javabin, $params);
+	# If optimization of java is enabled
+	if ($rsu_data->optimizejava =~ /^(true|1)$/i)
+	{
+		# Run the java optimizer which adds the optimized jvm parameters to the execution
+		$rsu_data->javabin = rsu::java::optimizer::run($rsu_data->javabin, $params);
+	}
 	
 	# Set the cachedir location
-	$rsu_data->javabin = $rsu_data->javabin." -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
+	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";

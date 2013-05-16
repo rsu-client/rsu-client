@@ -3,6 +3,9 @@ runescape (4.0.5) precise; urgency=low
   * Fixed a bug where RuneScape.exe said there was an update to the
     rsu-query.exe if it failed to connect to github.com
   * Added connection timeouts to sysdload
+  * Added the option to Enable/Disable Automatic Java Optimization in
+    the settings editor.
+  * Added debug output in the STDOUT for the newsfeed.
     
  -- HikariKnight <mu.antilag@gmail.com>  Fri, 26 Apr 2013 09:53:00 +0200
 

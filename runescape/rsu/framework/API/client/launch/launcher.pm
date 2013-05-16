@@ -465,11 +465,17 @@ sub fetch_rssnews
 	# Fetch the recent activity rss feed (timeout after 5 seconds)
 	my $rssfeed = updater::download::sysdload::readurl($rssurl,5);
 	
+	# Write debug info to STDOUT
+	print "This is the RSS contents we found:\n$rssfeed\n\n";
+	
 	# Make a hash reference for the RSSLite parser
 	my %rssnews;
 	
 	# Parse the RSSfeed
 	parseRSS(\%rssnews, \$rssfeed);
+	
+	# Write debug info to STDOUT
+	print "Parsing the news RSS feed(output is shown the way the GUI reads it):\n";
 	
 	# Make a counter to keep track of the news
 	my $counter = 1;
@@ -500,6 +506,9 @@ sub fetch_rssnews
 			$rssTitle =~ s/(&amp;)/&&&&/gi;
 		}
 		
+		# Write debug info to STDOUT
+		print "Adding News Title$counter: \"$rssTitle\"\n";
+		
 		# Make a title label for the news
 		$self->{newsTitle_.$counter}->SetLabel("$rssTitle");
 		
@@ -516,6 +525,9 @@ sub fetch_rssnews
 		
 		# Remove the timestamp because it is always 00:00:00 GMT
 		$rssDate =~ s/\s+\d{2,2}:\d{2,2}:\d{2,2}\s+GMT//g;
+		
+		# Write debug info to STDOUT
+		print "Adding Published Date$counter: \"$rssDate\"\n";
 		
 		# Make a date label for the news
 		$self->{newsDate_.$counter}->SetLabel("\tPublished: $rssDate");
@@ -556,6 +568,9 @@ sub fetch_rssnews
 			$rssDescription =~ s/(&amp;)/&&/gi if "@INC" =~ /(par-|\s{1,1}CODE\()/;
 		}
 		
+		# Write debug info to STDOUT
+		print "Adding News Description$counter: \"$rssDescription\"\n";
+		
 		# Make a date label for the news
 		$self->{newsDescription_.$counter}->SetLabel("$rssDescription");
 		
@@ -564,7 +579,11 @@ sub fetch_rssnews
 		
 		$self->{newsDescription_.$counter}->Wrap(480);
 		
-		##### Generate Link #####		
+		##### Generate Link #####
+		
+		# Write debug info to STDOUT
+		print "Adding News Link$counter: \"$item->{'link'}\"\n\n";
+			
 		# Add a tooltip showing the url to the article
 		$self->{rssLink_.$counter}->SetToolTip("$item->{'link'}");
 		
