@@ -22,7 +22,7 @@
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>
 								<object class="wxFlexGridSizer">
-									<rows>6</rows>
+									<rows>7</rows>
 									<cols>1</cols>
 									<vgap>0</vgap>
 									<hgap>0</hgap>
