@@ -224,6 +224,7 @@ sub set_layout
 		
 		# Make a refresh button
 		$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News");
+		$self->{rssRefresh}->SetName("refreshnews");
 			
 		# Add a tooltip to the button
 		$self->{rssRefresh}->SetToolTip("Click here to refresh the news RSS feed.");
@@ -1560,39 +1561,49 @@ sub launch_addon
 	# Make a variable which will contain only the unique id and not the universal_ or $OS_ identifier
 	my $addon = $addon_id;
 	
-	# Remove the identifier from the variable $addon
-	$addon  =~ s/^(universal|$OS)_//;
-	
-	# If the addon_id starts with universal_
-	if ($addon_id =~ /^universal_/)
+	# Check if this is the refresh button (for some reason it gets assigned as an addon button when addons are installed)
+	if ($addon =~ /^refreshnews$/)
 	{
-		# If we are on windows
-		if ($OS =~ /MSWin32/)
-		{
-			# Launch the universal addon
-			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
-		}
-		# Else
-		else
-		{
-			# Launch the universal addon
-			system "\"$cwd/rsu/rsu-query\" addon.universal.launch $addon &";
-		}
+		# Refresh the news
+		refreshnews_clicked($self);
 	}
 	# Else
 	else
 	{
-		# If we are on windows
-		if ($OS =~ /MSWin32/)
+		# Remove the identifier from the variable $addon
+		$addon  =~ s/^(universal|$OS)_//;
+		
+		# If the addon_id starts with universal_
+		if ($addon_id =~ /^universal_/)
 		{
-			# Launch the platform specific addon
-			system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
+			# If we are on windows
+			if ($OS =~ /MSWin32/)
+			{
+				# Launch the universal addon
+				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
+			}
+			# Else
+			else
+			{
+				# Launch the universal addon
+				system "\"$cwd/rsu/rsu-query\" addon.universal.launch $addon &";
+			}
 		}
 		# Else
 		else
 		{
-			# Launch the platform specific addon
-			system "\"$cwd/rsu/rsu-query\" addon.platform.launch $addon &";
+			# If we are on windows
+			if ($OS =~ /MSWin32/)
+			{
+				# Launch the platform specific addon
+				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
+			}
+			# Else
+			else
+			{
+				# Launch the platform specific addon
+				system "\"$cwd/rsu/rsu-query\" addon.platform.launch $addon &";
+			}
 		}
 	}
 }
