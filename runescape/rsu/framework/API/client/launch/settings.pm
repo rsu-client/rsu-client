@@ -322,6 +322,10 @@ sub set_events
 		$self->SetSize(510,600);
 	}
 	
+	# Resize the window to fit with the platform and desktop theme
+	$self->SetMinSize($self->GetSize);
+	$self->Fit();
+	
 	# Make sure the window cannot be resized
 	$self->SetMinSize($self->GetSize);
 	$self->SetMaxSize($self->GetSize);

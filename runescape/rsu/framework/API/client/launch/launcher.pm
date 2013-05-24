@@ -297,7 +297,9 @@ sub set_layout
 	$self->{mainsizer}->Fit($self);
 	
 	# Set default size
-	$self->SetSize(810,450);
+	$self->SetSize(1,450);
+	$self->SetMinSize($self->GetSize);
+	$self->Fit();
 	$self->SetMinSize($self->GetSize);
 	
 	# Set the layout
@@ -851,32 +853,18 @@ sub about
 		# Set the aboutdialog icon
 		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 		
-		# Set the size of the aboutdialog
-		$about->{dialog}->SetSize(365,400);
-		
 		# Add the aboutdialog icon to the dialog
 		$about->{vertical}->Add($about->{icon}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
 	}
-	# Else
-	else
-	{
-		# Set the size of the aboutdialog
-		$about->{dialog}->SetSize(365,225);
-	}
-	
-	# Set max and min size of the aboutdialog
-	$about->{dialog}->SetMaxSize($about->{dialog}->GetSize);
-	$about->{dialog}->SetMinSize($about->{dialog}->GetSize);
-	
 	
 	# Create the Program name label
-	$about->{version} = Wx::StaticText->new($about->{dialog}, -1, "\nRuneScape Unix Client $version", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	$about->{version} = Wx::StaticText->new($about->{dialog}, -1, "\nRuneScape Unix Client\nVersion: $version", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	
 	# Make the label the correct size
 	$about->{version}->SetFont(Wx::Font->new(15, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0));
 	
 	# Make a description label
-	$about->{description} = Wx::StaticText->new($about->{dialog}, -1, "\nThe Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	$about->{description} = Wx::StaticText->new($about->{dialog}, -1, "The Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	$about->{description}->Wrap(300);
 	
 	# If we are on windows
@@ -925,6 +913,12 @@ sub about
 	# Set the sizers
 	$about->{vertical}->Add($about->{horizontal}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
 	$about->{dialog}->SetSizer($about->{vertical});
+	
+	# Set the size of the aboutdialog
+	$about->{dialog}->Fit();
+	# Set max and min size of the aboutdialog
+	$about->{dialog}->SetMaxSize($about->{dialog}->GetSize);
+	$about->{dialog}->SetMinSize($about->{dialog}->GetSize);
 	
 	# Show the dialog
 	$about->{dialog}->ShowModal();
@@ -1376,7 +1370,7 @@ sub get_rsuversion
 	}
 	
 	# Use regular expression to get only the version number
-	$version =~ s/.+version\s+(\d{1,1}\.\d{1,1}\.\d{1,1})\s+/$1/;
+	$version =~ s/.+version\s+(\d{1,1}\.\d{1,1}\.\d{1,1})\s?+/$1/;
 	
 	# Return the result
 	return $version;
