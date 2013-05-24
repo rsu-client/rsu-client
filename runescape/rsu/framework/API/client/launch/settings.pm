@@ -319,7 +319,7 @@ sub set_events
 	if ($OS =~ /darwin/)
 	{
 		# Set default size
-		$self->SetSize(510,600);
+		$self->SetSize(560,600);
 	}
 	
 	# Resize the window to fit with the platform and desktop theme
