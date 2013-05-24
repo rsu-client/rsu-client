@@ -142,7 +142,7 @@ sub fetch
 		$binary[0] = "$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/rsu-query-darwin";
 		
 		# Copy the binary
-		rsu::files::copy::print_cp("$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/darwin","$cwd/rsu/3rdParty/darwin");
+		rsu::files::copy::print_cpr("$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/darwin","$cwd/rsu/3rdParty/darwin");
 	}
 	# Else
 	else
