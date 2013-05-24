@@ -1,7 +1,12 @@
 #!/usr/bin/perl -w
 
+# Be strict so we dont write messy code
+use strict;
+
 # Use FindBin module to get script directory
 use FindBin;
+
+# Use the Cwd module so we can find the current working directory
 use Cwd;
 
 # Get the $scriptdir
