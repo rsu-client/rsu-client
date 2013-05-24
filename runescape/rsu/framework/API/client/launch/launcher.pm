@@ -1395,7 +1395,7 @@ sub playoldschool
 		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --prmfile=oldschool.prm --unixquery &";
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the runescape oldschool call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape --prmfile=oldschool.prm &";
@@ -1421,7 +1421,7 @@ sub playnow
 		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --unixquery &";
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the runescape api call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape &";
@@ -1466,7 +1466,7 @@ sub update
 		
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the updater api call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.updater &";
@@ -1492,7 +1492,7 @@ sub settings
 		system "\"$cwd/rsu/rsu-query\" client.launch.settings &";
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the settings api call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.settings &";
@@ -1607,7 +1607,7 @@ sub launch_addon
 				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
 			}
 			# If we are on Mac OSX
-			if ($OS =~ /darwin/)
+			elsif ($OS =~ /darwin/)
 			{
 				# Launch the universal addon
 				system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" addon.universal.launch $addon &";
@@ -1629,7 +1629,7 @@ sub launch_addon
 				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
 			}
 			# If we are on Mac OSX
-			if ($OS =~ /darwin/)
+			elsif ($OS =~ /darwin/)
 			{
 				# Launch the platform specific addon
 				system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" addon.platform.launch $addon &";

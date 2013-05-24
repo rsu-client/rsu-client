@@ -18,6 +18,12 @@ package client::appletviewer::jagex;
 				# Download and extract the client
 				system "\"$cwd/rsu/rsu-query.exe\" rsu.download.client";
 			}
+			# Else if we are on mac osx
+			elsif ($rsu_data->OS =~ /darwin/)
+			{
+				# Download and extract the client
+				system "\"$cwd/rsu/bin/rsu-query-darwin\" rsu.download.client";
+			}
 			# Else we are on unix
 			else
 			{
