@@ -170,7 +170,7 @@ sub main
 		
 		
 		# Launch the launcher for mac osx
-		system "$cwd/bin/rsu-query-darwin @ARGV";
+		system "DYLD_LIBRARY_PATH=$cwd/3rdParty/darwin $cwd/bin/rsu-query-darwin @ARGV";
 	}
 	# Else
 	else
@@ -255,7 +255,7 @@ sub fallbackmode
 	print STDERR "WARNING: Running in fallback mode!\nrsu-queries will use the system perl so some API calls\nmay not work until you install certain modules\n" if "@ARGV" !~ /--unixquery/;
 		
 	# Install the menu icons and launch runescape
-	system "DYLD_LIBRARY_PATH=$cwd/3rdParty/darwin $cwd/bin/rsu-query-unix @ARGV";
+	system "$cwd/bin/rsu-query-unix @ARGV";
 }
 
 #
