@@ -140,6 +140,9 @@ sub fetch
 	{
 		# Assign a hardcoded path as apple have messed up their perl installation (YAY!)
 		$binary[0] = "$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/rsu-query-darwin";
+		
+		# Copy the binary
+		rsu::files::copy::print_cp("$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/darwin","$cwd/rsu/3rdParty/darwin");
 	}
 	# Else
 	else
