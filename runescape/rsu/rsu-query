@@ -168,7 +168,6 @@ sub main
 			push(@ARGV, "client.launch.launcher");
 		}
 		
-		
 		# Launch the launcher for mac osx
 		system "DYLD_LIBRARY_PATH=$cwd/3rdParty/darwin $cwd/bin/rsu-query-darwin @ARGV";
 	}
