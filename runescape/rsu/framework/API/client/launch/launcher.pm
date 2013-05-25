@@ -297,7 +297,19 @@ sub set_layout
 	$self->{mainsizer}->Fit($self);
 	
 	# Set default size
-	$self->SetSize(810,450);
+	if ($OS =~ /darwin/)
+	{
+		$self->SetSize(810,450);
+	}
+	# Else
+	else
+	{
+		$self->SetSize(1,450);
+		$self->SetMinSize($self->GetSize);
+		$self->Fit();
+	}
+	
+	# Set minimum size
 	$self->SetMinSize($self->GetSize);
 	
 	# Set the layout
@@ -851,32 +863,18 @@ sub about
 		# Set the aboutdialog icon
 		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
 		
-		# Set the size of the aboutdialog
-		$about->{dialog}->SetSize(365,400);
-		
 		# Add the aboutdialog icon to the dialog
 		$about->{vertical}->Add($about->{icon}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
 	}
-	# Else
-	else
-	{
-		# Set the size of the aboutdialog
-		$about->{dialog}->SetSize(365,225);
-	}
-	
-	# Set max and min size of the aboutdialog
-	$about->{dialog}->SetMaxSize($about->{dialog}->GetSize);
-	$about->{dialog}->SetMinSize($about->{dialog}->GetSize);
-	
 	
 	# Create the Program name label
-	$about->{version} = Wx::StaticText->new($about->{dialog}, -1, "\nRuneScape Unix Client $version", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	$about->{version} = Wx::StaticText->new($about->{dialog}, -1, "\nRuneScape Unix Client\nVersion: $version", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	
 	# Make the label the correct size
 	$about->{version}->SetFont(Wx::Font->new(15, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0));
 	
 	# Make a description label
-	$about->{description} = Wx::StaticText->new($about->{dialog}, -1, "\nThe Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	$about->{description} = Wx::StaticText->new($about->{dialog}, -1, "The Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	$about->{description}->Wrap(300);
 	
 	# If we are on windows
@@ -925,6 +923,12 @@ sub about
 	# Set the sizers
 	$about->{vertical}->Add($about->{horizontal}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
 	$about->{dialog}->SetSizer($about->{vertical});
+	
+	# Set the size of the aboutdialog
+	$about->{dialog}->Fit();
+	# Set max and min size of the aboutdialog
+	$about->{dialog}->SetMaxSize($about->{dialog}->GetSize);
+	$about->{dialog}->SetMinSize($about->{dialog}->GetSize);
 	
 	# Show the dialog
 	$about->{dialog}->ShowModal();
@@ -1368,6 +1372,12 @@ sub get_rsuversion
 		# Launch the runescape script and get the version
 		$version = `"$cwd/rsu/rsu-query" client.launch.runescape --version --showcmd=true`;
 	}
+	# If we are on mac osx
+	if ($OS =~ /darwin/)
+	{
+		# Launch the runescape script and get the version
+		$version = `DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin "$cwd/rsu/bin/rsu-query-darwin" client.launch.runescape --version`;
+	}
 	# Else
 	else
 	{
@@ -1376,7 +1386,7 @@ sub get_rsuversion
 	}
 	
 	# Use regular expression to get only the version number
-	$version =~ s/.+version\s+(\d{1,1}\.\d{1,1}\.\d{1,1})\s+/$1/;
+	$version =~ s/.+version\s+(\d{1,1}\.\d{1,1}\.\d{1,1})\s?+/$1/;
 	
 	# Return the result
 	return $version;
@@ -1393,6 +1403,12 @@ sub playoldschool
 	{
 		# Run the runescape script
 		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --prmfile=oldschool.prm --unixquery &";
+	}
+	# If we are on Mac OSX
+	if ($OS =~ /darwin/)
+	{
+		# Run the runescape oldschool call
+		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape --prmfile=oldschool.prm &";
 	}
 	# Else
 	else
@@ -1413,6 +1429,12 @@ sub playnow
 	{
 		# Run the runescape script
 		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --unixquery &";
+	}
+	# If we are on Mac OSX
+	if ($OS =~ /darwin/)
+	{
+		# Run the runescape api call
+		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape &";
 	}
 	# Else
 	else
@@ -1453,6 +1475,12 @@ sub update
 		#Wx::MessageBox("Finished running the updater!\nPlease close the Launcher and run the \"Download-Windows-Files.exe\"\nlocated in the client's folder to finish the update.", "Running update complete!", wxOK,$self);
 		
 	}
+	# If we are on Mac OSX
+	if ($OS =~ /darwin/)
+	{
+		# Run the updater api call
+		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.updater &";
+	}
 	# Else
 	else
 	{
@@ -1470,13 +1498,19 @@ sub settings
 	# If we are not on windows
 	if ($OS !~ /MSWin32/)
 	{
-		# Run the runescape script
+		# Run the settings api call
 		system "\"$cwd/rsu/rsu-query\" client.launch.settings &";
+	}
+	# If we are on Mac OSX
+	if ($OS =~ /darwin/)
+	{
+		# Run the settings api call
+		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.settings &";
 	}
 	# Else
 	else
 	{
-		# Run the runescape executable
+		# Run the settings api call
 		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.settings");
 	}
 }
@@ -1582,6 +1616,12 @@ sub launch_addon
 				# Launch the universal addon
 				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
 			}
+			# If we are on Mac OSX
+			if ($OS =~ /darwin/)
+			{
+				# Launch the universal addon
+				system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" addon.universal.launch $addon &";
+			}
 			# Else
 			else
 			{
@@ -1597,6 +1637,12 @@ sub launch_addon
 			{
 				# Launch the platform specific addon
 				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
+			}
+			# If we are on Mac OSX
+			if ($OS =~ /darwin/)
+			{
+				# Launch the platform specific addon
+				system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" addon.platform.launch $addon &";
 			}
 			# Else
 			else

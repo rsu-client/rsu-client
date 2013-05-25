@@ -441,6 +441,12 @@ sub update_clicked
 			# Launch the client downloader in a new process for extra resources for this task
 			system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.client $jardir $caller");
 		}
+		# Else if we are on mac osx
+		elsif ($OS =~ /darwin/)
+		{
+			# Launch the client downloader in a new process for extra resources for this task
+			system ("\"$cwd/rsu/bin/rsu-query-darwin\" rsu.download.client $jardir $caller");
+		}
 		# Else we are on a unix platform
 		else
 		{
@@ -463,8 +469,24 @@ sub update_clicked
 		# Split the config
 		my @callerdata = split /;/, $callerconfig;
 		
-		# Download the api in a new process
-		system("\"$cwd/rsu/rsu-query\" rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		# If we are on windows
+		if ($OS =~ /MSWin32/)
+		{
+			# Download the api in a new process
+			system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		}
+		# Else if we are on mac osx
+		elsif ($OS =~ /darwin/)
+		{
+			# Download the api in a new process
+			system ("\"$cwd/rsu/bin/rsu-query-darwin\" rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		}
+		# Else we are on a unix platform
+		else
+		{
+			# Download the api in a new process
+			system("\"$cwd/rsu/rsu-query\" rsu.download.file $callerdata[1] \"$clientdir/.download\"");
+		}
 		
 		# Intended function, however can only be used once per script, kept incase i manage to fix the problem
 		#updater::download::file::from("$callerdata[1]", "$clientdir/.download/rsu-api-latest.tar.gz");
@@ -533,11 +555,17 @@ sub update_addon_clicked
 	# Make the download directory
 	make_path("$clientdir/.download");
 	
-	## If we are on windows
+	# If we are on windows
 	if ($OS =~ /MSWin32/)
 	{
 		# Download the archive file
 		system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.file $addon_info[1]");
+	}
+	# Else if we are on mac osx
+	elsif ($OS =~ /darwin/)
+	{
+		# Download the archive file
+		system ("\"$cwd/rsu/bin/rsu-query-darwin\" rsu.download.file $addon_info[1]");
 	}
 	# Else we are on a unix platform
 	else

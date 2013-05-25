@@ -1,3 +1,12 @@
+runescape (4.0.6) precise; urgency=low
+
+  * Fixed missing strict in rsu-query-unix and rsu-query-darwin
+  * Added smart sizing (rsu windows now appear in a size that is
+    suitable for the platform+desktop theme)
+  * Fixed the library load error issue on OSX
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Fri, 24 May 2013 16:58:00 +0200
+ 
 runescape (4.0.5) precise; urgency=low
 
   * Fixed a bug where RuneScape.exe said there was an update to the
@@ -7,7 +16,7 @@ runescape (4.0.5) precise; urgency=low
     the settings editor.
   * Added debug output in the STDOUT for the newsfeed.
     
- -- HikariKnight <mu.antilag@gmail.com>  Fri, 26 Apr 2013 09:53:00 +0200
+ -- HikariKnight <mu.antilag@gmail.com>  Fri, 17 May 2013 09:53:00 +0200
 
 runescape (4.0.4) precise; urgency=low
 
