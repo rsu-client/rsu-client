@@ -948,6 +948,9 @@ sub loadsettings
 		## Location of the official parameter file
 		$settingsfile = "/Applications/RuneScape.app/Contents/Info.plist";
 	}
+    
+    # Make all / into \ if we are on windows
+    $settingsfile =~ s/\//\\/g if $OS =~ /MSWin32/;
 	
 	# Show the user what file we are changing
 	$self->{configfilepath}->SetValue($settingsfile);
