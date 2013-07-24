@@ -1,3 +1,9 @@
+runescape (4.0.7) precise; urgency=low
+
+  * Fixed a bug preventing the wine compabilitymode from working
+    
+ -- HikariKnight <mu.antilag@gmail.com>  Wed, 24 Jul 2013 19:27:00 +0200
+
 runescape (4.0.6) precise; urgency=low
 
   * Fixed missing strict in rsu-query-unix and rsu-query-darwin
