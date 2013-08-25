@@ -1475,8 +1475,8 @@ sub update
 		#Wx::MessageBox("Finished running the updater!\nPlease close the Launcher and run the \"Download-Windows-Files.exe\"\nlocated in the client's folder to finish the update.", "Running update complete!", wxOK,$self);
 		
 	}
-	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	# Else if we are on Mac OSX
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the updater api call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.updater &";
@@ -1616,8 +1616,8 @@ sub launch_addon
 				# Launch the universal addon
 				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
 			}
-			# If we are on Mac OSX
-			if ($OS =~ /darwin/)
+			# Else if we are on Mac OSX
+			elsif ($OS =~ /darwin/)
 			{
 				# Launch the universal addon
 				system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" addon.universal.launch $addon &";
@@ -1638,8 +1638,8 @@ sub launch_addon
 				# Launch the platform specific addon
 				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
 			}
-			# If we are on Mac OSX
-			if ($OS =~ /darwin/)
+			# Else if we are on Mac OSX
+			elsif ($OS =~ /darwin/)
 			{
 				# Launch the platform specific addon
 				system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" addon.platform.launch $addon &";
