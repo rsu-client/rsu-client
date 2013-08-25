@@ -1462,7 +1462,7 @@ sub update
 		Win32::GUI::Show($cmdwindow) if "@ARGV" =~ /--showcmd=true/;
 		
 		# Run the runescape executable
-		system "\"$cwd/rsu/rsu-query.exe\" client.launch.updater";
+		system (1, "\"$cwd/rsu/rsu-query.exe\" client.launch.updater");
 		
 		# If --showcmd=false is passed
 		if ("@ARGV" =~ /--showcmd=false/)
