@@ -29,6 +29,12 @@ sub getclientdir
 		# Change $clientdir to ~/.config/runescape
 		$clientdir = "$HOME/.config/runescape";
 	}
+    # Else
+    else
+    {
+        # Make sure that addons dont get their own directory
+        $clientdir =~ s/\/share\/addons\/(universal|darwin|MSWin32|linux)\/.+$//;
+    }
 	
 	# Return the result
 	return $clientdir;
