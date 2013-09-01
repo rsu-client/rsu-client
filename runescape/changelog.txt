@@ -6,6 +6,8 @@ runescape (4.0.9) precise; urgency=low
     as it had no actual use.
   * Added an debug output for rsu::client::language::setlanguage
   * Updated my contact email in credits
+  * Fix a bug that made fullscreen_emu not save or load settings
+    when run from a local version of the client
     
  -- HikariKnight <rshikariknight@gmail.com>  Sun, 01 Sep 2013 16:08:10 +0200
 
