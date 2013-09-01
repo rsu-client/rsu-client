@@ -67,6 +67,9 @@ package client::settings::language;
 	{
 		# Get the value passed
 		my ($lang) = @_;
+        
+        # Use the File::Path module
+        use File::Path qw(make_path);
 		
 		# Require the settings::cache module
 		require client::settings::cache;
@@ -81,6 +84,16 @@ package client::settings::language;
 		# If nothing returned or the key is not found
 		if ($content =~ /^\n$/ || $content !~ /Language=(.+)\n/)
 		{
+            # If we were not called from the API
+            if ("$ARGV[0]" !~ /get\.(client|rsu)\./)
+            {
+                # Print debug info
+                print "\nWriting the language value $lang to\n".$cachedir."/jagexappletviewer.preferences\n\n";
+            }
+            
+            # Make the directory incase it does not exist
+            make_path($cachedir);
+            
 			# Write a new file
 			rsu::files::IO::WriteFile("Language=$lang", ">>", "$cachedir/jagexappletviewer.preferences");
 		}

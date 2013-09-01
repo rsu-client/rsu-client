@@ -27,6 +27,9 @@ my $clientdir = rsu::files::clientdir::getclientdir();
 # Use the file IO module
 use rsu::files::IO;
 
+# Use the language module so we can get and set language
+require client::settings::language;
+
 # Tell if this is the settings editor that i sent to jagex or
 # used in the the RSU client (the difference is that 0 makes it read
 # the official clients parameter files)
@@ -262,7 +265,7 @@ sub set_events
 	EVT_NOTEBOOK_PAGE_CHANGED($self, Wx::XmlResource::GetXRCID('tab_box1'), \&tab_box1_changepage);
 	
 	# Find the widgets
-	$self->{classpath} = $self->FindWindow('classpath');
+	$self->{language} = $self->FindWindow('language');
 	$self->{cachedir} = $self->FindWindow('cachedir');
 	$self->{Xms} = $self->FindWindow('Xms');
 	$self->{Xmx} = $self->FindWindow('Xmx');
@@ -769,7 +772,15 @@ sub save_clicked
 		# Write template to Info.plist
 		rsu::files::IO::WriteFile("$template", ">", "$settingsfile");
 	}
-	
+    
+    # Get the language setting
+    my $language = $self->{language}->GetSelection;
+    
+    # Replace 4 with 6 so we can write the Spanish setting
+    $language =~ s/4/6/;
+    
+    # Set the language
+    client::settings::language::setlanguage($language);
 	
 	# Display a messagebox to notify that the function is done
 	Wx::MessageBox("Settings Saved!", "Settings Saved!", wxOK,$self);
@@ -973,6 +984,16 @@ sub loadsettings
 		# Parse the plist/xml
 		parse_plist("@$contents", $self);
 	}
+    
+    # Make a variable for the language setting and get the language
+    my $language = client::settings::language::getlanguage();
+    
+    # Replace the number 6 with 4 so that we can easily select Spanish (if its chosen)
+    $language =~ s/6/4/;
+    
+    # Set the selected language in the GUI
+    $self->{language}->SetSelection($language);
+    
 	
 }
 
@@ -1300,7 +1321,7 @@ sub set_tooltips
 	$self->{Xms}->SetToolTip("The minimum heap allocation is the minimum\namount of RAM Java is allowed to allocate for it's own use.\nIf the field is empty, the setting will be ignored.");
 	$self->{Xmx}->SetToolTip("The maximum heap allocation is the maximum\namount of ram Java is allowed to allocate for it's own use.\nIt is recommended to have this set to 512mb (up to 1024mb)\nbut not above 50% of your available RAM to fix black/white screen issues and client crashes(self closing).");
 	$self->{Xss}->SetToolTip("The stack is a restricted data structure where only a small number of operations are performed.\nIf the stack is too small it might result in an Error_Game_Crash message.\nHowever a corrupt(or lack of access to) jagexcache can cause an identical issue!");
-	$self->{classpath}->SetToolTip("The classpath is the name and location of the .jar file\nwhich is the actual client, the classpath is ALWAYS jagexappletviewer.jar");
+	#$self->{classpath}->SetToolTip("The classpath is the name and location of the .jar file\nwhich is the actual client, the classpath is ALWAYS jagexappletviewer.jar");
 	$self->{configurl}->SetToolTip("The config url is where the client loads it's external settings,\nit's also the config url that decides which world you will\nbe logged into when you first login to the game.\nBy default this is the world closest to your location, however if you replace \"www\" with world7\nit would make you always use world7 as your default world.");
 	$self->{prms}->SetToolTip("The Misc Settings is a special field where you can enter advanced\njava parameters, it is mostly used to fix new issues or add non standard client settings.\nIn short you can alter the java execution here and tweak\nthe client to work best on your computer.\n\nFor a full list of settings you can add here just google for \"Java HotSpot VM Options\"");
 	$self->{soundsystem}->SetToolTip("In some cases Java will be unable to play sounds properly on\nunix(randomly disappearing sound effects), forcing java to\nplay sounds through alsa(recommended for linux) or\npulseaudio(recommended for other unixes) will fix these\nsound issues.");
