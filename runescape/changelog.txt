@@ -1,3 +1,14 @@
+runescape (4.0.9) precise; urgency=low
+
+  * Added the option to change the game language from the
+    settings editor, incase Jagex messes up language selection again
+  * Removed the useless classpath object from the settings editor
+    as it had no actual use.
+  * Added an debug output for rsu::client::language::setlanguage
+  * Updated my contact email in credits
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Sun, 01 Sep 2013 16:08:10 +0200
+
 runescape (4.0.8) precise; urgency=low
 
   * Fixed the bug where addons launch twice on windows

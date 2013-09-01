@@ -17,7 +17,8 @@
 					<object class="wxNotebook" name="tab_box1">
 						<object class="notebookpage">
 							<label>Script Settings</label>
-							<selected>1</selected>
+							<selected>0</selected>
+							<bitmap />
 							<object class="wxScrolledWindow" name="scriptwindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>
@@ -303,7 +304,8 @@
 						</object>
 						<object class="notebookpage">
 							<label>Client Settings</label>
-							<selected>0</selected>
+							<selected>1</selected>
+							<bitmap />
 							<object class="wxScrolledWindow" name="rswindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>
@@ -445,8 +447,8 @@
 														<option>0</option>
 														<flag>wxALIGN_CENTER|wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="label_classpath">
-															<label>ClassPath:</label>
+														<object class="wxStaticText" name="label_language">
+															<label>Language:</label>
 															<wrap>-1</wrap>
 														</object>
 													</object>
@@ -454,9 +456,15 @@
 														<option>0</option>
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
-														<object class="wxTextCtrl" name="classpath">
-															<enabled>0</enabled>
-															<value>jagexappletviewer.jar</value>
+														<object class="wxChoice" name="language">
+															<selection>0</selection>
+															<content>
+																<item>English</item>
+																<item>Dutch</item>
+																<item>French</item>
+																<item>Portuguese</item>
+																<item>Spanish</item>
+															</content>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -549,6 +557,7 @@
 						<object class="notebookpage">
 							<label>JagexCache</label>
 							<selected>0</selected>
+							<bitmap />
 							<object class="wxScrolledWindow" name="cachewindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>
