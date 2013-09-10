@@ -73,9 +73,7 @@ Contribution
 If you want to contribute to the project you can do that in several ways.
 Either do a pull request and contribute through that (make sure you only commit to the development branch!)
 
-Or you can send a message with the code on youtube to [RSCommunityTech](http://www.youtube.com/user/RSCommunityTech).
-
-If you contribute code you can also get your name or nickname in the contributors list below (if you want)
+Or you can send a message with the code on youtube to [RSCommunityTech](http://www.youtube.com/user/RSCommunityTech). If you contribute code you can also get your name or nickname in the contributors list below (if you want)
 
 Developers, Contributors and people that have helped the project
 -----------
