@@ -27,7 +27,6 @@ __RuneScape is a registred trademark of Jagex Inc.__
 
 About the Project
 ----------
-![alt text](http://i.imgur.com/TEEvPZD.png "RSU Client Launcher Window")
 Development of the RSU-Client started in late October 2011.
 Back then it was designed as a Linux port of the
 Official RuneScape Client for Windows.
@@ -47,6 +46,8 @@ __settings.conf__ and __runescape.prm__ with a jagexcache cleaner included.
 And finally the client got support for modules, which lets anyone
 add their own functionality to the client
 (although not inside the client window due to license restrictions!)
+
+![alt text](http://i.imgur.com/TEEvPZD.png "RSU Client Launcher Window")
 
 
 Features
