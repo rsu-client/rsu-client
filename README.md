@@ -8,9 +8,18 @@ the game through Wine, however you __can run the game__ natively __without that 
 If you require Wine support you should instead install the stable client
 from one of the following repositories:
 
+__Linux Repositories__
 * [ArchLinux AUR Repository](https://aur.archlinux.org/packages.php?ID=59362 "ArchLinux AUR Repository")
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
-* [Universal tar.gz Archive](https://dl.dropbox.com/u/11631899/opensource/Perl/unix-runescape-client.tar.gz "Universal tar.gz Archive")
+
+__Installers (Powered by [BitRock](http://bitrock.com/))__
+* [Windows Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-windows-installer.exe "Windows Installer")
+* [Linux 32bit Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-linux-installer.run.zip "Linux 32bit Installer")
+* [Linux 64bit Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-linux-x64-installer.run.zip "Linux 64bit Installer")
+* [Mac OSX Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-osx-installer.app.zip "Mac OSX Installer")
+
+__Universal Archive/Zipped versions (If you dont want an installer)__
+* [Universal tar.gz Archive](https://github.com/HikariKnight/rsu-client/archive/master.tar.gz "Universal tar.gz Archive")
 * [Universal zip Archive](https://github.com/HikariKnight/rsu-client/archive/master.zip "Universal zip Archive")
 
 __RuneScape is a registred trademark of Jagex Inc.__
@@ -18,6 +27,7 @@ __RuneScape is a registred trademark of Jagex Inc.__
 
 About the Project
 ----------
+![alt text](http://i.imgur.com/TEEvPZD.png "RSU Client Launcher Window")
 Development of the RSU-Client started in late October 2011.
 Back then it was designed as a Linux port of the
 Official RuneScape Client for Windows.
@@ -42,6 +52,9 @@ add their own functionality to the client
 Features
 ----------
 * Optimized runescape.prm file (using 512mb for java heap space and 2mb stacksize by default instead of 256mb heap)
+* MultiCore loading of map chunks
+* Launcher that contains the RuneScape NewsFeed
+* Able to launch both the main game and oldschool, without the need to mess with files!
 * Built-in fixes (Uses Java6 instead of Java7 on Mac OSX if Java6 exists, and fixes opengl with java7 on Linux)
 * Settings editor (Easily edit the runescape.prm or settings.conf to tweak the client to optimal performance) - _requires WxPerl_
 * Working Language Settings! (Previously the language settings would not work on Linux on the client)
@@ -67,7 +80,7 @@ Developers, Contributors and people that have helped the project
 * HikariKnight - _Developer_
 * ivan p - _Aur Repository_
 * chroot - _force pulseaudio_
-* Ethoxyethaan - _original bash script for launching the jagexappletviewer.jar on Linux_
+* [Ethoxyethaan](https://github.com/Ethoxyethaan) - _original bash script for launching the jagexappletviewer.jar on Linux_
 * Jmb71 - _findjavalib regex_
 * Test6125 - _stacksize fix in prm_
 * [Fallen_Unia](https://github.com/Unia) - Zenity support in the Updater
