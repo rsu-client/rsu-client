@@ -22,7 +22,7 @@ __Universal Archive/Zipped versions (If you dont want an installer)__
 * [Universal tar.gz Archive](https://github.com/HikariKnight/rsu-client/archive/master.tar.gz "Universal tar.gz Archive")
 * [Universal zip Archive](https://github.com/HikariKnight/rsu-client/archive/master.zip "Universal zip Archive")
 
-*__RuneScape is a registred trademark of Jagex Ltd.__*
+*__[RuneScape](http://runescape.com) is a registred trademark of [Jagex Ltd](http://jagex.com).__*
 
 
 About the Project
