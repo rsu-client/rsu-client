@@ -597,7 +597,7 @@ sub update_addon_clicked
 	$extract_result = rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/.download/extracted_files");
 	
 	# If extraction was successful then
-	if ($extract_result = 0)
+	if ($extract_result =~ /^0$/)
 	{
 		# Locate the moduleloader.pm
 		my @moduleloader = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_files", "\/moduleloader\.pm\$");
