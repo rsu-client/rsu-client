@@ -125,38 +125,51 @@ sub fetch
 		# Download the archive file containing the new binary in a new process
 		system("\"$cwd/rsu/rsu-query\" rsu.download.file https://github.com/HikariKnight/rsu-launcher/archive/$name-latest.tar.gz \"$clientdir/.download\"");
 	}
-				
+    
+    # Make a variable so we can check if the extraction was successful
+    my $extract_result;
+    
 	# Extract the archive
-	rsu::extract::archive::extract("$clientdir/.download/$name-latest.tar.gz", "$clientdir/.download/extracted_binary");
+	$extract_result = rsu::extract::archive::extract("$clientdir/.download/$name-latest.tar.gz", "$clientdir/.download/extracted_binary");
 	
 	# Backup solution
 	#system("\"$clientdir/rsu/rsu-query\" rsu.extract.file $name-latest.zip \"$clientdir/.download/extracted_binary\"");
-				
-	# Locate the binary
-	my @binary;
 	
-	# If we are on MacOSX and the rsu-query-darwin is not installed from before then
-	if ($OS =~ /darwin/ && !-e "$cwd/rsu/bin/rsu-query-$OS")
+    # If extraction was successful then
+	if ($extract_result =~ /^0$/)
 	{
-		# Assign a hardcoded path as apple have messed up their perl installation (YAY!)
-		$binary[0] = "$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/rsu-query-darwin";
-		
-		# Copy the binary
-		rsu::files::copy::print_cpr("$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/darwin","$cwd/rsu/3rdParty/darwin");
+        # Locate the binary
+        my @binary;
+        
+        # If we are on MacOSX and the rsu-query-darwin is not installed from before then
+        if ($OS =~ /darwin/ && !-e "$cwd/rsu/bin/rsu-query-$OS")
+        {
+            # Assign a hardcoded path as apple have messed up their perl installation (YAY!)
+            $binary[0] = "$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/rsu-query-darwin";
+            
+            # Copy the binary
+            rsu::files::copy::print_cpr("$clientdir/.download/extracted_binary/rsu-launcher-rsu-query-darwin-latest/darwin","$cwd/rsu/3rdParty/darwin");
+        }
+        # Else
+        else
+        {
+            # Dynamically locate the binary
+            @binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name\$");
+        }
+                    
+        # Copy the binary
+        rsu::files::copy::print_cp($binary[0],"$cwd/rsu/bin/$name");
+        
+        # Make the file executable
+        system "chmod +x \"$cwd/rsu/bin/$name\"";
 	}
-	# Else
-	else
-	{
-		# Dynamically locate the binary
-		@binary = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_binary", "\/$name\$");
-	}
-				
-	# Copy the binary
-	rsu::files::copy::print_cp($binary[0],"$cwd/rsu/bin/$name");
-	
-	# Make the file executable
-	system "chmod +x \"$cwd/rsu/bin/$name\"";
-	
+    # Else
+    else
+    {
+        # Print an error message
+        print STDERR "Extraction of rsu-query failed with this error:\n".$extract_result."\n\n";
+    }
+    
 	# If $nogui = 1 then
 	if ($nogui eq '1')
 	{

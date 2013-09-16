@@ -14,11 +14,40 @@ sub extract
 	# Use the Archive::Extract module so we can handle .zip and .tar.gz files
 	use Archive::Extract;
 	
+    # Make a variable to check if extraction was successful
+	my $error = 0;
+    
 	# Make a handler for the archive
-	my $extract_handler = Archive::Extract->new( archive => $archive );
+	my $extract_handler = Archive::Extract->new( archive => $archive ) or $error = 1;
+    
+    # If the archive is invalid
+    if ($error =~ /^1$/)
+    {
+        # Print to STDERR that extraction failed
+		print STDERR "Extraction failed with error:\nArchive file is not a valid .tar.gz or .zip file!\n\n";
+        
+        # Return to call with error
+        return "Archive is not a valid .tar.gz or .zip file";
+    }
 	
 	# Extract the archive
-	$extract_handler->extract( to => $outdir ) or die $extract_handler->error;
+	$extract_handler->extract( to => $outdir ) or $error = 1; #die $extract_handler->error;
+	
+	# If extraction failed then
+	if ($error =~ /^0$/)
+	{
+		# Return null
+		return "0";
+	}
+	# Else
+	else
+	{
+		# Print to STDERR that extraction failed
+		print STDERR "Extraction failed with error:\n".$extract_handler->error."\n\n";
+		
+		# Return with the error
+		return $extract_handler->error;
+	}
 }
 
 #
