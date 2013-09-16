@@ -491,20 +491,33 @@ sub update_clicked
 		# Intended function, however can only be used once per script, kept incase i manage to fix the problem
 		#updater::download::file::from("$callerdata[1]", "$clientdir/.download/rsu-api-latest.tar.gz");
 		
+		# Make a variable so we can see if extraction is successful
+		my $extract_result = 0;
+		
 		# Extract the api
-		rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/");
+		$extract_result = rsu::extract::archive::extract("$clientdir/.download/rsu-api-latest.tar.gz", "$clientdir/.download/extracted_files/");
 		
-		# Replace the old API files with the new ones (rewrites directories)
-		rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/API", "$clientdir/rsu/framework/API", 1);
-		rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/modules", "$clientdir/rsu/framework/modules", 1);
-		rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/resources", "$clientdir/rsu/framework/resources", 1);
-		rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/templates", "$clientdir/templates", 1);
-		
-		# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
-		rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape", "$clientdir", 0);
-		
-		# Show a message that we are done
-		Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api", wxOK, $self);
+		# If extraction was successful then
+		if ($extract_result =~ /^0$/)
+		{
+			# Replace the old API files with the new ones (rewrites directories)
+			rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/API", "$clientdir/rsu/framework/API", 1);
+			rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/modules", "$clientdir/rsu/framework/modules", 1);
+			rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/rsu/framework/resources", "$clientdir/rsu/framework/resources", 1);
+			rsu::files::copy::print_mvr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape/templates", "$clientdir/templates", 1);
+			
+			# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
+			rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape", "$clientdir", 0);
+			
+			# Show a message that we are done
+			Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api", wxOK, $self);
+		}
+		# Else
+		else
+		{
+			# Show a message that extraction failed
+			Wx::MessageBox("Failed extracting the new update.\nPlease try again or try later.", "Extraction failed!", wxOK, $self);
+		}
 	}
 	
 	# Remove the update directory
@@ -577,35 +590,48 @@ sub update_addon_clicked
 	# Find out the filename
 	my @filename = split /\//, $addon_info[1];
 	
+	# Make a variable so we can see if extraction is successful
+	my $extract_result = 0;
+	
 	# Extract the archive
-	rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/.download/extracted_files");
+	$extract_result = rsu::extract::archive::extract("$clientdir/.download/$filename[-1]", "$clientdir/.download/extracted_files");
 	
-	# Locate the moduleloader.pm
-	my @moduleloader = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_files", "\/moduleloader\.pm\$");
-	
-	# Move the moduleloader location to a variable
-	my $addonroot = $moduleloader[0];
-	
-	# Remove /moduleloader.pm from the path
-	$addonroot =~ s/\/moduleloader\.pm$//;
-	
-	# Create a variable that will contain only the id of the addon
-	my $addon_id = $caller;
-	
-	# Remove the identifier from the $addon_id
-	$addon_id =~ s/^(universal|$OS)_//;
-	
-	# If this is an universal addon
-	if ($caller =~ /^universal_/)
+	# If extraction was successful then
+	if ($extract_result = 0)
 	{
-		# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
-		rsu::files::copy::print_mvr($addonroot, "$clientdir/share/addons/universal/$addon_id", 1)
+		# Locate the moduleloader.pm
+		my @moduleloader = rsu::files::grep::rdirgrep("$clientdir/.download/extracted_files", "\/moduleloader\.pm\$");
+	
+		# Move the moduleloader location to a variable
+		my $addonroot = $moduleloader[0];
+	
+		# Remove /moduleloader.pm from the path
+		$addonroot =~ s/\/moduleloader\.pm$//;
+	
+		# Create a variable that will contain only the id of the addon
+		my $addon_id = $caller;
+	
+		# Remove the identifier from the $addon_id
+		$addon_id =~ s/^(universal|$OS)_//;
+	
+		# If this is an universal addon
+		if ($caller =~ /^universal_/)
+		{
+			# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
+			rsu::files::copy::print_mvr($addonroot, "$clientdir/share/addons/universal/$addon_id", 1)
+		}
+		# Else
+		else
+		{
+			# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
+			rsu::files::copy::print_mvr($addonroot, "$clientdir/share/addons/$OS/$addon_id", 1)
+		}
 	}
 	# Else
 	else
 	{
-		# Move the addon to its proper place and use the caller name as folder ID and rewrite the destination folder
-		rsu::files::copy::print_mvr($addonroot, "$clientdir/share/addons/$OS/$addon_id", 1)
+		# Show a message that extraction failed
+		Wx::MessageBox("Failed extracting the addon archive.\nPlease try again", "Extraction failed!", wxOK, $self);
 	}
 	
 	# Remove the .download folder
