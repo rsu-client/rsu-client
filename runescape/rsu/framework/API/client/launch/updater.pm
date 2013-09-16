@@ -516,7 +516,7 @@ sub update_clicked
 		else
 		{
 			# Show a message that extraction failed
-			Wx::MessageBox("Failed extracting the new update.\nPlease try again or try later.", "Extraction failed!", wxOK, $self);
+			Wx::MessageBox("Failed extracting the new update.\n$extract_result\nPlease try again or try later.", "Extraction failed!", wxOK, $self);
 		}
 	}
 	
@@ -631,7 +631,7 @@ sub update_addon_clicked
 	else
 	{
 		# Show a message that extraction failed
-		Wx::MessageBox("Failed extracting the addon archive.\nPlease try again", "Extraction failed!", wxOK, $self);
+		Wx::MessageBox("Failed extracting the addon archive.\n$extract_result\nPlease try again", "Extraction failed!", wxOK, $self);
 	}
 	
 	# Remove the .download folder
