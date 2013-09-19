@@ -1495,14 +1495,14 @@ sub update
 
 sub settings
 {
-	# If we are not on windows
-	if ($OS !~ /MSWin32/)
+	# If we are on windows
+	if ($OS =~ /MSWin32/)
 	{
 		# Run the settings api call
-		system "\"$cwd/rsu/rsu-query\" client.launch.settings &";
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.settings");
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the settings api call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.settings &";
@@ -1511,7 +1511,7 @@ sub settings
 	else
 	{
 		# Run the settings api call
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.settings");
+		system "\"$cwd/rsu/rsu-query\" client.launch.settings &";
 	}
 }
 
