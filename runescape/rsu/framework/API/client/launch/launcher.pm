@@ -1370,7 +1370,7 @@ sub get_rsuversion
 	if ($OS =~ /MSWin32/)
 	{
 		# Launch the runescape script and get the version
-		$version = `"$cwd/rsu/rsu-query" client.launch.runescape --version --showcmd=true`;
+		$version = `"$cwd/rsu/rsu-query" client.launch.runescape --version`;
 	}
 	# If we are on mac osx
 	if ($OS =~ /darwin/)
@@ -1414,7 +1414,7 @@ sub playoldschool
 	else
 	{
 		# Run the runescape executable
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --prmfile=oldschool.prm --showcmd=true");
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --prmfile=oldschool.prm");
 	}
 }
 
@@ -1440,7 +1440,7 @@ sub playnow
 	else
 	{
 		# Run the runescape executable
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --showcmd=true");
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape");
 	}
 }
 
@@ -1456,20 +1456,20 @@ sub update
 	# If we are not on windows
 	if ($OS =~ /MSWin32/)
 	{
-		# Get the handle for the perl window
-		my $cmdwindow = Win32::GUI::GetPerlWindow();
-		# Show the cmd window
-		Win32::GUI::Show($cmdwindow) if "@ARGV" =~ /--showcmd=true/;
+		## Get the handle for the perl window
+		#my $cmdwindow = Win32::GUI::GetPerlWindow();
+		## Show the cmd window
+		#Win32::GUI::Show($cmdwindow) if "@ARGV" =~ /--showcmd=true/;
 		
 		# Run the runescape executable
 		system (1, "\"$cwd/rsu/rsu-query.exe\" client.launch.updater");
 		
 		# If --showcmd=false is passed
-		if ("@ARGV" =~ /--showcmd=false/)
-		{
-			# Hide the cmd window again
-			Win32::GUI::Hide($cmdwindow);
-		}
+		#if ("@ARGV" =~ /--showcmd=false/)
+		#{
+			## Hide the cmd window again
+			#Win32::GUI::Hide($cmdwindow);
+		#}
 		
 		# Tell the user that they should close the launcher and run "Download-Windows-Files.exe" to finish the update
 		#Wx::MessageBox("Finished running the updater!\nPlease close the Launcher and run the \"Download-Windows-Files.exe\"\nlocated in the client's folder to finish the update.", "Running update complete!", wxOK,$self);
@@ -1614,7 +1614,7 @@ sub launch_addon
 			if ($OS =~ /MSWin32/)
 			{
 				# Launch the universal addon
-				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon --showcmd=true &");
+				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.universal.launch $addon &");
 			}
 			# Else if we are on Mac OSX
 			elsif ($OS =~ /darwin/)
@@ -1636,7 +1636,7 @@ sub launch_addon
 			if ($OS =~ /MSWin32/)
 			{
 				# Launch the platform specific addon
-				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon --showcmd=false &");
+				system (1,"\"$cwd/rsu/rsu-query.exe\" addon.platform.launch $addon &");
 			}
 			# Else if we are on Mac OSX
 			elsif ($OS =~ /darwin/)
