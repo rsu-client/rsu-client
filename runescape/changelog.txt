@@ -1,3 +1,10 @@
+runescape (4.1.1) precise; urgency=low
+
+  * Added Wx::Html as an include inside the rsu-query so that addons
+    can take advantage of Wx::SimpleHtmlListBox to nicely format a listbox
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 20 Sep 2013 14:04:19 +0200
+
 runescape (4.1.0) precise; urgency=low
 
   * Made the "update rsu-api" and addon updater show an error message
