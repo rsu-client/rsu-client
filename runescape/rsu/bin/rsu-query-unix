@@ -51,19 +51,19 @@ if ("$^O" =~ /MSWin32/)
 	eval "use Win32::GUI()";
 	
 	# If the arguments passed do not contain --showcmd=true
-	if ("$ARGV[-1]" =~ /(-|--)showcmd=false/)
-	{
+	#if ("$ARGV[-1]" =~ /(-|--)showcmd=false/)
+	#{
 		# Get the handle for the perl window
-		my $loader_cmdwindow = Win32::GUI::GetPerlWindow();
+	#	my $loader_cmdwindow = Win32::GUI::GetPerlWindow();
 		# Hide the cmd window
-		Win32::GUI::Hide($loader_cmdwindow);
-	}
+	#	Win32::GUI::Hide($loader_cmdwindow);
+	#}
 	# Else
-	else
-	{
+	#else
+	#{
 		# Remove --showcmd=true or -showcmd=true from the arguments array
-		s/(-|--)showcmd=true(\s)//g for @ARGV;
-	}
+	#	s/(-|--)showcmd=true(\s)//g for @ARGV;
+	#}
 	
 	# Move to the script directory
 	chdir("$scriptdir");
