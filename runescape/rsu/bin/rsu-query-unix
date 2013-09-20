@@ -19,6 +19,7 @@ my $cwd = getcwd;
 eval "use Wx::Perl::Packager";
 eval "use Wx qw[:everything]"; print STDERR "Wx module not found, API calls using WxWidgets will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
 eval "use Wx::XRC";
+eval "use Wx::Html";
 eval "use Wx::WebView"; print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
 
 # Uncomment the below lines if packaging for mac
