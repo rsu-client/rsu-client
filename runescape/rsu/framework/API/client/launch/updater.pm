@@ -460,9 +460,6 @@ sub update_clicked
 	# Else if the caller was the api button
 	elsif($caller =~ /^api$/)
 	{
-		# Check if binary is installed and update it
-		updater::extract::query_bin::update(0);
-		
 		# Get the download link
 		my $callerconfig = rsu::files::IO::readconf("api_button", "Update rsu-api;$updateurl;Update the rsu-api to the newest version\n(from HikariKnight)", "buttons.conf", "$resourcedir/configs");
 		
@@ -508,6 +505,9 @@ sub update_clicked
 			
 			# Append the remaining files to the $clientdir (replacing files, does not rewrite directories)
 			rsu::files::copy::print_cpr("$clientdir/.download/extracted_files/rsu-client-rsu-api-latest/runescape", "$clientdir", 0);
+            
+            # Check if binary is installed and update it
+            updater::extract::query_bin::update(0);
 			
 			# Show a message that we are done
 			Wx::MessageBox("The rsu-api have now been updated\nto the newest version.", "Done updating the rsu-api", wxOK, $self);
