@@ -7,6 +7,9 @@ runescape (4.1.2) precise; urgency=low
     Plus this increases the performance of the launcher and decreases
     it's memory usage
     
+  * Adjust some text in the settings editor to stop horizontal
+    scrollbars from appearing with some GTK Themes
+    
  -- HikariKnight <rshikariknight@gmail.com>  Fri, 22 Sep 2013 16:18:19 +0200
  
 runescape (4.1.1) precise; urgency=low
