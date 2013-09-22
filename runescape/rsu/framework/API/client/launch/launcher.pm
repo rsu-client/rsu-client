@@ -59,7 +59,7 @@ package wxTopLevelFrame;
 use Wx qw[:everything];
 use Wx::XRC;
 # Which events shall we include
-use Wx::Event qw(EVT_BUTTON EVT_PAINT);
+use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED);
 
 # Use Wx::WebView if it exists
 eval "use Wx::WebView";
@@ -168,7 +168,8 @@ sub set_layout
 	else
 	{
 		# Make a scrolledwindow (uses less resources than webview)
-		$self->{rssview} = Wx::ScrolledWindow->new($self->{mainpanel}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE);
+		#$self->{rssview} = Wx::ScrolledWindow->new($self->{mainpanel}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE);
+		$self->{rssview} = Wx::Panel->new($self->{mainpanel}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE);
 		
 		# Make a painting event
 		#EVT_PAINT( $self->{rssview}, \&OnPaint );
@@ -235,14 +236,17 @@ sub set_layout
 		# Add the button to the sizer
 		$self->{rss_container}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
 		
+		# Create a HtmlWindow  (not to be confused with a browser window!)
+		$self->{htmlview} = Wx::HtmlWindow->new($self->{rssview}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_DEFAULT_STYLE);
+		
+		# Add the htmlview to the sizer
+		$self->{rss_container}->Add($self->{htmlview}, 1, wxALL|wxEXPAND, 0);
+		
 		# Use the rss_container as the sizer for rssview
 		$self->{rssview}->SetSizer($self->{rss_container});
 		
-		# Create a newslist
-		make_newslist($self);
-		
-		# Set scrollbars on the rssview
-		setScrollBars($self->{rssview});
+		# Make an empty newspage
+		make_newspage($self);
 		
 		# Fetch rssfeed
 		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
@@ -389,78 +393,41 @@ sub create_addons_page
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub make_newslist
+sub make_newspage
 {
 	# Get the passed data
 	my ($self) = @_;
 	
-	# Make a vertical box sizer for use to organize the rss
-	$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
-	
-	# For each value in the array
-	for (my $counter = 1; $counter <= 15; $counter++)
-	{
-		##### Generate Title #####
-		# Make a title label for the news
-		$self->{newsTitle_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "Dummy Title");
-		
-		# Make font bigger
-		$self->{newsTitle_.$counter}->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
-		
-		# Change the title color to the same color that Jagex use on news articles
-		$self->{newsTitle_.$counter}->SetForegroundColour(Wx::Colour->new(243,177,63));
-		
-		# Add label to the sizer
-		$self->{rss_sizer}->Add($self->{newsTitle_.$counter}, 0, wxEXPAND|wxALL, 5);
-		
-		##### Generate Date #####
-		# Make a date label for the news
-		$self->{newsDate_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "\tPublished: Sometime");
-		
-		# Change the text color to the same color that Jagex use on news articles
-		$self->{newsDate_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
-		
-		# Make font bigger
-		$self->{newsDate_.$counter}->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
-		
-		# Add label to the sizer
-		$self->{rss_sizer}->Add($self->{newsDate_.$counter}, 0, wxEXPAND|wxLEFT, 5);
-		
-		##### Generate Description #####
-		# Make a date label for the news
-		$self->{newsDescription_.$counter} = Wx::StaticText->new($self->{rssview}, -1, "If you see this then the newsfeed might have timed out...\nPress the refresh button to try reload the newsfeed.");
-		
-		# Change the text color to the same color that Jagex use on news articles
-		$self->{newsDescription_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
-		
-		$self->{newsDescription_.$counter}->Wrap(480);
-		
-		# Add label to the sizer
-		$self->{rss_sizer}->Add($self->{newsDescription_.$counter}, 0, wxEXPAND|wxALL, 5);
-		
-		##### Generate Link #####
-		# Make a hyperlink
-		$self->{rssLink_.$counter} = Wx::Button->new($self->{rssview}, wxID_ANY, "Read More..");
-		
-		# Add a tooltip showing the url to the article
-		$self->{rssLink_.$counter}->SetToolTip("");
-		
-		# Connect the hyperlink to an event named hyperlink_clicked
-		EVT_BUTTON($self->{rssLink_.$counter}, -1, \&hyperlink_clicked);
-		
-		# Add a link to the article to the sizer
-		$self->{rss_sizer}->Add($self->{rssLink_.$counter}, 0, wxALL, 0);
-		
-		##### Generate Static Line #####
-		# Make a static line to the sizer to nicely split the newsposts
-		$self->{rssLine_.$counter} = Wx::StaticLine->new($self->{rssview}, -1);
-		
-		# Add the static line to the sizer
-		$self->{rss_sizer}->Add($self->{rssLine_.$counter}, 0, wxEXPAND|wxALL, 5);
-	}
-	
-	# Add the sizer to the rssview
-	$self->{rss_container}->Add($self->{rss_sizer});
+	$self->{htmlview}->SetPage("<html>
+	<body bgcolor=black>
+			<table width=100%>
+				<td>
+					<b>
+						<font color=#E8B13F size=+1>Failed to load newsfeed from http://runescape.com</font>
+					</b>
+				</td>
+			</table>
+			<table width=100%>
+				<td width=5%>
+				</td>
+				<td>
+					<font color=#B8B8B8 size=-1 >Published: Sometime</font>
+				</td>
+			</table>
+			<table width=100%>
+				<tr>
+					<td>
+						<font color=#B8B8B8 size=3>If you see this then the newsfeed might have timed out...<br>Press the refresh button to try reload the newsfeed.</font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href=''><font color=#E8B13F size=3>Read More...</font></a>
+					</td>
+				</tr>
+			</table>
+	</body>
+</html>");
 }
 
 #
@@ -493,6 +460,10 @@ sub fetch_rssnews
 	# Make a counter to keep track of the news
 	my $counter = 1;
 	
+	# Make a variable to hold the html code
+	my $newspage = "<html>
+	<body bgcolor=black>";
+	
 	# For each value in the array
 	foreach my $item (@{$rssnews{'item'}})
 	{
@@ -522,14 +493,15 @@ sub fetch_rssnews
 		# Write debug info to STDOUT
 		print "Adding News Title$counter: \"$rssTitle\"\n";
 		
-		# Make a title label for the news
-		$self->{newsTitle_.$counter}->SetLabel("$rssTitle");
-		
-		# Make font bigger
-		$self->{newsTitle_.$counter}->SetFont(Wx::Font->new(14, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0, "Times New Roman"));
-		
-		# Change the title color to the same color that Jagex use on news articles
-		$self->{newsTitle_.$counter}->SetForegroundColour(Wx::Colour->new(243,177,63));
+		# Add the news title to the html code
+		$newspage = "$newspage
+		<table width=100%>
+			<td>
+				<b>
+					<font color=#E8B13F size=+1>$item->{'title'}</font>
+				</b>
+			</td>
+		</table>";
 		
 		##### Generate Date #####
 		
@@ -542,14 +514,15 @@ sub fetch_rssnews
 		# Write debug info to STDOUT
 		print "Adding Published Date$counter: \"$rssDate\"\n";
 		
-		# Make a date label for the news
-		$self->{newsDate_.$counter}->SetLabel("\tPublished: $rssDate");
-		
-		# Change the text color to the same color that Jagex use on news articles
-		$self->{newsDate_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
-		
-		# Make font bigger
-		$self->{newsDate_.$counter}->SetFont(Wx::Font->new(10, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
+		# Add the published date to the html code
+		$newspage = "$newspage
+		<table width=100%>
+			<td width=25px>
+			</td>
+			<td>
+				<font color=#B8B8B8 size=-1 >Published: $rssDate</font>
+			</td>
+		</table>";
 		
 		##### Generate Description #####
 		
@@ -584,33 +557,44 @@ sub fetch_rssnews
 		# Write debug info to STDOUT
 		print "Adding News Description$counter: \"$rssDescription\"\n";
 		
-		# Make a date label for the news
-		$self->{newsDescription_.$counter}->SetLabel("$rssDescription");
-		
-		# Change the text color to the same color that Jagex use on news articles
-		$self->{newsDescription_.$counter}->SetForegroundColour(Wx::Colour->new(184,184,184));
-		
-		$self->{newsDescription_.$counter}->Wrap(480);
+		# Add the news description to the html code
+		$newspage = "$newspage
+		<table width=100%>
+			<tr>
+				<td>
+					<font color=#B8B8B8 size=3>$item->{'description'}</font>
+				</td>
+			</tr>";
 		
 		##### Generate Link #####
 		
 		# Write debug info to STDOUT
 		print "Adding News Link$counter: \"$item->{'link'}\"\n\n";
-			
-		# Add a tooltip showing the url to the article
-		$self->{rssLink_.$counter}->SetToolTip("$item->{'link'}");
+		
+		# Add the Read More... link to the html code
+		$newspage = "$newspage
+			<tr>
+				<td>
+					<a href=\"$item->{'link'}\"><font color=#E8B13F size=3>Read More...</font></a>
+				</td>
+			</tr>
+		</table>
+		<hr>";
 		
 		# Increase counter by 1
 		$counter += 1;
 	}
 	
-	# If we are running inside a PAR Packed script then
-	if ("@INC" =~ /par-/)
-	{
-		# Redraw the rssview
-		$self->{rss_container}->Layout();
-		setScrollBars($self->{rssview});
-	}
+	# Add the ending html code to the newspage
+	$newspage = "$newspage
+	</body>
+</html>";
+
+	# Tell the user the generated html code
+	print "Generated html code from rssfeed:\n$newspage\n\n";
+
+	# Display the html we generated from the rssfeed
+	$self->{htmlview}->SetPage($newspage);
 }
 
 #
@@ -622,13 +606,10 @@ sub refreshnews_clicked
 	# Get pointers
 	my ($self, $event) = @_;
 	
-	$self->{rss_sizer}->Clear(1);
-	$self->{rss_container}->Remove($self->{rss_sizer});
-	$self->{rss_container}->FitInside($self->{rssview});
-	
+	# Print debug information
+	print "User requested to refresh the newsfeed!\nRefreshing the newsfeed now!\n\n";
 	
 	# Refresh the rssfeed
-	make_newslist($self);
 	fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
 }
 
@@ -641,11 +622,11 @@ sub hyperlink_clicked
 	# Get pointers
 	my ($self, $event) = @_;
 	
-	# Get the URL we are supposed to launch
-	my $hyperlink = $event->GetEventObject()->GetToolTip()->GetTip();
+	# Print debug information
+	print "Clicked on link: ".$event->GetLinkInfo()->GetHref()."\nOpening link in the default Web Browser\n\n";
 	
 	# Open the hyperlink url in the default web browser
-	Wx::LaunchDefaultBrowser("$hyperlink");
+	Wx::LaunchDefaultBrowser($event->GetLinkInfo()->GetHref());
 }
 
 #
@@ -811,6 +792,8 @@ sub set_events
 	
 	# Setup the events
 	# EVT_BUTTON($self, Wx::XmlResource::GetXRCID('objectname'), \&function);
+	
+	EVT_HTML_LINK_CLICKED($self, $self->{htmlview}, \&hyperlink_clicked);
 }
 
 #

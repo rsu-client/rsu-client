@@ -1,3 +1,14 @@
+runescape (4.1.2) precise; urgency=low
+
+  * Updated the launcher to use the Wx::HtmlWindow to display the
+    newsfeed instead of building it's own interface.
+    This lets me make the newsfeed a bit nicer and lets me use
+    hyperlinks instead of buttons to take users to the news article.
+    Plus this increases the performance of the launcher and decreases
+    it's memory usage
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 22 Sep 2013 16:18:19 +0200
+ 
 runescape (4.1.1) precise; urgency=low
 
   * Added Wx::Html as an include inside the rsu-query so that addons
