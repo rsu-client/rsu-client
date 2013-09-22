@@ -226,6 +226,9 @@ sub set_layout
 		# Make a refresh button
 		$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News");
 		$self->{rssRefresh}->SetName("refreshnews");
+        
+        # Make the foreground around the refresh button appear black
+        $self->{rssRefresh}->SetForegroundColour(wxBLACK);
 			
 		# Add a tooltip to the button
 		$self->{rssRefresh}->SetToolTip("Click here to refresh the news RSS feed.");
