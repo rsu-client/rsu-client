@@ -1151,7 +1151,7 @@
                                                                 <property name="gripper">0</property>
                                                                 <property name="hidden">0</property>
                                                                 <property name="id">wxID_ANY</property>
-                                                                <property name="label">When enabled, the Automatic Java Optimization will apply extra&#x0A;Java parameters ontop of the ones you provide in the&#x0A;Client Settings tab to try increase the games performance&#x0A;on your computer.&#x0A;It will also enable multiple processor cores(-XX:+UseParallelGC) in Java&#x0A;which will in most cases decrease loading times ingame.</property>
+                                                                <property name="label">When enabled, the Automatic Java Optimization will apply extra&#x0A;Java parameters ontop of the ones you provide in the&#x0A;Client Settings tab to try increase the games performance&#x0A;on your computer.&#x0A;It will also enable multiple processor cores (-XX:+UseParallelGC)&#x0A;in Java, which will in most cases decrease loading times ingame.</property>
                                                                 <property name="max_size"></property>
                                                                 <property name="maximize_button">0</property>
                                                                 <property name="maximum_size"></property>

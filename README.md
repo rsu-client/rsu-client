@@ -79,7 +79,7 @@ If you contribute code you can also get your name or nickname in the contributor
 Developers, Contributors and people that have helped the project
 -----------
 * HikariKnight - _Developer_
-* ivan p - _Aur Repository_
+* [ivanpu](https://github.com/ivanpu) - _Aur Repository_
 * chroot - _force pulseaudio_
 * [Ethoxyethaan](https://github.com/Ethoxyethaan) - _original bash script for launching the jagexappletviewer.jar on Linux_
 * Jmb71 - _findjavalib regex_
