@@ -169,7 +169,7 @@
 												<flag>wxALL</flag>
 												<border>5</border>
 												<object class="wxStaticText" name="label_optimize">
-													<label>When enabled, the Automatic Java Optimization will apply extra\nJava parameters ontop of the ones you provide in the\nClient Settings tab to try increase the games performance\non your computer.\nIt will also enable multiple processor cores(-XX:+UseParallelGC) in Java\nwhich will in most cases decrease loading times ingame.</label>
+													<label>When enabled, the Automatic Java Optimization will apply extra\nJava parameters ontop of the ones you provide in the\nClient Settings tab to try increase the games performance\non your computer.\nIt will also enable multiple processor cores (-XX:+UseParallelGC)\nin Java, which will in most cases decrease loading times ingame.</label>
 													<wrap>-1</wrap>
 												</object>
 											</object>
