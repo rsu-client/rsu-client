@@ -259,9 +259,8 @@
                                     <event name="OnSize"></event>
                                     <event name="OnUpdateUI"></event>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">Script Settings</property>
-                                        <property name="select">1</property>
+                                        <property name="select">0</property>
                                         <object class="wxScrolledWindow" expanded="1">
                                             <property name="BottomDockable">1</property>
                                             <property name="LeftDockable">1</property>
@@ -2040,7 +2039,6 @@
                                         </object>
                                     </object>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">Client Settings</property>
                                         <property name="select">0</property>
                                         <object class="wxScrolledWindow" expanded="1">
@@ -3495,9 +3493,8 @@
                                         </object>
                                     </object>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">JagexCache</property>
-                                        <property name="select">0</property>
+                                        <property name="select">1</property>
                                         <object class="wxScrolledWindow" expanded="1">
                                             <property name="BottomDockable">1</property>
                                             <property name="LeftDockable">1</property>
