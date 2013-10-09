@@ -191,7 +191,6 @@
                                     <property name="aui_row"></property>
                                     <property name="best_size"></property>
                                     <property name="bg"></property>
-                                    <property name="bitmapsize"></property>
                                     <property name="caption"></property>
                                     <property name="caption_visible">1</property>
                                     <property name="center_pane">0</property>
@@ -259,7 +258,6 @@
                                     <event name="OnSize"></event>
                                     <event name="OnUpdateUI"></event>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">Script Settings</property>
                                         <property name="select">1</property>
                                         <object class="wxScrolledWindow" expanded="1">
@@ -2040,7 +2038,6 @@
                                         </object>
                                     </object>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">Client Settings</property>
                                         <property name="select">0</property>
                                         <object class="wxScrolledWindow" expanded="1">
@@ -3495,7 +3492,6 @@
                                         </object>
                                     </object>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">JagexCache</property>
                                         <property name="select">0</property>
                                         <object class="wxScrolledWindow" expanded="1">
