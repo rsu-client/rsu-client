@@ -18,7 +18,6 @@
 						<object class="notebookpage">
 							<label>Script Settings</label>
 							<selected>1</selected>
-							<bitmap />
 							<object class="wxScrolledWindow" name="scriptwindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>
@@ -305,7 +304,6 @@
 						<object class="notebookpage">
 							<label>Client Settings</label>
 							<selected>0</selected>
-							<bitmap />
 							<object class="wxScrolledWindow" name="rswindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>
@@ -557,7 +555,6 @@
 						<object class="notebookpage">
 							<label>JagexCache</label>
 							<selected>0</selected>
-							<bitmap />
 							<object class="wxScrolledWindow" name="cachewindow">
 								<style>wxHSCROLL|wxVSCROLL</style>
 								<scrollrate>10,10</scrollrate>

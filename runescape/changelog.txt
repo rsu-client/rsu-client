@@ -1,3 +1,9 @@
+runescape (4.1.3) precise; urgency=low
+
+  * Fixed the "Unable to add image to the list" error on windows
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 09 Oct 2013 16:58:19 +0200
+ 
 runescape (4.1.2) precise; urgency=low
 
   * Updated the launcher to use the Wx::HtmlWindow to display the
