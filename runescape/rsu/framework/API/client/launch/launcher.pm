@@ -186,26 +186,39 @@ sub set_layout
 	# Create a scrolledwindow for the buttons
 	$self->{verticalbuttons} = Wx::ScrolledWindow->new($self->{mainpanel}, -1, wxDefaultPosition, wxDefaultSize );
 	
-	# Make buttons
-	make_button($self, "playnow", "&Play Now");
-	make_button($self, "playoldschool", "Play &OldSchool");
-	make_button($self, "update", "Run &Updater");
-	make_button($self, "settings", "&Settings");
-	make_button($self, "forums", "RS &Forums");
+#	# If we are on windows or mac
+#	if ($OS =~ /(darwin)/)
+#	{
+#		# Make buttons
+#		make_button($self, "playnow", "&Play Now");
+#		make_button($self, "playoldschool", "Play &OldSchool");
+#		make_button($self, "update", "Run &Updater");
+#		make_button($self, "settings", "&Settings");
+#		make_button($self, "forums", "RS &Forums");
+#		$self->{buttonsizer}->Add(1,1,1);
+#		make_button($self, "linuxthread", "&Linux Thread");
+#	}
+
+	# Make bitmap buttons
+	make_bitmapbutton($self, "playnow", "playnow");
+	make_bitmapbutton($self, "playoldschool", "oldschool");
+	make_bitmapbutton($self, "update", "runupdater");
+	make_bitmapbutton($self, "settings", "settings");
+	make_bitmapbutton($self, "forums", "forums");
 	$self->{buttonsizer}->Add(1,1,1);
-	make_button($self, "linuxthread", "&Linux Thread");
+	make_bitmapbutton($self, "linuxthread", "linuxthread");
 	
 	# If we are on MacOSX
 	if ($OS =~ /darwin/)
 	{
 		# Use the fallback/old aboutdialog as mac have issues with the modern one
-		make_button($self, "about_FALLBACK", "&About RSU");
+		make_bitmapbutton($self, "about_FALLBACK", "about");
 	}
 	# Else
 	else
 	{
 		# Use the new and improved aboutdialog
-		make_button($self, "about", "&About RSU");
+		make_bitmapbutton($self, "about", "about");
 	}
 	
 	# Add the webview or rssview to the sizers
@@ -224,7 +237,10 @@ sub set_layout
 		$self->{rss_container} = Wx::BoxSizer->new(wxVERTICAL);
 		
 		# Make a refresh button
-		$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News");
+		#$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News") if $OS =~ /(darwin)/;
+		$self->{rssRefresh} = Wx::BitmapButton->new($self->{rssview}, -1, Wx::Bitmap->new("$resourcedir/bitmaps/refresh.png", wxBITMAP_TYPE_PNG), wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
+		$self->{rssRefresh}->SetBitmapSelected(Wx::Bitmap->new("$resourcedir/bitmaps/refresh_press.png", wxBITMAP_TYPE_PNG)) if $OS =~ /(MSWin32|darwin)/;
+		$self->{rssRefresh}->SetBackgroundColour(Wx::Colour->new("#222222"));
 		$self->{rssRefresh}->SetName("refreshnews");
         
         # Make the foreground around the refresh button appear black
@@ -306,7 +322,7 @@ sub set_layout
 	# Set default size
 	if ($OS =~ /darwin/)
 	{
-		$self->SetSize(810,450);
+		$self->SetSize(800,450);
 	}
 	# Else
 	else
@@ -316,12 +332,8 @@ sub set_layout
 		$self->Fit();
 	}
 	
-	# If we are not on windows or darwin
-	if ($OS !~ /(MSWin32|darwin)/)
-	{
-		# Set the colors
-		set_colors($self);
-	}
+	# Set the colors
+	set_colors($self);
 	
 	# Set minimum size
 	$self->SetMinSize($self->GetSize);
@@ -356,7 +368,6 @@ sub set_colors
 	$self->{verticalbuttons}->SetForegroundColour(Wx::Colour->new("#222222"));
 	$self->{mainpanel}->SetBackgroundColour(Wx::Colour->new("#222222"));
 	$self->{mainpanel}->SetForegroundColour(Wx::Colour->new("#222222"));
-	
 }
 
 #
@@ -371,10 +382,6 @@ sub create_addons_page
 	# Make the new page for the tabbed window
 	$self->{addonspage} = Wx::ScrolledWindow->new($self->{tabcontrol}, -1, wxDefaultPosition, wxDefaultSize, );
 	
-	# Set colors if we are not on windows or mac
-	$self->{addonspage}->SetBackgroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
-	$self->{addonspage}->SetForegroundColour(Wx::Colour->new("#E8B13F")) if $OS !~ /(MSWin32|darwin)/;
-	
 	# Add the page to the tabbed window
 	$self->{tabcontrol}->AddPage($self->{addonspage}, "Installed Add-Ons");
 	
@@ -387,16 +394,9 @@ sub create_addons_page
 	# Make a button which tells the user how to add addons
 	$self->{addons_labeltop} = Wx::StaticText->new($self->{addonspage}, -1, "\nClick on the button coresponding to the addon you want to manually launch!\nClick the button below to open the addons directory. Install only addons you trust!", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	
-	# Set colors if we are not on windows or mac
-	$self->{addons_labeltop}->SetBackgroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
-	$self->{addons_labeltop}->SetForegroundColour(Wx::Colour->new("#E8B13F")) if $OS !~ /(MSWin32|darwin)/;
-	
 	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
 	$self->{addonsdirbutton} = Wx::Button->new($self->{addonspage}, -1, "Open Addons Folder (place manually extracted addons here)", wxDefaultPosition, wxDefaultSize, );
 	EVT_BUTTON($self->{addonsdirbutton}, $self->{addonsdirbutton}, \&open_addonsdir);
-	
-	# Set colors if we are not on windows or mac
-	$self->{addonsdirbutton}->SetForegroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
 	
 	# Add the label and button to the vertical boxsizer
 	$self->{addonsvertical}->Add($self->{addons_labeltop}, 0, wxALL|wxALIGN_CENTER,0);
@@ -409,10 +409,6 @@ sub create_addons_page
 	$self->{addons_installed} = Wx::StaticText->new($self->{addonspage}, -1, "  Addons you have installed:", wxDefaultPosition, wxDefaultSize);
 	$self->{addonsvertical}->Add($self->{addons_installed}, 0, wxALL,5);
 	$self->{addonscontainer} = Wx::BoxSizer->new(wxVERTICAL);
-	
-	# Set colors if we are not on windows or mac
-	$self->{addons_installed}->SetBackgroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
-	$self->{addons_installed}->SetForegroundColour(Wx::Colour->new("#E8B13F")) if $OS !~ /(MSWin32|darwin)/;
 	
 	# Add the addonslist to the container
 	$self->{addonscontainer}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
@@ -433,6 +429,17 @@ sub create_addons_page
 			make_addon_buttons($self, "$clientdir/share/addons/$addondir");
 		}
 	}
+	
+	# Set the colors for the correct platforms
+	
+	# Set colors for certain platforms
+	$self->{addonspage}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{addonspage}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+	$self->{addons_labeltop}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{addons_labeltop}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+	$self->{addonsdirbutton}->SetForegroundColour(Wx::Colour->new("#222222"));
+	$self->{addons_installed}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{addons_installed}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
 	
 	# Make sure the layout is displayed properly
 	$self->{addonspage}->SetSizer($self->{addonsvertical});
@@ -864,6 +871,27 @@ sub make_button
 	$self->{$button} = Wx::Button->new($self->{verticalbuttons}, -1, "$label");
 	$self->{$button}->SetForegroundColour(Wx::Colour->new("#222222"));
 	$self->{buttonsizer}->Add($self->{$button},0,wxEXPAND|wxALL,5);
+	
+	# Make an event trigger for the newly created button
+	EVT_BUTTON($self->{$button}, -1, \&$button);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub make_bitmapbutton
+{
+	my ($self, $button, $bitmap) = @_;
+	
+	# Make a button for the launcher
+	$self->{$button} = Wx::BitmapButton->new($self->{verticalbuttons}, -1, Wx::Bitmap->new("$resourcedir/bitmaps/$bitmap.png", wxBITMAP_TYPE_PNG), wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTRANSPARENT_WINDOW);
+	$self->{$button}->SetBitmapSelected(Wx::Bitmap->new("$resourcedir/bitmaps/$bitmap"."_press.png", wxBITMAP_TYPE_PNG)) if $OS =~ /(MSWin32|darwin)/;
+	$self->{$button}->SetForegroundColour(Wx::Colour->new("#222222"));
+	$self->{$button}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{buttonsizer}->Add($self->{$button},0,wxEXPAND|wxALL,5) if $OS =~ /(MSWin32)/;
+	$self->{buttonsizer}->Add($self->{$button},0,wxEXPAND|wxALL,3) if $OS =~ /(darwin)/;
+	$self->{buttonsizer}->Add($self->{$button},0,wxEXPAND|wxALL,0) if $OS !~ /(MSWin32|darwin)/;
 	
 	# Make an event trigger for the newly created button
 	EVT_BUTTON($self->{$button}, -1, \&$button);
