@@ -174,7 +174,7 @@ sub set_layout
 		# Make a painting event
 		#EVT_PAINT( $self->{rssview}, \&OnPaint );
 		# Change the RSSView background to black
-		$self->{rssview}->SetBackgroundColour(wxBLACK);
+		$self->{rssview}->SetBackgroundColour(Wx::Colour->new("#222222"));
 	}
 	
 	# Create the boxsizer needed for the layout
@@ -228,7 +228,7 @@ sub set_layout
 		$self->{rssRefresh}->SetName("refreshnews");
         
         # Make the foreground around the refresh button appear black
-        $self->{rssRefresh}->SetForegroundColour(wxBLACK);
+        $self->{rssRefresh}->SetForegroundColour(Wx::Colour->new("#222222"));
 			
 		# Add a tooltip to the button
 		$self->{rssRefresh}->SetToolTip("Click here to refresh the news RSS feed.");
@@ -316,6 +316,13 @@ sub set_layout
 		$self->Fit();
 	}
 	
+	# If we are not on windows or darwin
+	if ($OS !~ /(MSWin32|darwin)/)
+	{
+		# Set the colors
+		set_colors($self);
+	}
+	
 	# Set minimum size
 	$self->SetMinSize($self->GetSize);
 	
@@ -323,6 +330,33 @@ sub set_layout
 	$self->Layout;
 	# Refresh window
 	$self->Refresh;
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub set_colors
+{
+	# Get the passed data
+	my ($self) = @_;
+	
+	# If we are not on windows
+	if ($OS !~ /MSWin32/)
+	{
+		# Set these colors
+		$self->{tabcontrol}->SetBackgroundColour(Wx::Colour->new("#222222"));
+		$self->{tabcontrol}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+		$self->SetBackgroundColour(Wx::Colour->new("#000000"));
+		$self->SetForegroundColour(Wx::Colour->new("#000000"));
+	}
+	
+	# Set the colors
+	$self->{verticalbuttons}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{verticalbuttons}->SetForegroundColour(Wx::Colour->new("#222222"));
+	$self->{mainpanel}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{mainpanel}->SetForegroundColour(Wx::Colour->new("#222222"));
+	
 }
 
 #
@@ -337,6 +371,10 @@ sub create_addons_page
 	# Make the new page for the tabbed window
 	$self->{addonspage} = Wx::ScrolledWindow->new($self->{tabcontrol}, -1, wxDefaultPosition, wxDefaultSize, );
 	
+	# Set colors if we are not on windows or mac
+	$self->{addonspage}->SetBackgroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
+	$self->{addonspage}->SetForegroundColour(Wx::Colour->new("#E8B13F")) if $OS !~ /(MSWin32|darwin)/;
+	
 	# Add the page to the tabbed window
 	$self->{tabcontrol}->AddPage($self->{addonspage}, "Installed Add-Ons");
 	
@@ -349,9 +387,16 @@ sub create_addons_page
 	# Make a button which tells the user how to add addons
 	$self->{addons_labeltop} = Wx::StaticText->new($self->{addonspage}, -1, "\nClick on the button coresponding to the addon you want to manually launch!\nClick the button below to open the addons directory. Install only addons you trust!", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	
+	# Set colors if we are not on windows or mac
+	$self->{addons_labeltop}->SetBackgroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
+	$self->{addons_labeltop}->SetForegroundColour(Wx::Colour->new("#E8B13F")) if $OS !~ /(MSWin32|darwin)/;
+	
 	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
 	$self->{addonsdirbutton} = Wx::Button->new($self->{addonspage}, -1, "Open Addons Folder (place manually extracted addons here)", wxDefaultPosition, wxDefaultSize, );
 	EVT_BUTTON($self->{addonsdirbutton}, $self->{addonsdirbutton}, \&open_addonsdir);
+	
+	# Set colors if we are not on windows or mac
+	$self->{addonsdirbutton}->SetForegroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
 	
 	# Add the label and button to the vertical boxsizer
 	$self->{addonsvertical}->Add($self->{addons_labeltop}, 0, wxALL|wxALIGN_CENTER,0);
@@ -359,8 +404,15 @@ sub create_addons_page
 	$self->{addonsvertical}->Add(10,10,0,0);
 	
 	# Make a groupbox for tidyness
-	$self->{addonsbox} = Wx::StaticBox->new($self->{addonspage},-1, "Addons you have installed:");
-	$self->{addonscontainer} = Wx::StaticBoxSizer->new($self->{addonsbox},wxVERTICAL); 
+	#$self->{addonsbox} = Wx::StaticBox->new($self->{addonspage},-1, "Addons you have installed:");
+	#$self->{addonscontainer} = Wx::StaticBoxSizer->new($self->{addonsbox},wxVERTICAL);
+	$self->{addons_installed} = Wx::StaticText->new($self->{addonspage}, -1, "  Addons you have installed:", wxDefaultPosition, wxDefaultSize);
+	$self->{addonsvertical}->Add($self->{addons_installed}, 0, wxALL,5);
+	$self->{addonscontainer} = Wx::BoxSizer->new(wxVERTICAL);
+	
+	# Set colors if we are not on windows or mac
+	$self->{addons_installed}->SetBackgroundColour(Wx::Colour->new("#222222")) if $OS !~ /(MSWin32|darwin)/;
+	$self->{addons_installed}->SetForegroundColour(Wx::Colour->new("#E8B13F")) if $OS !~ /(MSWin32|darwin)/;
 	
 	# Add the addonslist to the container
 	$self->{addonscontainer}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
@@ -465,7 +517,7 @@ sub fetch_rssnews
 	
 	# Make a variable to hold the html code
 	my $newspage = "<html>
-	<body bgcolor=black>";
+	<body bgcolor=\"#222222\">";
 	
 	# For each value in the array
 	foreach my $item (@{$rssnews{'item'}})
@@ -702,7 +754,8 @@ sub make_addon_buttons
 			
 		# Make a button for the addon
 		$self->{$addon_id} = Wx::Button->new($self->{addonspage}, -1, "$addon_name", wxDefaultPosition, wxDefaultSize, );
-			
+		$self->{$addon_id}->SetForegroundColour(Wx::Colour->new("#222222"));
+		
 		# Make an event trigger for the newly created button
 		EVT_BUTTON($self, -1, \&launch_addon);
 		
@@ -809,6 +862,7 @@ sub make_button
 	
 	# Make a button for the launcher
 	$self->{$button} = Wx::Button->new($self->{verticalbuttons}, -1, "$label");
+	$self->{$button}->SetForegroundColour(Wx::Colour->new("#222222"));
 	$self->{buttonsizer}->Add($self->{$button},0,wxEXPAND|wxALL,5);
 	
 	# Make an event trigger for the newly created button
