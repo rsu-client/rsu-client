@@ -5,9 +5,5 @@
 		<size>637,421</size>
 		<title>RuneScape Unix Client Launcher</title>
 		<aui_managed>0</aui_managed>
-		<object class="wxStatusBar" name="m_statusBar1">
-			<style>wxST_SIZEGRIP</style>
-			<fields>1</fields>
-		</object>
 	</object>
 </resource>
