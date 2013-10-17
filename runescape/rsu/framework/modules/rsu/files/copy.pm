@@ -34,6 +34,9 @@ sub print_cpr
 		# Else
 		else
 		{
+			# Make the path to where we copy the file
+			make_path($to);
+			
 			# Copy using rsync
 			system "rsync -r --delete \"$from\" \"$to\"";
 		}
@@ -75,6 +78,9 @@ sub print_mvr
 		# Else
 		else
 		{
+			# Make the path to where we copy the file
+			make_path($to);
+			
 			# Copy using rsync
 			system "rsync -r --delete \"$from\" \"$to\"";
 		}
