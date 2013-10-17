@@ -38,7 +38,7 @@ sub print_cpr
 			make_path($to);
 			
 			# Copy using rsync
-			system "rsync -r --delete \"$from/\" \"$to\"";
+			system "rsync -r --delete \"$from\" \"$to\"";
 		}
 	}
 	else
@@ -82,7 +82,7 @@ sub print_mvr
 			make_path($to);
 			
 			# Copy using rsync
-			system "rsync -r --delete \"$from/\" \"$to\"";
+			system "rsync -r --delete \"$from\" \"$to\"";
 		}
 	}
 	else
