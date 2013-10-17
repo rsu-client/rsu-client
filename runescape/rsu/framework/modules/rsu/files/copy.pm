@@ -37,14 +37,8 @@ sub print_cpr
 			# Make the path to where we copy the file
 			make_path($to);
 			
-			# Split the path by /
-			my @pathsplit = split /\//, $to;
-			
-			# Remove the last folder
-			$to =~ s/$pathsplit[-1]$//;
-			
 			# Copy using rsync
-			system "rsync -r --delete \"$from\" \"$to\"";
+			system "rsync -r --delete \"$from/\"* \"$to\"";
 		}
 	}
 	else
