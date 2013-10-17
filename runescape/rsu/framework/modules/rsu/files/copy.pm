@@ -9,6 +9,9 @@ use File::Copy::Recursive qw(dircopy dirmove);
 # Use the File::Path module
 use File::Path qw(make_path);
 
+# Get the platform we are on
+my $OS = $^O;
+
 sub print_cpr
 {
 	# Get the passed data
@@ -48,14 +51,24 @@ sub print_mvr
 	# If replacing content was requested
 	if (defined $replace && $replace =~ /^(1|true)$/i)
 	{
-		# Enable Remove Target Directory Before Copy
-		local $File::Copy::Recursive::RMTrgDir = 2;
-	
 		# Tell user what we are doing
 		print "Replacing content in:\n\"$to/\"\nWith content from:\n\"$from/\"\n";
 		
-		# Copy $from to $to
-		dirmove($from, $to) or warn $!;
+		# If we are not on mac osx
+		if ($OS !~ /darwin/)
+		{
+			# Enable Remove Target Directory Before Copy
+			local $File::Copy::Recursive::RMTrgDir = 2;
+		
+			# Copy $from to $to
+			dirmove($from, $to) or warn $!;
+		}
+		# Else
+		else
+		{
+			# Copy using rsync
+			system "rsync -r --delete \"$from\" \"$to\"";
+		}
 	}
 	else
 	{
