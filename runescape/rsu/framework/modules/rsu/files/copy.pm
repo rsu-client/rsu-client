@@ -18,7 +18,7 @@ sub print_cpr
 	my ($from,$to,$replace) = @_;
 	
 	# If the $from is not /
-	if ($from !~ /^\/$/)
+	if ($from !~ /^$/)
 	{
 		# If replacing content was requested
 		if (defined $replace && $replace =~ /^(1|true)$/i)
@@ -66,7 +66,7 @@ sub print_mvr
 	my ($from,$to,$replace) = @_;
 	
 	# If the $from is not /
-	if ($from !~ /^\/$/)
+	if ($from !~ /^$/)
 	{
 		# If replacing content was requested
 		if (defined $replace && $replace =~ /^(1|true)$/i)
