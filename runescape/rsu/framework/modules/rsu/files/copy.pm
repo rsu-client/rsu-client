@@ -20,14 +20,23 @@ sub print_cpr
 	# If replacing content was requested
 	if (defined $replace && $replace =~ /^(1|true)$/i)
 	{
-		# Enable Remove Target Directory Before Copy
-		local $File::Copy::Recursive::RMTrgDir = 2;
-	
 		# Tell user what we are doing
 		print "Replacing content in:\n\"$to/\"\nWith content from:\n\"$from/\"\n";
 		
-		# Copy $from to $to
-		dircopy($from, $to) or warn $!;
+		if ($OS !~ /darwin/)
+		{
+			# Enable Remove Target Directory Before Copy
+			local $File::Copy::Recursive::RMTrgDir = 2;
+			
+			# Copy $from to $to
+			dircopy($from, $to) or warn $!;
+		}
+		# Else
+		else
+		{
+			# Copy using rsync
+			system "rsync -r --delete \"$from\" \"$to\"";
+		}
 	}
 	else
 	{
