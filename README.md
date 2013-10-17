@@ -47,7 +47,7 @@ And finally the client got support for modules, which lets anyone
 add their own functionality to the client
 (although not inside the client window due to license restrictions!)
 
-![alt text](http://i.imgur.com/TEEvPZD.png "RSU Client Launcher Window")
+![alt text](http://i.imgur.com/YMjG500.png "RSU Client Launcher Window")
 
 
 Features
