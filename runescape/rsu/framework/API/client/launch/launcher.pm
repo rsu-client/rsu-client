@@ -357,10 +357,10 @@ sub set_colors
 	if ($OS !~ /MSWin32/)
 	{
 		# Set these colors
-		$self->{tabcontrol}->SetBackgroundColour(Wx::Colour->new("#222222"));
-		$self->{tabcontrol}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+		#$self->{tabcontrol}->SetBackgroundColour(Wx::Colour->new("#222222"));
+		#$self->{tabcontrol}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
 		$self->SetBackgroundColour(Wx::Colour->new("#000000"));
-		$self->SetForegroundColour(Wx::Colour->new("#000000"));
+		#$self->SetForegroundColour(Wx::Colour->new("#000000"));
 	}
 	
 	# Set the colors
