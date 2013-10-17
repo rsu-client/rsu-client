@@ -49,7 +49,7 @@ Else
 EndIf
 
 ; Run the client and hide the cmd window
-Run(@ScriptDir & "\rsu\rsu-query.exe $CmdLineRaw",@ScriptDir,@SW_HIDE);
+Run(@ScriptDir & "\rsu\rsu-query.exe " & $CmdLineRaw,@ScriptDir,@SW_HIDE);
 
 func do_update($text)
 	#Region ### START Koda GUI section ###
