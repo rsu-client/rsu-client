@@ -37,6 +37,12 @@ sub print_cpr
 			# Make the path to where we copy the file
 			make_path($to);
 			
+			# Split the path by /
+			my @pathsplit = split /\//, $to;
+			
+			# Remove the last folder
+			$to =~ /$pathsplit[-1]$/;
+			
 			# Copy using rsync
 			system "rsync -r --delete \"$from\" \"$to\"";
 		}
@@ -80,6 +86,12 @@ sub print_mvr
 		{
 			# Make the path to where we copy the file
 			make_path($to);
+			
+			# Split the path by /
+			my @pathsplit = split /\//, $to;
+			
+			# Remove the last folder
+			$to =~ /$pathsplit[-1]$/;
 			
 			# Copy using rsync
 			system "rsync -r --delete \"$from\" \"$to\"";
