@@ -41,7 +41,7 @@ sub print_cpr
 			my @pathsplit = split /\//, $to;
 			
 			# Remove the last folder
-			$to =~ /$pathsplit[-1]$/;
+			$to =~ s/$pathsplit[-1]$//;
 			
 			# Copy using rsync
 			system "rsync -r --delete \"$from\" \"$to\"";
@@ -91,7 +91,7 @@ sub print_mvr
 			my @pathsplit = split /\//, $to;
 			
 			# Remove the last folder
-			$to =~ /$pathsplit[-1]$/;
+			$to =~ s/$pathsplit[-1]$//;
 			
 			# Copy using rsync
 			system "rsync -r --delete \"$from\" \"$to\"";
