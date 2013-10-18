@@ -37,7 +37,7 @@ else
 	else
 	{
 		# Tell user they are on an unsupported OS
-		print STDER "Youre running on $OS\neither your OS does not have an official rsu-query binary or your\narchitecture is not supported.\n";
+		print STDERR "Youre running on $OS\neither your OS does not have an official rsu-query binary or your\narchitecture is not supported.\n";
 	}
 }
 

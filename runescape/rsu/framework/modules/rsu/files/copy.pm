@@ -12,6 +12,10 @@ use File::Path qw(make_path);
 # Get the platform we are on
 my $OS = $^O;
 
+# Check if we can load Wx
+my $wxload = 1;
+eval "use Wx;"; $wxload = 0 if $@;
+
 sub print_cpr
 {
 	# Get the passed data
@@ -51,6 +55,19 @@ sub print_cpr
 			
 			# Copy $from to $to
 			dircopy($from, $to) or warn $!;
+		}
+	}
+	# Else
+	else
+	{
+		# Tell in the console that copying failed
+		print STDERR "ERROR: Copying failed due to missing source location!\nPlease try again\n\n";
+		
+		# If Wx is loaded
+		if ($wxload =~ /^1$/)
+		{
+			# Display a messagebox
+			Wx::MessageBox("Copying failed due to missing source location!\nPlease try again","Copying failed!", wxOK);
 		}
 	}
 	
@@ -100,6 +117,19 @@ sub print_mvr
 			
 			# Copy $from to $to
 			dirmove($from, $to) or warn $!;
+		}
+	}
+	# Else
+	else
+	{
+		# Tell in the console that copying failed
+		print STDERR "ERROR: Copying failed due to missing source location!\nPlease try again\n\n";
+		
+		# If Wx is loaded
+		if ($wxload =~ /^1$/)
+		{
+			# Display a messagebox
+			Wx::MessageBox("Copying failed due to missing source location!\nPlease try again","Copying failed!", wxOK);
 		}
 	}
 }
