@@ -221,6 +221,13 @@ sub set_layout
 		make_bitmapbutton($self, "about", "about");
 	}
 	
+	# If the --add-exitbutton is passed as an argument
+	if ("@ARGV" =~ /--closebutton=1/)
+	{
+		# Make an exit button
+		make_bitmapbutton($self, "close_clicked", "close");
+	}
+	
 	# Add the webview or rssview to the sizers
 	if ("@ARGV" =~ /--webview/)
 	{
@@ -1795,8 +1802,8 @@ sub close_clicked
 	# Get pointers
 	my ($self, $event) = @_;
 	
-	# Close window
-	$self->Destroy();
+	# Close the mainwindow
+	$self->GetParent()->GetParent()->GetParent()->GetParent()->Destroy();
 }
 
 #
