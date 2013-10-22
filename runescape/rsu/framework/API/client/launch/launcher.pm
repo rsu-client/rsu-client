@@ -482,7 +482,7 @@ sub make_newspage
 	my ($self) = @_;
 	
 	$self->{htmlview}->SetPage("<html>
-	<body bgcolor=black>
+	<body bgcolor=#222222>
 			<table width=100%>
 				<td>
 					<b>
@@ -531,8 +531,18 @@ sub get_playercount
 	# Read the contents of the playercount.js
 	my $playercount = rsu::files::IO::getcontent("$clientdir/.download","playercount.js");
 	
-	# Remove the jQuery part of the output
-	$playercount =~ s/jQuery.+\((.+)\);/$1/;
+	# If we managed to get the playercount
+	if ($playercount =~ /jQuery.+\((.+)\);/)
+	{
+		# Remove the jQuery part of the output
+		$playercount =~ s/jQuery.+\((.+)\);/$1/;
+	}
+	# Else
+	else
+	{
+		# Set playercount to 0
+		$playercount = 0;
+	}
 	
 	# Remove the temp download folder
 	remove_tree("$clientdir/.download/");
@@ -549,8 +559,21 @@ sub get_playercount
 	# Transfer the playercount to a string so we can edit it
 	my $osrs_playercount = "@osrs_grep";
 	
-	# Remove the text
-	$osrs_playercount =~ s/There are currently\s(.+)\speople playing!/$1/;
+	# If we managed to get the amount of OSRS players
+	if ($osrs_playercount =~ /There are currently\s(.+)\speople playing!/)
+	{
+		# Remove the text
+		$osrs_playercount =~ s/There are currently\s(.+)\speople playing!/$1/;
+		
+		# Remove OSRS players from RS3 playercount if $playercount is not 0
+		$playercount = $playercount-$osrs_playercount if $playercount !~ /^0$/;
+	}
+	# Else
+	else
+	{
+		# Set OSRS playercount to 0
+		$osrs_playercount = 0;
+	}
 	
 	# Return the playercount
 	return "RS3 Players Online: ".commify($playercount)."\nOSRS Players Online: ".commify($osrs_playercount);
@@ -571,56 +594,97 @@ sub fetch_rssnews
 	# Fetch the recent activity rss feed (timeout after 5 seconds)
 	my $rssfeed = updater::download::sysdload::readurl($rssurl,5);
 	
-	# Write debug info to STDOUT
-	print "This is the RSS contents we found:\n$rssfeed\n\n";
-	
-	# Make a hash reference for the RSSLite parser
-	my %rssnews;
-	
-	# Parse the RSSfeed
-	parseRSS(\%rssnews, \$rssfeed);
-	
-	# Write debug info to STDOUT
-	print "Parsing the news RSS feed(output is shown the way the GUI reads it):\n";
-	
-	# Make a counter to keep track of the news
-	my $counter = 1;
-	
-	# Make a variable to hold the html code
-	my $newspage = "<html>
-	<body bgcolor=\"#222222\">";
-	
-	# For each value in the array
-	foreach my $item (@{$rssnews{'item'}})
+	# If the rssfeed contains html code
+	if ($rssfeed =~ /<(html|ul|li|ol|body|div)>/)
 	{
-		##### Generate Title #####
+		# Print error message
+		print "Error reading rssfeed, found html code instead!\nMaybe the website is down for maintenance?\n\n";
 		
-		# Get the news title text so we can format it
-		my $rssTitle = "$item->{'title'}";
+		# Add the error page to the newsfeed
+		$self->{htmlview}->SetPage("<html>
+	<body bgcolor=#222222>
+			<table width=100%>
+				<td>
+					<b>
+						<font color=#E8B13F size=+1>Failed to load newsfeed from http://runescape.com</font>
+					</b>
+				</td>
+			</table>
+			<table width=100%>
+				<td width=5%>
+				</td>
+				<td>
+					<font color=#B8B8B8 size=-1 >Published: Sometime</font>
+				</td>
+			</table>
+			<table width=100%>
+				<tr>
+					<td>
+						<font color=#B8B8B8 size=3>If you see this then the newsfeed might have timed out or the rssfeed is down...<br>Press the refresh button to try reload the newsfeed.</font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href=''><font color=#E8B13F size=3>Read More...</font></a>
+					</td>
+				</tr>
+			</table>
+	</body>
+</html>");
+	}
+	# Else
+	else
+	{
+		# Write debug info to STDOUT
+		print "This is the RSS contents we found:\n$rssfeed\n\n";
 		
-		# Fix some formating issues from html
-		$rssTitle =~ s/(&#8217;|&APOS;)/'/gi;
-		$rssTitle =~ s/(&#8211;)/-/gi;
-		$rssTitle =~ s/(&#13;|&#10;|&#9;)//gi;
+		# Make a hash reference for the RSSLite parser
+		my %rssnews;
 		
-		# If we are on mac or windows
-		if ($OS =~ /(darwin|MSWin32)/)
-		{
-			# fix the & on mac and windows
-			$rssTitle =~ s/(&amp;)/&&/gi;
-		}
-		# Else
-		else
-		{
-			# Fix the & on unix
-			$rssTitle =~ s/(&amp;)/&&&&/gi;
-		}
+		# Parse the RSSfeed
+		parseRSS(\%rssnews, \$rssfeed);
 		
 		# Write debug info to STDOUT
-		print "Adding News Title$counter: \"$rssTitle\"\n";
+		print "Parsing the news RSS feed(output is shown the way the GUI reads it):\n";
 		
-		# Add the news title to the html code
-		$newspage = "$newspage
+		# Make a counter to keep track of the news
+		my $counter = 1;
+		
+		# Make a variable to hold the html code
+		my $newspage = "<html>
+	<body bgcolor=\"#222222\">";
+	
+		# For each value in the array
+		foreach my $item (@{$rssnews{'item'}})
+		{
+			##### Generate Title #####
+			
+			# Get the news title text so we can format it
+			my $rssTitle = "$item->{'title'}";
+			
+			# Fix some formating issues from html
+			$rssTitle =~ s/(&#8217;|&APOS;)/'/gi;
+			$rssTitle =~ s/(&#8211;)/-/gi;
+			$rssTitle =~ s/(&#13;|&#10;|&#9;)//gi;
+			
+			# If we are on mac or windows
+			if ($OS =~ /(darwin|MSWin32)/)
+			{
+				# fix the & on mac and windows
+				$rssTitle =~ s/(&amp;)/&&/gi;
+			}
+			# Else
+			else
+			{
+				# Fix the & on unix
+				$rssTitle =~ s/(&amp;)/&&&&/gi;
+			}
+			
+			# Write debug info to STDOUT
+			print "Adding News Title$counter: \"$rssTitle\"\n";
+			
+			# Add the news title to the html code
+			$newspage = "$newspage
 		<table width=100%>
 			<td>
 				<b>
@@ -629,19 +693,19 @@ sub fetch_rssnews
 			</td>
 		</table>";
 		
-		##### Generate Date #####
-		
-		# Get the published date so we can remove the unused time
-		my $rssDate = "$item->{'pubDate'}";
-		
-		# Remove the timestamp because it is always 00:00:00 GMT
-		$rssDate =~ s/\s+\d{2,2}:\d{2,2}:\d{2,2}\s+GMT//g;
-		
-		# Write debug info to STDOUT
-		print "Adding Published Date$counter: \"$rssDate\"\n";
-		
-		# Add the published date to the html code
-		$newspage = "$newspage
+			##### Generate Date #####
+			
+			# Get the published date so we can remove the unused time
+			my $rssDate = "$item->{'pubDate'}";
+			
+			# Remove the timestamp because it is always 00:00:00 GMT
+			$rssDate =~ s/\s+\d{2,2}:\d{2,2}:\d{2,2}\s+GMT//g;
+			
+			# Write debug info to STDOUT
+			print "Adding Published Date$counter: \"$rssDate\"\n";
+			
+			# Add the published date to the html code
+			$newspage = "$newspage
 		<table width=100%>
 			<td width=25px>
 			</td>
@@ -650,41 +714,41 @@ sub fetch_rssnews
 			</td>
 		</table>";
 		
-		##### Generate Description #####
-		
-		# Make a variable to contain the description because it needs fixing too
-		my $rssDescription = $item->{'description'};
-		
-		# Remove all tabs
-		$rssDescription =~ s/^\s+//g;
-		
-		# Replace all multiple whitespaces with normal whitespace
-		$rssDescription =~ s/\s+/ /g;
-		
-		# Fix some stuff in the finished activity list
-		$rssDescription =~ s/(&#8217;|&APOS;)/'/gi;
-		$rssDescription =~ s/(&#8211;)/-/gi;
-		$rssDescription =~ s/(&#13;|&#10;|&#9;)//gi;
-		
-		# If we are on mac or windows
-		if ($OS =~ /(darwin|MSWin32)/)
-		{
-			# fix the & on mac and windows
-			$rssDescription =~ s/(&amp;)/&&/gi;
-		}
-		# Else
-		else
-		{
-			# Fix the & on unix
-			$rssDescription =~ s/(&amp;)/&&&&&&&&/gi if "@INC" !~ /(par-|\s{1,1}CODE\()/;
-			$rssDescription =~ s/(&amp;)/&&/gi if "@INC" =~ /(par-|\s{1,1}CODE\()/;
-		}
-		
-		# Write debug info to STDOUT
-		print "Adding News Description$counter: \"$rssDescription\"\n";
-		
-		# Add the news description to the html code
-		$newspage = "$newspage
+			##### Generate Description #####
+			
+			# Make a variable to contain the description because it needs fixing too
+			my $rssDescription = $item->{'description'};
+			
+			# Remove all tabs
+			$rssDescription =~ s/^\s+//g;
+			
+			# Replace all multiple whitespaces with normal whitespace
+			$rssDescription =~ s/\s+/ /g;
+			
+			# Fix some stuff in the finished activity list
+			$rssDescription =~ s/(&#8217;|&APOS;)/'/gi;
+			$rssDescription =~ s/(&#8211;)/-/gi;
+			$rssDescription =~ s/(&#13;|&#10;|&#9;)//gi;
+			
+			# If we are on mac or windows
+			if ($OS =~ /(darwin|MSWin32)/)
+			{
+				# fix the & on mac and windows
+				$rssDescription =~ s/(&amp;)/&&/gi;
+			}
+			# Else
+			else
+			{
+				# Fix the & on unix
+				$rssDescription =~ s/(&amp;)/&&&&&&&&/gi if "@INC" !~ /(par-|\s{1,1}CODE\()/;
+				$rssDescription =~ s/(&amp;)/&&/gi if "@INC" =~ /(par-|\s{1,1}CODE\()/;
+			}
+			
+			# Write debug info to STDOUT
+			print "Adding News Description$counter: \"$rssDescription\"\n";
+			
+			# Add the news description to the html code
+			$newspage = "$newspage
 		<table width=100%>
 			<tr>
 				<td>
@@ -692,13 +756,13 @@ sub fetch_rssnews
 				</td>
 			</tr>";
 		
-		##### Generate Link #####
-		
-		# Write debug info to STDOUT
-		print "Adding News Link$counter: \"$item->{'link'}\"\n\n";
-		
-		# Add the Read More... link to the html code
-		$newspage = "$newspage
+			##### Generate Link #####
+			
+			# Write debug info to STDOUT
+			print "Adding News Link$counter: \"$item->{'link'}\"\n\n";
+			
+			# Add the Read More... link to the html code
+			$newspage = "$newspage
 			<tr>
 				<td>
 					<a href=\"$item->{'link'}\"><font color=#E8B13F size=3>Read More...</font></a>
@@ -707,20 +771,21 @@ sub fetch_rssnews
 		</table>
 		<hr>";
 		
-		# Increase counter by 1
-		$counter += 1;
-	}
+			# Increase counter by 1
+			$counter += 1;
+		}
 	
-	# Add the ending html code to the newspage
-	$newspage = "$newspage
+		# Add the ending html code to the newspage
+		$newspage = "$newspage
 	</body>
 </html>";
 
-	# Tell the user the generated html code
-	print "Generated html code from rssfeed:\n$newspage\n\n";
+		# Tell the user the generated html code
+		print "Generated html code from rssfeed:\n$newspage\n\n";
 
-	# Display the html we generated from the rssfeed
-	$self->{htmlview}->SetPage($newspage);
+		# Display the html we generated from the rssfeed
+		$self->{htmlview}->SetPage($newspage);	
+	}
 }
 
 #
