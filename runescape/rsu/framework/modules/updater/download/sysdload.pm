@@ -96,7 +96,7 @@ sub readurl
 		}
 
 		# Read the contents of url
-		$output = `$fetchcommand $url`;
+		$output = `$fetchcommand \"$url\"`;
 	}
 	
 	# Return the content of $url
