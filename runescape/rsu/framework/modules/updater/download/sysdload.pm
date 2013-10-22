@@ -7,27 +7,49 @@ sub sysdownload
 	# Get the passed data
 	my ($url, $downloadto) = @_;
 	
-	# Make a variable which will contain the download command we will use
-	my $fetchcommand = "wget --connect-timeout=10 -O";
+	# Get the platform we are on
+	my $OS = "$^O";
 	
-	# If /usr/bin contains wget
-	if(`ls /usr/bin | grep wget` =~  /wget/)
+	# If we are not on windows
+	if ($OS !~ /MSWin32/)
 	{
-		# Use wget command to fetch files
-		$fetchcommand = "wget --connect-timeout=10 -O";
+		# Make a variable which will contain the download command we will use
+		my $fetchcommand = "wget --connect-timeout=10 -O";
+		
+		# If /usr/bin contains wget
+		if(`ls /usr/bin | grep wget` =~  /wget/)
+		{
+			# Use wget command to fetch files
+			$fetchcommand = "wget --connect-timeout=10 -O";
+		}
+		# Else if /usr/bin contains curl
+		elsif(`ls /usr/bin | grep curl` =~  /curl/)
+		{
+			# Curl command equalent to the wget command to fetch files
+			$fetchcommand = "curl -L --connect-timeout 10 -# -o";
+		}
+		
+		# Split the url by /
+		my @filename = split /\//, $url;
+		
+		# Download the file
+		system "$fetchcommand \"$downloadto\" \"$url\"";
 	}
-	# Else if /usr/bin contains curl
-	elsif(`ls /usr/bin | grep curl` =~  /curl/)
+	# Else
+	else
 	{
-		# Curl command equalent to the wget command to fetch files
-		$fetchcommand = "curl -L --connect-timeout 10 -# -o";
+		# Use LWP::Simple
+		eval "use LWP::UserAgent";
+		
+		# Make a handle for LWP
+		my $lwp = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+		
+		# Enable the "progressbar"
+		$lwp->show_progress(1);
+		
+		# Download the file
+		$lwp->get($url, ':content_file' => "$downloadto", 8192);
 	}
-	
-	# Split the url by /
-	my @filename = split /\//, $url;
-	
-	# Download the file
-	system "$fetchcommand \"$downloadto\" \"$url\"";
 }
 
 #
