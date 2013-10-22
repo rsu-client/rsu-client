@@ -46,7 +46,7 @@ if ($RSU =~ /0/)
 my $resourcedir = "$cwd/rsu/framework/resources/client/launch/settings";
 
 # Make a variable to contain the conf_file
-my $conf_file = "$clientdir/share/configs/settings.conf";
+my $conf_file = "settings.conf";
 
 # Name of our xrc gui resource file
 my $xrc_gui_file = "rsu-settings_gui.xrc";
@@ -84,36 +84,36 @@ if ($OS !~ /MSWin32/ && $clientdir =~ /$HOME\/\.config\/runescape/)
 
 # Read from the config file if the user want to run in compabilitymode/wine,
 # if nothing is found then dont use it
-my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "settings.conf");
+my $compabilitymode = rsu::files::IO::readconf("compabilitymode", "False", "$conf_file");
 
 # Read the preferred java in the config file, if nothing is found then use default-java
-my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
+my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "$conf_file");
 
 # Read the cachedir setting in the conf file, if nothing is found then use default
-my $cachedir = rsu::files::IO::readconf("cachedir", "default", "settings.conf");
+my $cachedir = rsu::files::IO::readconf("cachedir", "default", "$conf_file");
 
 # If we are running on windows then
 if ($OS =~ /MSWin32/)
 {
-	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
+	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "$conf_file");
 }
 
 # Read from the config file if the user want to force the client to use pulseaudio
 # if nothing then dont use it (incase a system does not have pulseaudio/padsp installed)
-my $forcepulseaudio = rsu::files::IO::readconf("forcepulseaudio", "False", "settings.conf");
+my $forcepulseaudio = rsu::files::IO::readconf("forcepulseaudio", "False", "$conf_file");
 
 # Read from the config file if the user want to tell java to use alsa in the base for sounds
 # If nothing is found then do not use alsa and instead use the java default
-my $forcealsa = rsu::files::IO::readconf("forcealsa", "False", "settings.conf");
+my $forcealsa = rsu::files::IO::readconf("forcealsa", "False", "$conf_file");
 
 # Read from the config file, the name of the prm file to use
-my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf");
+my $prmfile = rsu::files::IO::readconf("prmfile", "runescape.prm", "$conf_file");
 
 # Read from the config file if the user have told the script to use primusrun or not if it is available
-my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "settings.conf");
+my $useprimusrun = rsu::files::IO::readconf("useprimusrun", "false", "$conf_file");
 
 # Read from the config file if the user have enabled Automatic Java Optimization
-my $optimizejava = rsu::files::IO::readconf("optimizejava", "true", "settings.conf");
+my $optimizejava = rsu::files::IO::readconf("optimizejava", "true", "$conf_file");
 
 # Define a text inside the script for use
 my $plist_template = << "plist_template";
@@ -1382,7 +1382,8 @@ sub saveconf_clicked
 	
 	## Write prmfile setting
 	# Start writing the settings.conf
-	rsu::files::IO::WriteFile("prmfile=$prmfile_setting", ">", "$conf_file");
+	#rsu::files::IO::WriteFile("prmfile=$prmfile_setting", ">", "$conf_file");
+	rsu::files::IO::writeconf("_", "prmfile", "$prmfile_setting", "$conf_file");
 	
 	## Write preferredjava setting
 	# If preferredjava is set to custom-java
@@ -1392,37 +1393,33 @@ sub saveconf_clicked
 		if ($OS =~ /MSWin32/)
 		{
 			# Add the custom path to the settings.conf
-			rsu::files::IO::WriteFile("preferredjava=$old_unixjava", ">>", "$conf_file");
-			rsu::files::IO::WriteFile("win32java.exe=$customjava_setting", ">>", "$conf_file");
+			rsu::files::IO::writeconf("_", "win32java.exe", "$customjava_setting", "$conf_file");
 		}
 		# Else
 		else
 		{
 			# Add the custom path to the settings.conf
-			rsu::files::IO::WriteFile("preferredjava=$customjava_setting", ">>", "$conf_file");
-			rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$conf_file");
+			rsu::files::IO::writeconf("_", "preferredjava", "$customjava_setting", "$conf_file");
 		}
 	}
 	# Else if preferredjava is set to 7-openjdk
 	elsif($preferredjava_setting =~ /1/)
 	{
 		# Write the 7-openjdk option to settings.conf
-		rsu::files::IO::WriteFile("preferredjava=7-openjdk", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_","preferredjava", "7-openjdk", "$conf_file");
 	}
 	# Else if preferredjava is set to 6-openjdk
 	elsif($preferredjava_setting =~ /2/)
 	{
 		# Write the 6-openjdk option to settings.conf
-		rsu::files::IO::WriteFile("preferredjava=6-openjdk", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("win32java.exe=$old_win32java", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "preferredjava", "6-openjdk", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write the default-java option to settings.conf
-		rsu::files::IO::WriteFile("preferredjava=default-java", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("win32java.exe=default-java", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "preferredjava", "default-java", "$conf_file");
+		rsu::files::IO::writeconf("_", "win32java.exe", "default-java", "$conf_file");
 	}
 	
 	## Write sound settings
@@ -1430,29 +1427,29 @@ sub saveconf_clicked
 	if ($soundsystem_setting =~ /1/)
 	{
 		# Write forcepulseaudio=true to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=true", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcepulseaudio", "true", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcealsa","false", "$conf_file");
 	}
 	# Else if alsa is selected as sound system
 	elsif($soundsystem_setting =~ /2/)
 	{
 		# Write forcealsa=true to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=false", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("forcealsa=true", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcepulseaudio", "false", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcealsa", "true", "$conf_file");
 	}
 	# Else if alsa+pulse is selected as soundsystem
 	elsif($soundsystem_setting =~ /3/)
 	{
 		# Write forcepulseaudio=true and forcealsa=true to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=true", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("forcealsa=true", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcepulseaudio", "true", "$conf_file");
+		rsu::files::IO::WriteFile("_", "forcealsa", "true", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write forcealsa=false and forcepulseaudio=false to settings.conf
-		rsu::files::IO::WriteFile("forcepulseaudio=false", ">>", "$conf_file");
-		rsu::files::IO::WriteFile("forcealsa=false", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcepulseaudio", "false", "$conf_file");
+		rsu::files::IO::writeconf("_", "forcealsa", "false", "$conf_file");
 	}
 	
 	## Write compabilitymode/winemode setting
@@ -1460,13 +1457,13 @@ sub saveconf_clicked
 	if ($winemode_setting =~ /1/)
 	{
 		# Write compabilitymode=true to settings.conf
-		rsu::files::IO::WriteFile("compabilitymode=true", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_","compabilitymode", "true", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write compabilitymode=false to settings.conf
-		rsu::files::IO::WriteFile("compabilitymode=false", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "compabilitymode", "false", "$conf_file");
 	}
 	
 	## Write cachedir setting
@@ -1474,13 +1471,13 @@ sub saveconf_clicked
 	if ($cachedir_setting =~ /0/)
 	{
 		# Write cachedir=default to settings.conf
-		rsu::files::IO::WriteFile("cachedir=default", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "cachedir", "default", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write cachedir=portable to settings.conf
-		rsu::files::IO::WriteFile("cachedir=portable", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "cachedir", "portable", "$conf_file");
 	}
 	
 	## Write primusmode setting
@@ -1488,7 +1485,7 @@ sub saveconf_clicked
 	if ($primusmode_setting =~ /1/)
 	{
 		# Write useprimusrun=true to settings.conf
-		rsu::files::IO::WriteFile("useprimusrun=true", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "useprimusrun", "true", "$conf_file");
 		
 		$savemessage = "$savemessage\n\nWarning!: Do not disable your Nvidia Card with\n\"bbswitch\" while runescape runs through primusrun!";
 	}
@@ -1496,7 +1493,7 @@ sub saveconf_clicked
 	else
 	{
 		# Write useprimusrun=false to settings.conf
-		rsu::files::IO::WriteFile("useprimusrun=false", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "useprimusrun", "false", "$conf_file");
 	}
 	
 	## Write optimizejava setting
@@ -1504,13 +1501,13 @@ sub saveconf_clicked
 	if ($optimizejava_setting =~ /1/)
 	{
 		# Write optimizejava=true to settings.conf
-		rsu::files::IO::WriteFile("optimizejava=true", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "optimizejava", "true", "$conf_file");
 	}
 	# Else
 	else
 	{
 		# Write optimizejava=false to settings.conf
-		rsu::files::IO::WriteFile("optimizejava=false", ">>", "$conf_file");
+		rsu::files::IO::writeconf("_", "optimizejava", "false", "$conf_file");
 	}
 	
 	# Display a messagebox to notify that the function is done

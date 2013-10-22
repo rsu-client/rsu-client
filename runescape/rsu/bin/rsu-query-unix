@@ -35,6 +35,10 @@ eval "use LWP::Simple"; print STDERR "LWP::Simple module not found, API calls us
 # Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
 use Encode::Byte;
 
+# Include List::MoreUtils and Config::IniFiles for proper config filehandling
+eval "use List::MoreUtils"; die "List::MoreUtils module not found, please install the List::MoreUtils module\n" if $@;
+eval "use Config::IniFiles"; print STDERR "Config::IniFiles module not found, if you experience crashes then please install it through your package manager\n" if $@ && "$^O" !~ /darwin/;
+
 # Include the module for extracting archives
 use Archive::Extract;
 
