@@ -68,6 +68,10 @@ eval "use XML::RSSLite";
 
 # Require sysdload which containd a readurl function
 require updater::download::sysdload;
+require updater::download::file;
+
+# Use the File::Path module so we can make and remove paths
+use File::Path qw(make_path remove_tree);
 
 use base qw(Wx::Frame Wx::ScrolledWindow);
 
@@ -243,6 +247,12 @@ sub set_layout
 		# Make a vertical box sizer for use to organize the rss
 		$self->{rss_container} = Wx::BoxSizer->new(wxVERTICAL);
 		
+		# Make a horizontal boz sizer for the top of the rssfeed
+		$self->{rss_top} = Wx::BoxSizer->new(wxHORIZONTAL);
+		
+		# Make a label for the top of the rssfeed
+		$self->{playercount} = Wx::StaticText->new($self->{rssview}, -1, get_playercount(), wxDefaultPosition, wxDefaultSize,);
+		
 		# Make a refresh button
 		#$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News") if $OS =~ /(darwin)/;
 		$self->{rssRefresh} = Wx::BitmapButton->new($self->{rssview}, -1, Wx::Bitmap->new("$resourcedir/bitmaps/refresh.png", wxBITMAP_TYPE_PNG), wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
@@ -259,8 +269,10 @@ sub set_layout
 		# Make an event for the refresh button
 		EVT_BUTTON($self, $self->{rssRefresh}, \&refreshnews_clicked);
 		
-		# Add the button to the sizer
-		$self->{rss_container}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
+		# Add the playercount and button to the sizer
+		$self->{rss_top}->Add($self->{playercount},1, wxALL|wxALIGN_CENTER_VERTICAL,0);
+		$self->{rss_top}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
+		$self->{rss_container}->Add($self->{rss_top}, 0, wxALL|wxEXPAND, 1);
 		
 		# Create a HtmlWindow  (not to be confused with a browser window!)
 		$self->{htmlview} = Wx::HtmlWindow->new($self->{rssview}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_DEFAULT_STYLE);
@@ -371,6 +383,8 @@ sub set_colors
 	}
 	
 	# Set the colors
+	$self->{playercount}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+	$self->{playercount}->SetBackgroundColour(Wx::Colour->new("#222222"));
 	$self->{verticalbuttons}->SetBackgroundColour(Wx::Colour->new("#222222"));
 	$self->{verticalbuttons}->SetForegroundColour(Wx::Colour->new("#222222"));
 	$self->{mainpanel}->SetBackgroundColour(Wx::Colour->new("#222222"));
@@ -497,6 +511,49 @@ sub make_newspage
 			</table>
 	</body>
 </html>");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub get_playercount
+{
+	# Make the download path
+	make_path("$clientdir/.download/");
+	
+	# Tell the user what we are doing
+	print "Fetching the current playercount.\n";
+	
+	# Download the file containing the current playercount (does not output to STDOUT)
+	updater::download::file::from("http://www.runescape.com/player_count.js?varname=iPlayerCount&callback=jQuery17209493430445436388_1382425275438&_=".time,"$clientdir/.download/playercount.js",1);
+	
+	# Read the contents of the playercount.js
+	my $playercount = rsu::files::IO::getcontent("$clientdir/.download","playercount.js");
+	
+	# Remove the jQuery part of the output
+	$playercount =~ s/jQuery.+\((.+)\);/$1/;
+	
+	# Remove the temp download folder
+	remove_tree("$clientdir/.download/");
+	
+	# Tell the user what we are doing
+	print "Fetching the current playercount from Old School RuneScape.\n";
+	
+	# Get the html from the oldschool homepage
+	my $osrs_html = updater::download::sysdload::readurl("http://oldschool.runescape.com",5);
+	
+	# Fetch the oldschool homepage html so we can find the playercount
+	my @osrs_grep = rsu::files::grep::strgrep($osrs_html, "There are currently");
+	
+	# Transfer the playercount to a string so we can edit it
+	my $osrs_playercount = "@osrs_grep";
+	
+	# Remove the text
+	$osrs_playercount =~ s/There are currently\s(.+)\speople playing!/$1/;
+	
+	# Return the playercount
+	return "RS3 Players Online: ".commify($playercount)."\nOSRS Players Online: ".commify($osrs_playercount);
 }
 
 #
@@ -674,6 +731,12 @@ sub refreshnews_clicked
 {
 	# Get pointers
 	my ($self, $event) = @_;
+	
+	# Print debug information
+	print "Refreshing the playercount!\n";
+	
+	# Set the playercount
+	$self->{playercount}->SetLabel(get_playercount());
 	
 	# Print debug information
 	print "User requested to refresh the newsfeed!\nRefreshing the newsfeed now!\n\n";
@@ -1588,6 +1651,22 @@ sub settings
 		# Run the settings api call
 		system "\"$cwd/rsu/rsu-query\" client.launch.settings &";
 	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+# Method by ivanpu to make the numbers more readable
+sub commify {
+	# Get the passed data
+	local $_  = shift;
+	
+	# Make higher values easier to read by adding commas
+	1 while s/^(-?\d+)(\d{3})/$1,$2/;
+	
+	# Return the improved number
+	return $_;
 }
 
 #
