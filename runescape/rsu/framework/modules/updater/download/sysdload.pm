@@ -27,7 +27,7 @@ sub sysdownload
 	my @filename = split /\//, $url;
 	
 	# Download the file
-	system "$fetchcommand \"$downloadto\" $url";
+	system "$fetchcommand \"$downloadto\" \"$url\"";
 }
 
 #
