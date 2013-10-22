@@ -830,6 +830,25 @@ sub hyperlink_clicked
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub getsource_clicked
+{
+	# Get pointers
+	my ($self, $event) = @_;
+	
+	# Print debug information
+	print "User requested the sourcecode!\nOpening link in the default Web Browser\n\n";
+	
+	# Get the URL we are supposed to launch
+	my $hyperlink = $event->GetEventObject()->GetToolTip()->GetTip();
+	
+	# Open the hyperlink url in the default web browser
+	Wx::LaunchDefaultBrowser($hyperlink);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
 sub make_addon_buttons
 {
 	# Get the passed data
@@ -1100,7 +1119,7 @@ sub about
 	$about->{website} = Wx::Button->new($about->{dialog}, -1, 'Get the &sourcecode from GitHub.com');
 	$about->{website}->SetToolTip("https://github.com/HikariKnight/rsu-client");
 	# Make an event for the get source button
-	EVT_BUTTON($about->{website}, -1, \&hyperlink_clicked);
+	EVT_BUTTON($about->{website}, -1, \&getsource_clicked);
 	
 	# Make buttons for the bottom of the about dialog (with hotkeys support &key = alt+key)
 	# And make the events for the buttons
