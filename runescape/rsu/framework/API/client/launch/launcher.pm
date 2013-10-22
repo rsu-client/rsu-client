@@ -251,7 +251,7 @@ sub set_layout
 		$self->{rss_top} = Wx::BoxSizer->new(wxHORIZONTAL);
 		
 		# Make a label for the top of the rssfeed
-		$self->{playercount} = Wx::StaticText->new($self->{rssview}, -1, "Players Online: ".get_playercount(), wxDefaultPosition, wxDefaultSize,);
+		$self->{playercount} = Wx::StaticText->new($self->{rssview}, -1, get_playercount(), wxDefaultPosition, wxDefaultSize,);
 		
 		# Make a refresh button
 		#$self->{rssRefresh} = Wx::Button->new($self->{rssview}, wxID_ANY, "Refresh News") if $OS =~ /(darwin)/;
@@ -537,8 +537,23 @@ sub get_playercount
 	# Remove the temp download folder
 	remove_tree("$clientdir/.download/");
 	
+	# Tell the user what we are doing
+	print "Fetching the current playercount from Old School RuneScape.\n";
+	
+	# Get the html from the oldschool homepage
+	my $osrs_html = updater::download::sysdload::readurl("http://oldschool.runescape.com",5);
+	
+	# Fetch the oldschool homepage html so we can find the playercount
+	my @osrs_grep = rsu::files::grep::strgrep($osrs_html, "There are currently");
+	
+	# Transfer the playercount to a string so we can edit it
+	my $osrs_playercount = "@osrs_grep";
+	
+	# Remove the text
+	$osrs_playercount =~ s/There are currently\s(.+)\speople playing!/$1/;
+	
 	# Return the playercount
-	return commify($playercount);
+	return "RS3 Players Online: ".commify($playercount)."\nOSRS Players Online: ".commify($osrs_playercount);
 }
 
 #
@@ -721,7 +736,7 @@ sub refreshnews_clicked
 	print "Refreshing the playercount!\n";
 	
 	# Set the playercount
-	$self->{playercount}->SetLabel("Players Online: ".get_playercount());
+	$self->{playercount}->SetLabel(get_playercount());
 	
 	# Print debug information
 	print "User requested to refresh the newsfeed!\nRefreshing the newsfeed now!\n\n";
