@@ -37,7 +37,7 @@ sub wxsysdownload
 	if ($fetchcommand =~ /^wget/)
 	{
 		# Start the download
-		open(DLOAD, "$fetchcommand $downloadto $url 2>&1 |");
+		open(DLOAD, "$fetchcommand \"$downloadto\" \"$url\" 2>&1 |");
 		
 		# While process is active
 		while (<DLOAD>)

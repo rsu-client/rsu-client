@@ -1,3 +1,15 @@
+runescape (4.1.6) precise; urgency=low
+
+  * Added the amount of players online for RuneScape3 and
+    OldSchool RuneScape to the top left of the launcher
+  
+  * Made the refresh button also refresh the playercount
+  
+  * Fixed a problem with urls containing & in the readurl
+    and sysdload functions 
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Tue, 22 Oct 2013 12:12:57 +0200
+
 runescape (4.1.5) precise; urgency=low
 
   * Added a close button to the launcher when it is launched with
