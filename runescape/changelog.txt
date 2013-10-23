@@ -5,6 +5,13 @@ runescape (4.1.7) precise; urgency=low
   * Rewrote several parts of the framework to use
     the Config::IniFiles module from cpan
     
+  * Included local versions of List::MoreUtils and IO::Stringy
+  
+  * Fixed some warnings in some of the public API calls
+  
+  * Fixed some issues with certain parameters on the packaging
+    templates that package maintainers copy to /usr/bin or /usr/games
+    
  -- HikariKnight <rshikariknight@gmail.com>  Tue, 22 Oct 2013 12:12:57 +0200
 
 runescape (4.1.6) precise; urgency=low
