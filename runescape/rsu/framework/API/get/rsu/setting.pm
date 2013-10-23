@@ -62,7 +62,7 @@ else
 	my $file = "settings.conf";
 	
 	# If a 2nd parameter is passed
-	if ($ARGV[2] ne '')
+	if (defined $ARGV[2])
 	{
 		# If the parameter starts with a full path or variable
 		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/|http:\/\/|https:\/\/)/i)
@@ -77,7 +77,7 @@ else
 			$file = $ARGV[2];
 			
 			# If the 3rd parameter is passed
-			if ($ARGV[3] ne '')
+			if (defined $ARGV[3])
 			{
 				# If the parameter starts with a full path or variable
 				if ($ARGV[3] =~ /^(\$|\%|[a-z]:|\/|http:\/\/|https:\/\/)/i)

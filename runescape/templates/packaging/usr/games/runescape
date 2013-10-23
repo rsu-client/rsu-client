@@ -17,6 +17,12 @@ if (-d "/opt/runescape")
 	if ($scriptname =~ /^runescape$/ && "@ARGV" eq '')
 	{
 		# Run the rsu launcher or fall back to launching runescape directly
+		system "/opt/runescape/rsu/rsu-query";
+	}
+	# Else if scriptname is runescape and parameters are passed and the parameters do not start with - then
+	elsif($scriptname =~ /^runescape$/ && "@ARGV" ne '' && "@ARGV" !~ /^-/)
+	{
+		# Do an rsu-query
 		system "/opt/runescape/rsu/rsu-query @ARGV";
 	}
 	# Else
@@ -32,6 +38,12 @@ elsif (-d "/opt/extras.ubuntu.com/rsu-client")
 	if ($scriptname =~ /^runescape$/ && "@ARGV" eq '')
 	{
 		# Run the rsu launcher or fall back to launching runescape directly
+		system "/opt/extras.ubuntu.com/rsu-client/rsu/rsu-query @ARGV";
+	}
+	# Else if scriptname is runescape and parameters are passed and the parameters do not start with - then
+	elsif($scriptname =~ /^runescape$/ && "@ARGV" ne '' && "@ARGV" !~ /^-/)
+	{
+		# Do an rsu-query
 		system "/opt/extras.ubuntu.com/rsu-client/rsu/rsu-query @ARGV";
 	}
 	# Else

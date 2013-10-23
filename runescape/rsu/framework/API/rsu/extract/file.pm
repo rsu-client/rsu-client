@@ -89,7 +89,7 @@ else
 	my $outdir = $clientdir;
 	
 	# If a 2nd parameter is passed
-	if ($ARGV[2] ne '')
+	if (defined $ARGV[2])
 	{
 		# If the parameter starts with a full path or variable
 		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/)/i)
