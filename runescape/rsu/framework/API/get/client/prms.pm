@@ -57,7 +57,7 @@ else
 	my $location = "$clientdir/share/prms";
 
 	# If a location is is passed
-	if ($ARGV[2] ne '')
+	if (defined $ARGV[2])
 	{
 		# If the parameter starts with a full path or variable
 		if ($ARGV[2] =~ /^(\$|\%|[a-z]:|\/)/i)
@@ -77,7 +77,7 @@ else
 	my $prmfile = rsu::files::IO::readconf("prmfile", "undef", "settings.conf", "$location");
 
 	# If a filename is passed
-	if ($ARGV[1] ne '')
+	if (defined $ARGV[1])
 	{
 		# Use parameter as prmfile
 		$prmfile = $ARGV[1];
