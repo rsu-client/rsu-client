@@ -29,13 +29,13 @@ eval "use LWP::Simple"; print STDERR "WARNING: LWP::Simple module not found, API
 # Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
 use Encode::Byte;
 
-# Include List::MoreUtils and Config::IniFiles for proper config filehandling
-eval "use List::MoreUtils"; print STDERR "WARNING: List::MoreUtils module not found on the system,\nplease install the List::MoreUtils module if the one provided inside the RSU-Client does not work!\n\n" if $@;
-eval "use IO::Stringy"; print STDERR "WARNING: IO::Stringy module not found on the system,\nplease install the IO::Stringy module if the one provided inside the RSU-Client does not work!\n\n" if $@;
-eval "use Config::IniFiles"; print STDERR "WARNING: Config::IniFiles module not found on the system,\nplease install the Config::IniFiles module if the one provided inside the RSU-Client does not work!\n\n" if $@ && "$^O" !~ /darwin/;
+# Include List::MoreUtils, IO::Stringy and Config::IniFiles for proper config filehandling
+eval "use List::MoreUtils"; print STDERR "WARNING: List::MoreUtils module not found on the system,\nusing the version provided by the client instead!\n\n" if $@;
+eval "use IO::Stringy"; print STDERR "WARNING: IO::Stringy module not found on the system,\nusing the version provided by the client instead!\n\n" if $@;
+eval "use Config::IniFiles"; print STDERR "WARNING: Config::IniFiles module not found on the system,\nusing the version provided by the client instead!\n\n" if $@ && "$^O" !~ /darwin/;
 
 # Include the module for extracting archives
-eval "use Archive::Extract"; print STDERR "WARNING: Archive::Extract not module not found on the system,\nplease install the Archive::Extract module if the one provided inside the RSU-Client does not work!\n\n" if $@;
+eval "use Archive::Extract"; print STDERR "WARNING: Archive::Extract not module not found on the system,\nusing the version provided by the client instead!\n\n" if $@;
 
 # If we are on windows
 if ("$^O" =~ /MSWin32/)
