@@ -25,6 +25,7 @@ Remarks:
 	1 = German (DE)
 	2 = French (FR)
 	3 = Portuguese (BR)
+	6 = Spanish (ES)
 
 Purpose:
 	Simplify setting the client language preference

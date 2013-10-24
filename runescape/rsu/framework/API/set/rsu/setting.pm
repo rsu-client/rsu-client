@@ -62,7 +62,7 @@ else
 	my $file = "settings.conf";
 	
 	# If a 2nd parameter is passed
-	if ($ARGV[3] ne '')
+	if (defined $ARGV[3])
 	{
 		# If the parameter starts with a full path or variable
 		if ($ARGV[3] =~ /^(\$|\%|[a-z]:|\/)/i)
@@ -77,7 +77,7 @@ else
 			$file = $ARGV[3];
 			
 			# If the 3rd parameter is passed
-			if ($ARGV[4] ne '')
+			if (defined $ARGV[4])
 			{
 				# If the parameter starts with a full path or variable
 				if ($ARGV[4] =~ /^(\$|\%|[a-z]:|\/)/i)
@@ -104,27 +104,9 @@ else
 	# Use the file IO
 	require rsu::files::IO;
 	
-	# Read the content of the config file
-	my $content = rsu::files::IO::getcontent("$location", "$file");
+	# Write the new setting
+	rsu::files::IO::writeconf("_", "$ARGV[1]", "$ARGV[2]", "$file", "$location");
 	
-	# If nothing returned or the key is not found
-	if ($content =~ /^\n$/ || $content !~ /$ARGV[1]=(.+)\n/)
-	{
-		# Write a new file
-		rsu::files::IO::WriteFile("$ARGV[1]=$ARGV[2]", ">>", "$location/$file");
-	}
-	# Else
-	else
-	{
-		# Replace the old value with the new one
-		$content =~ s/$ARGV[1]=.+\n/$ARGV[1]=$ARGV[2]\n/;
-		
-		# Remove the newline at the end
-		$content =~ s/\n$//;
-		
-		# Write the contents back to the file
-		rsu::files::IO::WriteFile($content, ">", "$location/$file");
-	}
 }
 
 1; 

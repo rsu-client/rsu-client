@@ -318,7 +318,7 @@ sub runjar
 	while(<CLIENT>)
 	{
 		# Print output if it is not the "Received command" output spam
-		print $_ if $_ !~ /Received command/;
+		print $_ if $_ !~ /(Received command|MEvent)/;
 	}
 }
 

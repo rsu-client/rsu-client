@@ -17,26 +17,25 @@ my $cwd = getcwd;
 
 # Load the required Wx modules
 eval "use Wx::Perl::Packager";
-eval "use Wx qw[:everything]"; print STDERR "Wx module not found, API calls using WxWidgets will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
+eval "use Wx qw[:everything]"; print STDERR "WARNING: Wx module not found, API calls using WxWidgets will not work\n\n" if $@ && "@ARGV" !~ /--unixquery/;
 eval "use Wx::XRC";
 eval "use Wx::Html";
-eval "use Wx::WebView"; print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
-
-# Uncomment the below lines if packaging for mac
-#use Wx::Perl::Packager;
-#use Wx qw[:everything]; #print STDERR "Wx module not found, API calls using WxWidgets will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
-#use Wx::XRC;
-#use Wx::WebView; #print STDERR "Wx::WebView module not found, API calls using Wx::WebView will not work\n" if $@ && "@ARGV" !~ /--unixquery/;
+eval "use Wx::WebView"; print STDERR "WARNING: Wx::WebView module not found, API calls using Wx::WebView will not work\n\n" if $@ && "@ARGV" !~ /--unixquery/;
 
 # Use LWP::Simple module to get website content (crossplatform) if it is available
-eval "use LWP::Simple"; print STDERR "LWP::Simple module not found, API calls using LWP::Simple will either use alternative methods\n" if $@ && "@ARGV" !~ /--unixquery/;
+eval "use LWP::Simple"; print STDERR "WARNING: LWP::Simple module not found, API calls using LWP::Simple will either use alternative methods\n\n" if $@ && "@ARGV" !~ /--unixquery/;
 
 # Include the byte encryption so that the script will work on all localizations of windows or other systems
 # Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
 use Encode::Byte;
 
+# Include List::MoreUtils, IO::Stringy and Config::IniFiles for proper config filehandling
+eval "use List::MoreUtils"; print STDERR "WARNING: List::MoreUtils module not found on the system,\nusing the version provided by the client instead!\n\n" if $@;
+eval "use IO::Stringy"; print STDERR "WARNING: IO::Stringy module not found on the system,\nusing the version provided by the client instead!\n\n" if $@;
+eval "use Config::IniFiles"; print STDERR "WARNING: Config::IniFiles module not found on the system,\nusing the version provided by the client instead!\n\n" if $@ && "$^O" !~ /darwin/;
+
 # Include the module for extracting archives
-use Archive::Extract;
+eval "use Archive::Extract"; print STDERR "WARNING: Archive::Extract not module not found on the system,\nusing the version provided by the client instead!\n\n" if $@;
 
 # If we are on windows
 if ("$^O" =~ /MSWin32/)
