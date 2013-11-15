@@ -1,3 +1,11 @@
+runescape (4.1.8) precise; urgency=low
+
+  * Redesigned the addons tab in the launcher to
+    provide better information about the installed
+    addons and give it a better look
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 15 Nov 2013 17:30:40 +0200
+
 runescape (4.1.7) precise; urgency=low
 
   * Fixed the playercount for RS3 on windows

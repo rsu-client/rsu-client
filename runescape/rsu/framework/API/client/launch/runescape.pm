@@ -35,7 +35,7 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "4.1.7";
+my $scriptversion = "4.1.8";
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
