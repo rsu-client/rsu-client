@@ -998,19 +998,6 @@ sub make_addon_buttons
 			</table>
 		</td>";
 		
-		# Make a button for the addon
-		#$self->{$addon_id} = Wx::Button->new($self->{addonspage}, -1, "$addon_name", wxDefaultPosition, wxDefaultSize, );
-		#$self->{$addon_id}->SetForegroundColour(Wx::Colour->new("#222222"));
-		
-		# Make an event trigger for the newly created button
-		#EVT_BUTTON($self, -1, \&launch_addon);
-		
-		# Set the buttons name to $addon_id
-		#$self->{$addon_id}->SetName($addon_id);
-			
-		# Add the button to the vertical addon list sizer
-		#$self->{addonlist}->Add($self->{$addon_id}, 0, wxEXPAND|wxALL,5);
-		
 		# Increase counter by 1
 		$counter += 1;
 	}
