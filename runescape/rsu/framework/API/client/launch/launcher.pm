@@ -61,6 +61,9 @@ use Wx::XRC;
 # Which events shall we include
 use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED);
 
+# FileSystem module, used for addons tab
+use Wx::FS;
+
 # Use Wx::WebView if it exists
 eval "use Wx::WebView";
 # Use XML::RSSLite if it exists
@@ -126,6 +129,8 @@ sub load_xrc_gui
 	
 	# Initialize WX
 	Wx::InitAllImageHandlers();
+	
+	Wx::FileSystem::AddHandler(Wx::InternetFSHandler->new());
 	
 	# Create xrc/xml resource
 	$self->xrc_resource = Wx::XmlResource->new;
@@ -409,33 +414,80 @@ sub create_addons_page
 	# Make sizers for the top of the page
 	$self->{addonsvertical} = Wx::BoxSizer->new(wxVERTICAL);
 	
-	# Make a gridsizer which will contain the addons
-	$self->{addonlist} = Wx::GridSizer->new(1,4,5,5);
+	# Create a addons htmlwindow for displaying installed addons
+	$self->{addonsview} = Wx::HtmlWindow->new($self->{addonspage}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_DEFAULT_STYLE);
 	
-	# Make a button which tells the user how to add addons
-	$self->{addons_labeltop} = Wx::StaticText->new($self->{addonspage}, -1, "\nClick on the button coresponding to the addon you want to manually launch!\nClick the button below to open the addons directory. Install only addons you trust!", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	# Add the addons htmlwindow to the sizer
+	$self->{addonsvertical}->Add($self->{addonsview},1,wxALL|wxEXPAND,0);
 	
-	# Make a button to open the addons dir and make it run the function open_addonsdir when clicked
-	$self->{addonsdirbutton} = Wx::Button->new($self->{addonspage}, -1, "Open Addons Folder (place manually extracted addons here)", wxDefaultPosition, wxDefaultSize, );
-	EVT_BUTTON($self->{addonsdirbutton}, $self->{addonsdirbutton}, \&open_addonsdir);
+	# Load the addons into the addonsview
+	load_addons($self);
 	
-	# Add the label and button to the vertical boxsizer
-	$self->{addonsvertical}->Add($self->{addons_labeltop}, 0, wxALL|wxALIGN_CENTER,0);
-	$self->{addonsvertical}->Add($self->{addonsdirbutton}, 0, wxALL|wxALIGN_CENTER,0);
-	$self->{addonsvertical}->Add(10,10,0,0);
+	# Set colors the widgets
+	$self->{addonspage}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$self->{addonspage}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+	#$self->{addons_labeltop}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	#$self->{addons_labeltop}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+	#$self->{addonsdirbutton}->SetForegroundColour(Wx::Colour->new("#222222"));
+	#$self->{addons_installed}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	#$self->{addons_installed}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
 	
-	# Make a groupbox for tidyness
-	#$self->{addonsbox} = Wx::StaticBox->new($self->{addonspage},-1, "Addons you have installed:");
-	#$self->{addonscontainer} = Wx::StaticBoxSizer->new($self->{addonsbox},wxVERTICAL);
-	$self->{addons_installed} = Wx::StaticText->new($self->{addonspage}, -1, "  Addons you have installed:", wxDefaultPosition, wxDefaultSize);
-	$self->{addonsvertical}->Add($self->{addons_installed}, 0, wxALL,5);
-	$self->{addonscontainer} = Wx::BoxSizer->new(wxVERTICAL);
+	# Make sure the layout is displayed properly
+	$self->{addonspage}->SetSizer($self->{addonsvertical});
+	$self->{addonsvertical}->Fit($self->{addonspage});
+	$self->{addonspage}->Layout();
 	
-	# Add the addonslist to the container
-	$self->{addonscontainer}->Add($self->{addonlist},0,wxEXPAND|wxALL,0);
+	# Add scrollbars if neccessary
+	setScrollBars($self->{addonspage});
 	
-	# Add the gridsizer to the vertical boxsizer
-	$self->{addonsvertical}->Add($self->{addonscontainer},1,wxEXPAND|wxALL,0);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub load_addons 
+{
+	# Get the passed data
+	my ($self) = @_;
+	
+	# Create a variable to contain the addonsview html code
+	my $addonshtml = "<html>
+	<body bgcolor=#222222>
+		<table width=100%>
+		<tr>
+			<td width=87%>
+				<center>
+					<a href=\"open://addonsdir\">
+						<font size=4 color=#E8B13F>
+							Click here to open the Addons Folder!
+						</font>
+					</a>
+				</center>
+			</td>
+			<td>
+				<a href=\"refresh://addons\">
+					<font size=3 color=#E8B13F>
+						Refresh list
+					</font>
+				</a>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<center>	
+					<font size=2 color=#E8B13F>
+						<b>Addons you have installed are shown below.</b>
+					</font>
+				</center>
+			</td>
+		</tr>
+		</table>
+		<table width=100% bgcolor=#222222>
+			<tr>";
+			
+	# Create a variable of the addons content
+	my @addonscontent;
 	
 	# Get the addon directories which are supported by this platform
 	my @addondirs = rsu::files::grep::dirgrep("$clientdir/share/addons/","^(universal|$OS)\$");
@@ -446,30 +498,43 @@ sub create_addons_page
 		# If the current content is either named universal or the same as $OS
 		if (($addondir =~ /^universal$/ && -d "$clientdir/share/addons/$addondir") || ($addondir =~ /^$OS$/ && -d "$clientdir/share/addons/$addondir"))
 		{
-			# Make the addons buttons
-			make_addon_buttons($self, "$clientdir/share/addons/$addondir");
+			# Create addon tables and put them in an array
+			@addonscontent = make_addon_buttons($self, "$clientdir/share/addons/$addondir", @addonscontent);
 		}
 	}
 	
-	# Set the colors for the correct platforms
+	# Make a counter so we know when to add a new row to the grid
+	my $counter = 0;
 	
-	# Set colors for certain platforms
-	$self->{addonspage}->SetBackgroundColour(Wx::Colour->new("#222222"));
-	$self->{addonspage}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
-	$self->{addons_labeltop}->SetBackgroundColour(Wx::Colour->new("#222222"));
-	$self->{addons_labeltop}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
-	$self->{addonsdirbutton}->SetForegroundColour(Wx::Colour->new("#222222"));
-	$self->{addons_installed}->SetBackgroundColour(Wx::Colour->new("#222222"));
-	$self->{addons_installed}->SetForegroundColour(Wx::Colour->new("#E8B13F"));
+	# For each addon table we have inside the addonscontent array
+	foreach my $addontable (@addonscontent)
+	{
+		# If $counter is a modulo of 4 (translation: every 4th)
+		if (($counter %= 4) == 0)
+		{
+			# Increase the amount of rows by 1
+			$addonshtml = "$addonshtml
+			</tr>
+			<tr>";
+		}
+		
+		# Add the addon table to the addonshtml
+		$addonshtml = "$addonshtml
+		$addontable";
+		
+		# Increase counter by 1
+		$counter += 1;
+	}
 	
-	# Make sure the layout is displayed properly
-	$self->{addonspage}->SetSizer($self->{addonsvertical});
-	$self->{addonsvertical}->Fit($self->{addonspage});
-	$self->{addonspage}->Layout();
-	
-	# Add scrollbars if neccessary
-	setScrollBars($self->{addonspage});
-	
+	# Add the end of the addonshtml
+	$addonshtml = "$addonshtml
+			</tr>
+		</table>
+	</body>
+</html>";
+
+	# Add the html to the addonsview
+	$self->{addonsview}->SetPage($addonshtml);
 }
 
 #
@@ -852,10 +917,7 @@ sub getsource_clicked
 sub make_addon_buttons
 {
 	# Get the passed data
-	my ($self, $addondir) = @_;
-	
-	# Make a counter so we know when to add a new row to the grid
-	my $counter = 1;
+	my ($self, $addondir, @addonscontent) = @_;
 	
 	# Get all moduleloaders in the addon directory
 	my @addons = rsu::files::grep::rdirgrep($addondir, "\/moduleloader\.pm");
@@ -885,13 +947,23 @@ sub make_addon_buttons
 			next if "@platforms" !~ /$OS/i;
 		}
 		
-		my $addon_id = "$folder_id[-3]_$folder_id[-2]";
+		# Generate an id for the addon
+		my $addon_id = "$folder_id[-3]://$folder_id[-2]";
 		
 		# Try to get the addon name (if nothing is found then use the folder id as addon name)
 		my $addon_name = rsu::files::IO::readconf("name", "$addon_id", "info.conf", $addon_path);
 		
 		# Incase the id becomes the name we can remove universal_ or $OS_ from the start of the name
-		$addon_name =~ s/^(universal|$OS)_//;
+		$addon_name =~ s/^(universal|$OS):\/\///;
+		
+		# Get the addon description
+		my $addon_description = rsu::files::IO::readconf("description", "No description available for $addon_name", "info.conf", $addon_path);
+		
+		# Replace \n with space in the description
+		$addon_description =~ s/\\n/ /g;
+		
+		# Get the addon description
+		my $addon_icon = rsu::files::IO::readconf("icon", "noicon", "info.conf", $addon_path);
 		
 		# Check if there is a download url in the info.conf
 		my $addon_url = rsu::files::IO::readconf("url", "", "info.conf", $addon_path);
@@ -899,36 +971,42 @@ sub make_addon_buttons
 		# If the addon url is not empty
 		if ($addon_url ne '')
 		{
-			# Get the addon description
-			my $addon_description = rsu::files::IO::readconf("description", "No description available for $addon_name", "info.conf", $addon_path);
-			
 			# Generate an updater entry
 			generate_updater_entry($addon_id, $addon_name, $addon_url, $addon_description);
 		}
-		
-		# If $counter is a modulo of 4 (translation: every 4th)
-		if (($counter %= 4) == 0)
-		{
-			# Increase the amount of rows by 1
-			$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
-		}
-			
-		# Make a button for the addon
-		$self->{$addon_id} = Wx::Button->new($self->{addonspage}, -1, "$addon_name", wxDefaultPosition, wxDefaultSize, );
-		$self->{$addon_id}->SetForegroundColour(Wx::Colour->new("#222222"));
-		
-		# Make an event trigger for the newly created button
-		EVT_BUTTON($self, -1, \&launch_addon);
-		
-		# Set the buttons name to $addon_id
-		$self->{$addon_id}->SetName($addon_id);
-			
-		# Add the button to the vertical addon list sizer
-		$self->{addonlist}->Add($self->{$addon_id}, 0, wxEXPAND|wxALL,5);
-		
-		# Increase counter by 1
-		$counter += 1;
+		print "adding table for $addon_name\n\n";
+		# Make the addons buttons
+		push @addonscontent, "<td bgcolor=#000000 valign=top>
+			<table width=100%>
+				<tr>
+				<td width=90%>
+					<div align=right><a href=\"delete://$addon_id\"><font size=4 color=#E8B13F>[X]</font></a></div>
+				</td>
+				</tr>
+				<tr>
+				<a href=\"$addon_id\">
+				<td width=90%>
+					<center><img src=\"$addon_path/$addon_icon\" width=64 height=64></center>
+				</td>
+				</a>
+				</tr>
+				<tr>
+				<a href=\"$addon_id\">
+				<td width=90%>
+					<center><font size=3 color=#E8B13F>$addon_name</font></center>
+				</td>
+				</a>
+				</tr>
+				<tr>
+				<td width=90%>
+					<center><font size=2 color=#E8B13F>$addon_description</font></center>
+				</td>
+				</tr>
+			</table>
+		</td>";
 	}
+	
+	return @addonscontent;
 }
 
 #
@@ -1011,6 +1089,7 @@ sub set_events
 	# EVT_BUTTON($self, Wx::XmlResource::GetXRCID('objectname'), \&function);
 	
 	EVT_HTML_LINK_CLICKED($self, $self->{htmlview}, \&hyperlink_clicked);
+	EVT_HTML_LINK_CLICKED($self, $self->{addonsview}, \&addon_handler);
 }
 
 #
@@ -1822,31 +1901,71 @@ See the file COPYING for more information.");
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub launch_addon
+sub addon_handler
 {
 	# Get the passed data
 	my ($self, $event) = @_;
 	
 	# Get the name of the addon that triggered the event
-	my $addon_id = $event->GetEventObject()->GetName();
+	my $addon_id = $event->GetLinkInfo()->GetHref();
 	
-	# Make a variable which will contain only the unique id and not the universal_ or $OS_ identifier
+	# Make a variable which will contain only the unique id and not the universal:// or $OS:// identifier
 	my $addon = $addon_id;
 	
-	# Check if this is the refresh button (for some reason it gets assigned as an addon button when addons are installed)
-	if ($addon =~ /^refreshnews$/)
+	# Check if this is the addonsdir link
+	if ($addon =~ /^open:\/\/addonsdir/)
 	{
-		# Refresh the news
-		refreshnews_clicked($self);
+		# Open the addons directory
+		open_addonsdir($self);
+	}
+	# Else if the refresh link
+	elsif ($addon =~ /^refresh:\/\/addons/)
+	{
+		# Refresh the list of addons
+		load_addons($self);
+	}
+	# Else if the delete addon link is clicked
+	elsif ($addon =~ /^delete:\/\//)
+	{
+		# Remove delete:// from begining of addon call
+		$addon =~ s/^delete:\/\/(universal|$OS):\/\///;
+		
+		# Display a console message
+		print "User requested to delete $addon\n";
+		
+		# If this is an universal addon
+		if ($addon_id =~ /^delete:\/\/universal:\/\//)
+		{
+			# Tell what is happening
+			print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/universal/$addon\"\n";
+			
+			# Delete the universal addon
+			remove_tree("$clientdir/share/addons/universal/$addon");
+		}
+		# Else
+		else
+		{
+			# Tell what is happening
+			print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/$OS/$addon\"\n";
+			
+			# Delete the platform specific addon
+			remove_tree("$clientdir/share/addons/$OS/$addon");
+		}
+		
+		# Tell what is happening
+		print "Refreshing the list of addons!\n\n";
+		
+		# Refresh the list of addons
+		load_addons($self);
 	}
 	# Else
 	else
 	{
 		# Remove the identifier from the variable $addon
-		$addon  =~ s/^(universal|$OS)_//;
+		$addon  =~ s/^(universal|$OS):\/\///;
 		
 		# If the addon_id starts with universal_
-		if ($addon_id =~ /^universal_/)
+		if ($addon_id =~ /^universal:\/\//)
 		{
 			# If we are on windows
 			if ($OS =~ /MSWin32/)
