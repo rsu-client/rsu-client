@@ -62,7 +62,7 @@ use Wx::XRC;
 use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED);
 
 # FileSystem module, used for addons tab
-use Wx::FS;
+#use Wx::FS;
 
 # Use Wx::WebView if it exists
 eval "use Wx::WebView";
@@ -130,7 +130,7 @@ sub load_xrc_gui
 	# Initialize WX
 	Wx::InitAllImageHandlers();
 	
-	Wx::FileSystem::AddHandler(Wx::InternetFSHandler->new());
+	#Wx::FileSystem::AddHandler(Wx::InternetFSHandler->new());
 	
 	# Create xrc/xml resource
 	$self->xrc_resource = Wx::XmlResource->new;
