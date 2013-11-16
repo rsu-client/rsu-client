@@ -4,6 +4,11 @@ runescape (4.1.8) precise; urgency=low
     provide better information about the installed
     addons and give it a better look
     
+  * Made it possible to delete an addon by clicking
+    the [X] in the addons tab
+    
+  * Added a refresh list function to the addons tab
+    
  -- HikariKnight <rshikariknight@gmail.com>  Fri, 15 Nov 2013 17:30:40 +0200
 
 runescape (4.1.7) precise; urgency=low
