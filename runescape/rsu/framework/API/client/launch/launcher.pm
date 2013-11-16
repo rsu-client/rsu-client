@@ -487,7 +487,7 @@ sub load_addons
 			<tr>";
 			
 	# Create a variable of the addons content
-	my $addonscontent = "";
+	my @addonscontent;
 	
 	# Get the addon directories which are supported by this platform
 	my @addondirs = rsu::files::grep::dirgrep("$clientdir/share/addons/","^(universal|$OS)\$");
@@ -498,13 +498,32 @@ sub load_addons
 		# If the current content is either named universal or the same as $OS
 		if (($addondir =~ /^universal$/ && -d "$clientdir/share/addons/$addondir") || ($addondir =~ /^$OS$/ && -d "$clientdir/share/addons/$addondir"))
 		{
-			# Create addon entries in the addonsview
-			$addonscontent = make_addon_buttons($self, "$clientdir/share/addons/$addondir");
-			
-			# Append the addonscontent to the addonshtml
-			$addonshtml = "$addonshtml
-				$addonscontent";
+			# Create addon tables and put them in an array
+			@addonscontent = make_addon_buttons($self, "$clientdir/share/addons/$addondir", @addonscontent);
 		}
+	}
+	
+	# Make a counter so we know when to add a new row to the grid
+	my $counter = 0;
+	
+	# For each addon table we have inside the addonscontent array
+	foreach my $addontable (@addonscontent)
+	{
+		# If $counter is a modulo of 4 (translation: every 4th)
+		if (($counter %= 4) == 0)
+		{
+			# Increase the amount of rows by 1
+			$addonshtml = "$addonshtml
+			</tr>
+			<tr>";
+		}
+		
+		# Add the addon table to the addonshtml
+		$addonshtml = "$addonshtml
+		$addontable";
+		
+		# Increase counter by 1
+		$counter += 1;
 	}
 	
 	# Add the end of the addonshtml
@@ -898,13 +917,7 @@ sub getsource_clicked
 sub make_addon_buttons
 {
 	# Get the passed data
-	my ($self, $addondir) = @_;
-	
-	# Make the addons buttons
-	my $addonshtml = "";
-	
-	# Make a counter so we know when to add a new row to the grid
-	my $counter = 0;
+	my ($self, $addondir, @addonscontent) = @_;
 	
 	# Get all moduleloaders in the addon directory
 	my @addons = rsu::files::grep::rdirgrep($addondir, "\/moduleloader\.pm");
@@ -961,21 +974,15 @@ sub make_addon_buttons
 			# Generate an updater entry
 			generate_updater_entry($addon_id, $addon_name, $addon_url, $addon_description);
 		}
-		
-		# If $counter is a modulo of 4 (translation: every 4th)
-		if (($counter %= 4) == 0)
-		{
-			# Increase the amount of rows by 1
-			#$self->{addonlist}->SetRows($self->{addonlist}->GetRows()+1);
-			$addonshtml = "$addonshtml
-			</tr>
-			<tr>";
-		}
-		
+		print "adding table for $addon_name\n\n";
 		# Make the addons buttons
-		$addonshtml = "$addonshtml
-		<td bgcolor=#000000>
+		push @addonscontent, "<td bgcolor=#000000 valign=top>
 			<table width=100%>
+				<tr>
+				<td width=90%>
+					<div align=right><a href=\"delete://$addon_id\"><font size=4 color=#E8B13F>[X]</font></a></div>
+				</td>
+				</tr>
 				<tr>
 				<a href=\"$addon_id\">
 				<td width=90%>
@@ -997,12 +1004,9 @@ sub make_addon_buttons
 				</tr>
 			</table>
 		</td>";
-		
-		# Increase counter by 1
-		$counter += 1;
 	}
 	
-	return "$addonshtml";
+	return @addonscontent;
 }
 
 #
@@ -1085,7 +1089,7 @@ sub set_events
 	# EVT_BUTTON($self, Wx::XmlResource::GetXRCID('objectname'), \&function);
 	
 	EVT_HTML_LINK_CLICKED($self, $self->{htmlview}, \&hyperlink_clicked);
-	EVT_HTML_LINK_CLICKED($self, $self->{addonsview}, \&launch_addon);
+	EVT_HTML_LINK_CLICKED($self, $self->{addonsview}, \&addon_handler);
 }
 
 #
@@ -1897,7 +1901,7 @@ See the file COPYING for more information.");
 #---------------------------------------- *** ----------------------------------------
 #
 
-sub launch_addon
+sub addon_handler
 {
 	# Get the passed data
 	my ($self, $event) = @_;
@@ -1905,7 +1909,7 @@ sub launch_addon
 	# Get the name of the addon that triggered the event
 	my $addon_id = $event->GetLinkInfo()->GetHref();
 	
-	# Make a variable which will contain only the unique id and not the universal_ or $OS_ identifier
+	# Make a variable which will contain only the unique id and not the universal:// or $OS:// identifier
 	my $addon = $addon_id;
 	
 	# Check if this is the addonsdir link
@@ -1917,7 +1921,41 @@ sub launch_addon
 	# Else if the refresh link
 	elsif ($addon =~ /^refresh:\/\/addons/)
 	{
-		# Refresh the addons
+		# Refresh the list of addons
+		load_addons($self);
+	}
+	# Else if the delete addon link is clicked
+	elsif ($addon =~ /^delete:\/\//)
+	{
+		# Remove delete:// from begining of addon call
+		$addon =~ s/^delete:\/\/(universal|$OS):\/\///;
+		
+		# Display a console message
+		print "User requested to delete $addon\n";
+		
+		# If this is an universal addon
+		if ($addon_id =~ /^delete:\/\/universal:\/\//)
+		{
+			# Tell what is happening
+			print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/universal/$addon\"\n";
+			
+			# Delete the universal addon
+			remove_tree("$clientdir/share/addons/universal/$addon");
+		}
+		# Else
+		else
+		{
+			# Tell what is happening
+			print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/$OS/$addon\"\n";
+			
+			# Delete the platform specific addon
+			remove_tree("$clientdir/share/addons/$OS/$addon");
+		}
+		
+		# Tell what is happening
+		print "Refreshing the list of addons!\n\n";
+		
+		# Refresh the list of addons
 		load_addons($self);
 	}
 	# Else
