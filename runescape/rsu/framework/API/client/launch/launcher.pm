@@ -1930,33 +1930,40 @@ sub addon_handler
 		# Remove delete:// from begining of addon call
 		$addon =~ s/^delete:\/\/(universal|$OS):\/\///;
 		
-		# Display a console message
-		print "User requested to delete $addon\n";
+		# Ask if they are sure they want to delete the addon
+		my $answer = Wx::MessageBox("Do you want to remove the addon \"$addon\"?", 'Addon removal!', wxYES_NO, $self);
 		
-		# If this is an universal addon
-		if ($addon_id =~ /^delete:\/\/universal:\/\//)
+		# If they say yes
+		if ($answer == wxYES)
 		{
-			# Tell what is happening
-			print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/universal/$addon\"\n";
+			# Display a console message
+			print "User requested to delete $addon\n";
 			
-			# Delete the universal addon
-			remove_tree("$clientdir/share/addons/universal/$addon");
-		}
-		# Else
-		else
-		{
-			# Tell what is happening
-			print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/$OS/$addon\"\n";
+			# If this is an universal addon
+			if ($addon_id =~ /^delete:\/\/universal:\/\//)
+			{
+				# Tell what is happening
+				print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/universal/$addon\"\n";
+				
+				# Delete the universal addon
+				remove_tree("$clientdir/share/addons/universal/$addon");
+			}
+			# Else
+			else
+			{
+				# Tell what is happening
+				print "ID clicked was: $addon_id\nRemoving directory: \"$clientdir/share/addons/$OS/$addon\"\n";
+				
+				# Delete the platform specific addon
+				remove_tree("$clientdir/share/addons/$OS/$addon");
+			}
 			
-			# Delete the platform specific addon
-			remove_tree("$clientdir/share/addons/$OS/$addon");
+			# Tell what is happening
+			print "Refreshing the list of addons!\n\n";
+			
+			# Refresh the list of addons
+			load_addons($self);
 		}
-		
-		# Tell what is happening
-		print "Refreshing the list of addons!\n\n";
-		
-		# Refresh the list of addons
-		load_addons($self);
 	}
 	# Else
 	else
