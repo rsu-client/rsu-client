@@ -27,6 +27,9 @@ my $xrc_gui_file = "rsu-launcher.xrc";
 # Disable buffering
 $|=1;
 
+# Use the File::Path module
+use File::Path qw(make_path remove_tree);
+
 # Use the module for getting the current working directory
 use Cwd;
 
@@ -49,6 +52,99 @@ use rsu::files::clientdir;
 
 # Get the location of the clientdir
 my $clientdir = rsu::files::clientdir::getclientdir();
+
+# Use the rsu copy module
+require rsu::files::copy;
+
+# Use the rsu dirs module
+require rsu::files::dirs;
+
+# Use client environment module
+use client::env;
+
+# Get the users home directory
+my $HOME = client::env::home();
+
+# If this script have been installed systemwide
+if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
+{
+	# Print debug info
+	print "The script is running from a system path!\n".$HOME."/.config/runescape will be used as client folder instead!\n\n";
+		
+	# Make the client folders
+	make_path($clientdir."/bin", $clientdir."/share/img", $clientdir."/share/configs", $clientdir."/share/prms");
+	
+	# Tell user what we are doing
+	print "Symlinking icon and updating examples\n\n";
+	
+	# Symlink or Copy needed resources to the clientdir
+	system "ln -sf \"".$cwd."/share/img/jagexappletviewer.png\" \"".$clientdir."/share/img/jagexappletviewer.png\"";
+	
+	# Copy the examples (should always be kept up to date)
+	rsu::files::copy::print_cp($cwd."/share/configs/settings.conf.example", $clientdir."/share/configs/settings.conf.example");
+	rsu::files::copy::print_cp($cwd."/share/prms/runescape.prm.example", $clientdir."/share/prms/runescape.prm.example");
+	
+	# Check the contents of $clientdir/share
+	my @localcheck = rsu::files::dirs::rlist("$clientdir/share");
+	#my $prmfile_exists = `ls -la $clientdir/share|grep -P \"runescape.prm\$\"`;
+	
+	# Tell what we are doing
+	print "Checking if any known files are still using the old folder structure\n";
+	
+	# For each value in the @localcheck array
+	foreach my $checkfile (@localcheck)
+	{
+		# If runescape.prm exists in old directory format
+		if ($checkfile =~ /$clientdir\/share\/runescape\.prm$/)
+		{
+			# Copy the example file to clientdir as runescape.prm
+			rsu::files::copy::print_mv($clientdir."/share/runescape.prm", $clientdir."/share/prms/runescape.prm");
+		}
+		# If oldschool.prm exists in old directory format
+		if ($checkfile =~ /$clientdir\/share\/oldschool\.prm$/)
+		{
+			# Copy the oldschool.prm file to clientdir
+			rsu::files::copy::print_mv($clientdir."/share/oldschool.prm", $clientdir."/share/prms/oldschool.prm");
+		}
+		# If settings.conf exists in the old directory format
+		if ($checkfile =~ /$clientdir\/share\/settings\.conf$/)
+		{
+			# Copy the oldschool.prm file to clientdir
+			rsu::files::copy::print_mv($clientdir."/share/settings.conf", $clientdir."/share/configs/settings.conf");
+		}
+	}
+	
+	# Tell user what we are doing
+	print "\nChecking if any default configurations are missing\n";
+	
+	# If runescape.prm do not exist
+	if (!-e "$clientdir/share/prms/runescape.prm")
+	{
+		# Copy the example file to clientdir as runescape.prm
+		rsu::files::copy::print_cp($cwd."/share/prms/runescape.prm.example", $clientdir."/share/prms/runescape.prm");
+	}
+	# If oldschool.prm do not exist
+	if (!-e "$clientdir/share/prms/oldschool.prm")
+	{
+		# Copy the oldschool.prm file to clientdir
+		rsu::files::copy::print_cp($cwd."/share/prms/oldschool.prm", $clientdir."/share/prms/oldschool.prm");
+	}
+	# If addons_updater.conf do not exist
+	if (!-e "$clientdir/share/configs/addons_updater.conf")
+	{
+		# Copy the oldschool.prm file to clientdir
+		rsu::files::copy::print_cp($cwd."/share/configs/addons_updater.conf", $clientdir."/share/configs/addons_updater.conf");
+	}
+	
+	# Add a newline for tidyness
+	print "\n";
+}
+
+# Require the files IO module
+require rsu::files::IO;
+
+# Read from the config file to find out which newschannel the user wants
+my $newschannel = rsu::files::IO::readconf("newschannel", "runescape", "settings.conf");
 
 #---------------------------------------- *** ----------------------------------------
 #---------------------------------------- *** ----------------------------------------
@@ -291,8 +387,18 @@ sub set_layout
 		# Make an empty newspage
 		make_newspage($self);
 		
-		# Fetch rssfeed
-		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+		# If the newschannel is oldschool
+		if ($newschannel =~ /oldschool/)
+		{
+			# Fetch rssfeed for oldschool
+			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss?oldschool=true");
+		}
+		# Else
+		else
+		{
+			# Fetch rssfeed for oldschool
+			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+		}
 	}
 	
 	# Add the sizers and panels together to form the layout
@@ -719,6 +825,34 @@ sub fetch_rssnews
 		my $newspage = "<html>
 	<body bgcolor=\"#222222\">";
 	
+		# If the rssfeed is the oldschool news
+		if ($rssnews{'title'} =~ /oldschool/i)
+		{
+			# Add the rssfeed title to the page and a link to switch to the other rssfeed
+			$newspage = "$newspage
+		<table width=100% valign=top>
+			<td>
+					<font color=#E8B13F size=+1>$rssnews{'title'}</font>
+			</td>
+			<td valign=top>
+					<div align=right><a href='news://runescape'><font color=#E8B13F size=0>View RuneScape News</font></a></div>
+			</td>
+		</table>";
+		}
+		else
+		{
+			# Add the rssfeed title to the page and a link to switch to the other rssfeed
+			$newspage = "$newspage
+		<table width=100% valign=top>
+			<td>
+					<font color=#E8B13F size=+1>$rssnews{'title'}</font>
+			</td>
+			<td valign=top>
+					<div align=right><a href='news://oldschool'><font color=#E8B13F size=0>View OldSchool News</font></a></div>
+			</td>
+		</table>";
+		}
+	
 		# For each value in the array
 		foreach my $item (@{$rssnews{'item'}})
 		{
@@ -871,8 +1005,21 @@ sub refreshnews_clicked
 	# Print debug information
 	print "User requested to refresh the newsfeed!\nRefreshing the newsfeed now!\n\n";
 	
-	# Refresh the rssfeed
-	fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+	# Get the current newschannel
+	$newschannel = rsu::files::IO::readconf("newschannel","runescape","settings.conf");
+	
+	# If the current newschannel is oldschool
+	if ($newschannel =~ /oldschool/)
+	{
+		# Refresh the rssfeed for oldschool
+		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss?oldschool=true");
+	}
+	# Else
+	else
+	{
+		# Refresh the rssfeed for runescape
+		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+	}
 }
 
 #
@@ -884,11 +1031,39 @@ sub hyperlink_clicked
 	# Get pointers
 	my ($self, $event) = @_;
 	
-	# Print debug information
-	print "Clicked on link: ".$event->GetLinkInfo()->GetHref()."\nOpening link in the default Web Browser\n\n";
+	# Get the call (link)
+	my $call = $event->GetLinkInfo()->GetHref();
 	
-	# Open the hyperlink url in the default web browser
-	Wx::LaunchDefaultBrowser($event->GetLinkInfo()->GetHref());
+	# If the call is a news call
+	if ($call =~ /^news:\/\//)
+	{
+		# If the call is for the oldschool news
+		if ($call =~ /^news:\/\/oldschool/)
+		{
+			# Refresh the rssfeed with oldschool news
+			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss?oldschool=true");
+			
+			# Set the newschannel to oldschool in settings
+			rsu::files::IO::writeconf("_", "newschannel", "oldschool", "settings.conf");
+		}
+		# Else if the call is for the runescape news
+		elsif ($call =~ /^news:\/\/runescape/)
+		{
+			# Refresh the rssfeed with RuneScape news
+			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+			
+			# Set the newschannel to oldschool in settings
+			rsu::files::IO::writeconf("_", "newschannel", "runescape", "settings.conf");
+		}
+	}
+	else
+	{
+		# Print debug information
+		print "Clicked on link: ".$event->GetLinkInfo()->GetHref()."\nOpening link in the default Web Browser\n\n";
+	
+		# Open the hyperlink url in the default web browser
+		Wx::LaunchDefaultBrowser($event->GetLinkInfo()->GetHref());
+	}
 }
 
 #
