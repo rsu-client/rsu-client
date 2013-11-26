@@ -1,3 +1,18 @@
+runescape (4.1.9) precise; urgency=low
+
+  * Added the new rssfeed for oldschool news to the launcher
+    with the ability to change between oldschool and runescape news.
+    Kudos to Jagex for the new rssfeed!
+    
+  * Changed the Dutch option in the settings to German
+    Closes Issue #20
+    
+  * Fixed the issue where runescape.prm would get corrupted on the
+    first launch if the player opened up the settings and saved
+    them before playing.
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 26 Nov 2013 13:43:30 +0200
+
 runescape (4.1.8) precise; urgency=low
 
   * Redesigned the addons tab in the launcher to
