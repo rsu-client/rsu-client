@@ -240,8 +240,12 @@ sub windows_main
 	# Split the clientdir path into sections so we can get the parent folder name (so we can get a window icon)
 	my @parentfolder = split /(\\|\/)/, $rsu_data->clientdir;
 	
-	# Run the java auto optimizer
-	$win32javabin = rsu::java::optimizer::run("\"$win32javabin\"", $params);
+	# If optimization of java is enabled
+	if ($rsu_data->optimizejava =~ /^(true|1)$/i)
+	{
+		# Run the java auto optimizer
+		$win32javabin = rsu::java::optimizer::run("\"$win32javabin\"", $params);
+	}
 	
 	# Set the cachedir location
 	$win32javabin = "$win32javabin -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
@@ -275,13 +279,23 @@ sub checkcompabilitymode
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
 		# Make a variable containing the launch code
-		my $launchline = "cd \"".$rsu_data->cwd."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\" -cp $params /share/img && exit\"";
+		my $launchline = "cd \"".$rsu_data->cwd."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\"";
+		
+		# If optimization of java is enabled
+		if ($rsu_data->optimizejava =~ /^(true|1)$/i)
+		{
+			# Run the java auto optimizer
+			$launchline = rsu::java::optimizer::run("$launchline", $params);
+		}
+		
+		# Finish the launch code
+		$launchline = "$launchline -cp $params /share/img && exit\"";
 		
 		# Tell what we are doing
 		print "Launching the client through wine with this command:\n$launchline\n\n";
 		
 		# Launch client through wine
-		runjar("cd \"".$rsu_data->cwd."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\" -cp $params /share/img && exit\"");
+		runjar("$launchline");
 		
 		# Once the client is closed we need to do some cleanup (bug when running commands through shell to wine cmd
 		# Make a variable to contain the pids of cmd (from wine)
