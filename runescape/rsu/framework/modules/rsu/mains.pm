@@ -274,8 +274,14 @@ sub checkcompabilitymode
 		# Parse the prm file
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
+		# Make a variable containing the launch code
+		my $launchline = "cd \"".$rsu_data->cwd."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\" -cp $params /share/img && exit\"";
+		
+		# Tell what we are doing
+		print "Launching the client through wine with this command:\n$launchline\n\n";
+		
 		# Launch client through wine
-		system "cd \"".$rsu_data->cwd."/\" && wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"".$rsu_data->cachedir."\" -cp $params /share/img && exit\"";
+		runjar("cd \"".$rsu_data->cwd."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\" -cp $params /share/img && exit\"");
 		
 		# Once the client is closed we need to do some cleanup (bug when running commands through shell to wine cmd
 		# Make a variable to contain the pids of cmd (from wine)
