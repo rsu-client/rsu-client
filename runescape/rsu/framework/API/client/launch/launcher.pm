@@ -1882,13 +1882,13 @@ sub get_rsuversion
 sub playoldschool
 {
 	# If we are not on windows
-	if ($OS !~ /MSWin32/)
+	if ($OS =~ /MSWin32/)
 	{
-		# Run the runescape script
-		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --prmfile=oldschool.prm --unixquery &";
+		# Run the runescape executable
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --prmfile=oldschool.prm");
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the runescape oldschool call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape --prmfile=oldschool.prm &";
@@ -1896,8 +1896,8 @@ sub playoldschool
 	# Else
 	else
 	{
-		# Run the runescape executable
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --prmfile=oldschool.prm");
+		# Run the runescape script
+		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --prmfile=oldschool.prm --unixquery &";
 	}
 }
 
@@ -1908,13 +1908,13 @@ sub playoldschool
 sub playnow
 {
 	# If we are not on windows
-	if ($OS !~ /MSWin32/)
+	if ($OS =~ /MSWin32/)
 	{
-		# Run the runescape script
-		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --unixquery &";
+		# Run the runescape executable
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape");
 	}
 	# If we are on Mac OSX
-	if ($OS =~ /darwin/)
+	elsif ($OS =~ /darwin/)
 	{
 		# Run the runescape api call
 		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape &";
@@ -1922,8 +1922,8 @@ sub playnow
 	# Else
 	else
 	{
-		# Run the runescape executable
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape");
+		# Run the runescape script
+		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --unixquery &";
 	}
 }
 
