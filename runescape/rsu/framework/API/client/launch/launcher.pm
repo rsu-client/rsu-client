@@ -1428,7 +1428,14 @@ sub about_credits
 	# Add credits to the object
 	$credits->{writtenby} = "HikariKnight - <rshikariknight\@gmail.com>";
 	$credits->{artworkby} = "none so far";
-	$credits->{contributors} = "Ker Laeda - AUR Repository maintainer \nGarage Punk - forcepulseaudio code \nJmb71 - findjavalib regex \nEthoxyethaan - original launch script for Linux \nFallen_Unia - Zenity support in the Updater\nKalio - Portable jagexcache";
+	$credits->{contributors} = "Ker Laeda - AUR Repository maintainer
+	Garage Punk - forcepulseaudio code
+	Jmb71 - findjavalib regex
+	Ethoxyethaan - original launch script for Linux
+	Fallen_Unia - Zenity support in the Updater
+	Kalio - Portable jagexcache
+	Jagex Ltd - Releasing the official client as opensource
+	RS Linux Community - Built up from their ideas";
 	
 	# Make the dialog window
 	$credits->{dialog} = Wx::Dialog->new(undef, -1, "Credits");
@@ -2047,7 +2054,7 @@ sub about_FALLBACK
     $info->SetDescription( 'The Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows' );
     $info->SetCopyright( '(c) 2011-2013 HikariKnight' );
     $info->SetWebSite( 'https://github.com/HikariKnight/rsu-client', 'Get the sourcecode from GitHub.com' );
-    $info->SetDevelopers( ['HikariKnight - Main developer <rshikariknight@gmail.com>', 'Ker Laeda - AUR Repository maintainer', 'Garage Punk - forcepulseaudio code', 'Jmb71 - findjavalib regex', 'Ethoxyethaan - original launch script for Linux', 'Fallen_Unia - Zenity support in the Updater', 'Kalio - Portable jagexcache' ] );
+    $info->SetDevelopers( ['HikariKnight - Main developer <rshikariknight@gmail.com>', 'Ker Laeda - AUR Repository maintainer', 'Garage Punk - forcepulseaudio code', 'Jmb71 - findjavalib regex', 'Ethoxyethaan - original launch script for Linux', 'Fallen_Unia - Zenity support in the Updater', 'Kalio - Portable jagexcache', 'Jagex - Releasing the official client as opensource', 'RS Linux Community - Built up from their ideas' ] );
     $info->SetLicense("GNU General Public License Version2
 Copyright (C) 2011-2013  HikariKnight
 

@@ -1,3 +1,16 @@
+runescape (4.2.0) precise; urgency=low
+
+  * Performance tweak to the winemode along with debug message
+    showing the launch command before running it.
+    
+  * Moved the winemode execution into the same function as the
+    other launch commands
+    
+  * Made it so that the winemode use the portable cache if
+    the jagexcache is set to be portable.
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 27 Nov 2013 13:50:20 +0200
+
 runescape (4.1.9) precise; urgency=low
 
   * Added the new rssfeed for oldschool news to the launcher
