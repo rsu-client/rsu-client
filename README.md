@@ -24,20 +24,29 @@ __Universal Archive/Zipped versions (If you dont want an installer)__
 
 *__[RuneScape](http://runescape.com) is a registred trademark of [Jagex Ltd](http://jagex.com).__*
 
+Install instructions
+----------
 __Installation on Debian__
+
 1. Add "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu precise main" to your /etc/sources.list
 2. Run the command "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9BA73CFA"
 3. Run the command "sudo apt-get update && sudo apt-get install unix-runescape-client"
 
 __Installation on Ubuntu or Mint__
+
 1. Run the command "sudo apt-add-repository ppa:hikariknight/unix-runescape-client"
 2. Run the command "sudo apt-get update && sudo apt-get install unix-runescape-client"
 
 __Installation on ArchLinux__
+
 1. Run the command "yaourt unix-runescape-client"
 
 __Other Linux systems__
-Please use the bitrock installer or universal archive
+
+Please use the bitrock installer or universal archive.
+The RSU-Client is not officially supported on other Linux systems
+due to the lack of package maintainers for those systems.
+Also the RSU-Client may not work correctly on other Linux systems due to missing packages
 
 
 
