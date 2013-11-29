@@ -30,6 +30,7 @@ package client::launch::updater;
 
 my $windowsurl = "http://www.runescape.com/downloads/runescape.msi";
 my $macurl = "http://www.runescape.com/downloads/runescape.dmg";
+my $jarurl = "http://www.runescape.com/downloads/jagexappletviewer.jar";
 my $updateurl = "https://github.com/HikariKnight/rsu-client/archive/rsu-api-latest.tar.gz";
 
 # Be strict to avoid messy code
@@ -250,18 +251,27 @@ sub create_button_list
 	# If we are on Windows
 	if ($OS =~ /MSWin32/)
 	{
+		# Generate an update entry for jar file
+		generate_update_entry($self, "jar", "Download just the jagexappletviewer.jar\ndirectly from the RuneScape Download page (Recommended)");
+		
 		# Generate an update entry for windows
 		generate_update_entry($self, "msi", "Update jagexappletviewer;$windowsurl;Download and extract the jagexappletviewer.jar from the Official Windows Client (from Jagex)");
 	}
 	# Else if we are on mac
 	elsif($OS =~ /darwin/)
 	{
+		# Generate an update entry for jar file
+		generate_update_entry($self, "jar", "Download just the jagexappletviewer.jar\ndirectly from the RuneScape Download page (Recommended)");
+		
 		# Generate an update entry for mac
 		generate_update_entry($self, "dmg", "Update jagexappletviewer;$macurl;Download and extract the jagexappletviewer.jar from the Official Mac Client (from Jagex)");
 	}
 	# Else (we are on linux or some other unix)
 	else
 	{
+		# Generate an update entry for jar file
+		generate_update_entry($self, "jar", "Download just the jagexappletviewer.jar\ndirectly from the RuneScape Download page (Recommended)");
+		
 		# Generate an update entry for windows
 		generate_update_entry($self, "msi", "Update jagexappletviewer;$windowsurl;Download and extract the jagexappletviewer.jar from\nthe Official Windows Client (from Jagex)");
 		
@@ -430,7 +440,7 @@ sub update_clicked
 	make_path("$clientdir/.download");
 	
 	# If the caller was the dmg or msi button
-	if ($caller =~ /^(msi|dmg)$/)
+	if ($caller =~ /^(msi|dmg|jar)$/)
 	{
 		# Get the location to store the jar file
 		my $jardir = rsu::files::IO::readconf("jardir", "bin", "updater.conf", "$resourcedir/configs");
@@ -440,6 +450,13 @@ sub update_clicked
 		{
 			# Launch the client downloader in a new process for extra resources for this task
 			system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.client $jardir $caller");
+			
+			# If the msi got requested
+			if ($caller =~ /^msi$/)
+			{
+				# Download the jar directly too as it is more crossplatform compatable
+				system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.client $jardir jar");
+			}
 		}
 		# Else if we are on mac osx
 		elsif ($OS =~ /darwin/)
@@ -452,6 +469,13 @@ sub update_clicked
 		{
 			# Launch the client downloader in a new process for extra resources for this task
 			system ("\"$cwd/rsu/rsu-query\" rsu.download.client $jardir $caller");
+			
+			# If the msi got requested
+			if ($caller =~ /^msi$/)
+			{
+				# Download the jar directly too as it is more crossplatform compatable
+				system ("\"$cwd/rsu/rsu-query\" rsu.download.client $jardir jar");
+			}
 		}
 		
 		# Show a message that we are done

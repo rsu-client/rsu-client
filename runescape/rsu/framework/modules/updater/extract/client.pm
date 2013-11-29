@@ -108,6 +108,22 @@ sub dmgextract
 #---------------------------------------- *** ----------------------------------------
 #
 
+sub jarextract 
+{
+	# Get the passed data
+	my ($placejar) = @_;
+	
+	# Make the location to place the jar file
+	make_path("$clientdir/$placejar");
+	
+	# Copy the jagexappletviewer.jar to $placejar
+	rsu::files::copy::print_cp("$clientdir/.download/jagexappletviewer.jar", "$clientdir/$placejar");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
 sub p7zip_msi
 {
 	# Get the passed data
