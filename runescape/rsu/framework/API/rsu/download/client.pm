@@ -7,18 +7,18 @@ if ("@ARGV" =~ /\s+help(|\s+)/i)
 	print "API call to download the RuneScape client and extract it
 Syntaxes (parts with [ infront of them are optional):
 	$ARGV[0] help
-	$ARGV[0] [\"jardir\" [dmg|msi
+	$ARGV[0] [\"jardir\" [dmg|msi|jar
 	
 DEFAULTS:
 	jardir = bin
 	
-	# Linux Only
-	dmg|msi = Depends on system
+	# Which client to download
+	dmg|msi|jar = dmg is not on windows and msi is not on mac
 	
 	# Platform defaults
-	Windows = msi (no support for dmg)
-	MacOSX = dmg (no support for msi)
-	Linux = msi (unless dmg is requested)
+	Windows = jar (no support for dmg)
+	MacOSX = jar (no support for msi)
+	Linux = jar (unless dmg is requested)
 	
 NOTES:
 	The msi|dmg parameter is Linux only.
@@ -72,14 +72,20 @@ else
 	# Require the download API
 	require updater::download::file;
 	
-	# Make a variable to contain the download url
-	my $url = "http://www.runescape.com/downloads/runescape.msi";
+	# Make a variable to contain the download url for the jar file directly
+	my $url = "http://www.runescape.com/downloads/jagexappletviewer.jar";
 	
 	# If we are on Mac or we are on linux and dmg is passed
-	if (($OS =~ /darwin/) || ($OS =~ /linux/ && defined $ARGV[1] && $ARGV[1] =~ /^dmg$/i) || ($OS =~ /linux/ && defined $ARGV[2] && $ARGV[2] =~ /^dmg$/i))
+	if (($OS =~ /(linux|darwin)/ && defined $ARGV[1] && $ARGV[1] =~ /^dmg$/i) || ($OS =~ /(linux|darwin)/ && defined $ARGV[2] && $ARGV[2] =~ /^dmg$/i))
 	{
 		# Download the dmg file instead
 		$url = "http://www.runescape.com/downloads/runescape.dmg";
+	}
+	# Else If we are on Windows or we are on linux and msi is passed
+	elsif (($OS =~ /(linux|MSWin32)/ && defined $ARGV[1] && $ARGV[1] =~ /^msi$/i) || ($OS =~ /(linux|MSWin32)/ && defined $ARGV[2] && $ARGV[2] =~ /^msi$/i))
+	{
+		# Download the dmg file instead
+		$url = "http://www.runescape.com/downloads/runescape.msi";
 	}
 	
 	# Split the url by /
@@ -139,6 +145,12 @@ sub extractclient
 	{
 		# Run the dmgextract function
 		updater::extract::client::dmgextract($placejar);
+	}
+	# Else if filename is runescape.dmg and we are not on Windows
+	elsif($filename =~ /jagexappletviewer.jar/)
+	{
+		# Run the dmgextract function
+		updater::extract::client::jarextract($placejar);
 	}
 	
 	# Remove the download directory

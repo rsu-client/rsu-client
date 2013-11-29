@@ -1,3 +1,15 @@
+runescape (4.2.1) precise; urgency=low
+
+  * Added option to download the jagexappletviewer.jar
+    directly (thank you Mod Philip!)
+    
+  * Updated the message in the updater
+  
+  * Made the jar file the default client download on all
+    platforms
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 29 Nov 2013 19:11:20 +0200
+
 runescape (4.2.0) precise; urgency=low
 
   * Performance tweak to the winemode along with debug message

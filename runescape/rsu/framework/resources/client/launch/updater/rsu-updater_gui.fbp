@@ -20,8 +20,10 @@
         <property name="path">.</property>
         <property name="precompiled_header"></property>
         <property name="relative_path">1</property>
+        <property name="skip_lua_events">1</property>
         <property name="skip_php_events">1</property>
         <property name="skip_python_events">1</property>
+        <property name="ui_table">UI</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
         <object class="Frame" expanded="1">
@@ -263,7 +265,6 @@
                                     <event name="OnSize"></event>
                                     <event name="OnUpdateUI"></event>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">Client Updater</property>
                                         <property name="select">0</property>
                                         <object class="wxPanel" expanded="1">
@@ -384,7 +385,7 @@
                                                         <property name="gripper">0</property>
                                                         <property name="hidden">0</property>
                                                         <property name="id">wxID_ANY</property>
-                                                        <property name="label">Due to Legal Reasons the file jagexappletviewer.jar is not&#x0A;available/downloadable in certain locations. For this client&#x0A;to work you must be able to download the&#x0A;Official RuneScape Clients so we can extract the jagexappletviewer.jar!&#x0A;</property>
+                                                        <property name="label">For this client to work you must be able to download the Official RuneScape Client.&#x0A;NOTE: It does not matter which one you choose unless you choose&#x0A;to run the client in winemode, in that case you must use the files from the Windows Client</property>
                                                         <property name="max_size"></property>
                                                         <property name="maximize_button">0</property>
                                                         <property name="maximum_size"></property>
@@ -535,7 +536,6 @@
                                         </object>
                                     </object>
                                     <object class="notebookpage" expanded="1">
-                                        <property name="bitmap"></property>
                                         <property name="label">Addon Updater</property>
                                         <property name="select">0</property>
                                         <object class="wxPanel" expanded="1">

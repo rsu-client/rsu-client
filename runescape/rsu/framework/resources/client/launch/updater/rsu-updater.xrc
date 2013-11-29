@@ -36,7 +36,7 @@
 										<border>5</border>
 										<object class="wxStaticText" name="legalnote">
 											<style>wxALIGN_CENTRE</style>
-											<label>Due to Legal Reasons the file jagexappletviewer.jar is not\navailable/downloadable in certain locations. For this client\nto work you must be able to download the\nOfficial RuneScape Clients so we can extract the jagexappletviewer.jar!\n</label>
+											<label>For this client to work you must be able to download the Official RuneScape Client.\nNOTE: It does not matter which one you choose unless you choose\nto run the client in winemode, in that case you must use the files from the Windows Client</label>
 											<wrap>-1</wrap>
 										</object>
 									</object>
