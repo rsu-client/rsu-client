@@ -223,6 +223,7 @@ sub set_layout
 	$self->{addongrid}->FitInside($self->{addonlist});
 	
 	# Set minimum size and maximum size of the window
+	$self->SetSize(680,400);
 	$self->SetMinSize($self->GetSize);
 	#$self->SetMaxSize($self->GetSize);
 	
