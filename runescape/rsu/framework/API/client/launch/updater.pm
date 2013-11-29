@@ -454,7 +454,7 @@ sub update_clicked
 			# If the msi got requested
 			if ($caller =~ /^msi$/)
 			{
-				# Download the jar directly too as it is more crossplatform compatable
+				# Download the jar directly too as it is more crossplatform compatible
 				system ("\"$cwd/rsu/rsu-query.exe\" rsu.download.client $jardir jar");
 			}
 		}
@@ -473,7 +473,7 @@ sub update_clicked
 			# If the msi got requested
 			if ($caller =~ /^msi$/)
 			{
-				# Download the jar directly too as it is more crossplatform compatable
+				# Download the jar directly too as it is more crossplatform compatible
 				system ("\"$cwd/rsu/rsu-query\" rsu.download.client $jardir jar");
 			}
 		}
