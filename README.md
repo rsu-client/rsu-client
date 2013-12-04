@@ -28,9 +28,10 @@ Install instructions
 ----------
 __Installation on Debian__
 
-1. Add "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu precise main" to your /etc/sources.list
-2. Run the command "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9BA73CFA"
-3. Run the command "sudo apt-get update && sudo apt-get install unix-runescape-client"
+1. Open the terminal and type in the following commands.
+<pre>echo "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu precise main" | sudo tee -a /etc/apt/sources.list
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9BA73CFA
+sudo apt-get update && sudo apt-get install unix-runescape-client</pre>
 
 __Installation on Ubuntu or Mint__
 
