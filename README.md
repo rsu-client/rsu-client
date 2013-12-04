@@ -42,7 +42,8 @@ __Installation on Ubuntu or Mint__
 
 __Installation on ArchLinux__
 
-1. Run the command "yaourt unix-runescape-client"
+1. Open the Terminal program and type in the following command
+<pre>yaourt unix-runescape-client</pre>
 
 __Other Linux systems__
 
