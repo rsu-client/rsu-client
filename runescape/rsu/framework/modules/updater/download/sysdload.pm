@@ -59,6 +59,40 @@ sub sysdownload
 sub readurl
 {
 	# Get the passed data
+	my ($url, $max_time) = @_;
+	
+	# Load the HTTP::Tiny module
+	use HTTP::Tiny;
+	
+	# Set the timeout in seconds
+	my $timeout = 10;
+	$timeout = $max_time if defined $max_time;
+	
+	# If the url starts with https
+	if ($url =~ /^https/)
+	{
+		# Use the old readurl function
+		my $response = readurl_https($url,$timeout);
+		
+		# Return the content
+		return $response;
+	}
+	else
+	{
+		# Make a new http object
+		my $http = HTTP::Tiny->new(timeout => $timeout, verify_SSL => "false");
+		
+		# Make a variable to contain the http response
+		my $response = $http->get($url);
+		
+		# Return the content
+		return $response->{content};
+	}
+}
+
+sub readurl_https
+{
+	# Get the passed data
 	my ($url, $timeout) = @_;
 	
 	# Get the current OS
