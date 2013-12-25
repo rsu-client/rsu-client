@@ -3,6 +3,28 @@
 # Be strict to avoid messy code
 use strict;
 
+BEGIN {
+	if("@ARGV" =~ /\s--version$/) {
+		# ideally more detailed information could be display for -v
+		# such as, dependencies for the client.
+		my $scriptversion = "4.2.1";
+		print"runescape unix client $scriptversion\n".
+		"Copyright (C) 2011-2013 HikariKnight\n".
+		"This is free software; see the source for copying conditions.\n".  
+		"See the GNU General Public License for more details.\n\n";
+		exit();
+	}elsif("@ARGV" =~ /\s--help$/) {
+		print "Usage: runescape [option]\n".
+		"Options:\n".
+		"--help             Display this information\n".
+		"--version          Display the version of this launcher\n".
+		"--verbose:<arg>    Display java output during run\n".
+		"    <arg>          jni | gc | class\n".
+		"                   --verbose:<arg> --verbose:<arg> is valid\n".
+		"--compabilitymode  Launch using wine\n";
+		exit();
+	}
+}
 # Include the byte encryption so that the script will work on all localizations of windows or other systems
 # Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
 use Encode::Byte;
@@ -260,4 +282,3 @@ sub fallbackmode
 #
 #---------------------------------------- *** ----------------------------------------
 #
-

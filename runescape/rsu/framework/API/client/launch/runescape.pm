@@ -1,4 +1,6 @@
+#!/usr/bin/perl -w
 package client::launch::runescape;
+
 #
 #    The main script of the rsu-client, this takes care of overhead stuff
 #    Copyright (C) 2011-2013  HikariKnight
@@ -35,11 +37,6 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "4.2.1";
-
-# Before starting show runescape script version
-print "RuneScape Unix Client script version $scriptversion\n\n";
-
 # Use the File::Path module
 use File::Path qw(make_path remove_tree);
 
@@ -62,12 +59,9 @@ $rsu_data->create_mutator(qw(version OS cwd clientdir javabin javaversion HOME a
 
 # Add clientdir data to the data container
 $rsu_data->clientdir = rsu::files::clientdir::getclientdir();
+
 # Add cwd data to the data container
 $rsu_data->cwd = $cwd;
-# Add scriptversion to the data container
-$rsu_data->version = $scriptversion;
-# Add all the arguments passed to the script to the data container
-$rsu_data->args = "@ARGV";
 
 # Detect the current OS and add it to the data container
 $rsu_data->OS = "$^O";
@@ -79,43 +73,6 @@ $rsu_data->HOME = client::env::home();
 
 # Make a variable to contain the location of the homefolder for use later in the script
 my $HOME = $rsu_data->HOME;
-
-# If --version was provided then print out the version info
-if ($rsu_data->args =~ /--version/)
-{
-	# Version is now printed at the start of the script so just exit instead
-	#print "RuneScape UNIX Client Script version: $scriptversion\n";
-	exit;
-}
-elsif ($rsu_data->args =~ /--help/)
-{
-	# Display the help text
-	print "Run the \"runescape\" without any parameters to launch the client normally.
-There are however some parameters you can use to alter
-the behaviour of the script.
-   Launch client by using java from wine: 
-     runescape --compabilitymode
-	
-VERBOSE MODES (warning!: outputs alot of text):
-   Make java display full verbose output: 
-     runescape --verbose
-	
-   Make java display selected verbose outputs (jni, gc and class verbose)
-      runescape --verbose:jni
-      runescape --verbose:gc
-      runescape --verbose:class
-   
-   All 3 of the above verbose modes can be used together like this.
-      runescape --verbose:gc --verbose:jni
-		
-   Save verbose output to a file:
-   Simply add \"&> \$HOME/verbose.txt\" at the end of the command like this.
-      runescape --verbose &> \$HOME/verbose.txt
-      runescape --verbose:class --verbose:jni &> \$HOME/verbose.txt
-      
-   The file verbose.txt in your homefolder will then contain all the output.\n";
-	exit;	
-}
 
 # If this script have been installed systemwide
 if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
