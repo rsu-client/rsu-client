@@ -26,7 +26,7 @@ eval "use Wx::WebView"; print STDERR "WARNING: Wx::WebView module not found, API
 eval "use LWP::Simple"; print STDERR "WARNING: LWP::Simple module not found, API calls using LWP::Simple will either use alternative methods\n\n" if $@ && "@ARGV" !~ /--unixquery/;
 
 # Include the byte encryption so that the script will work on all localizations of windows or other systems
-# Odd i know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
+# OddsIsknow, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
 use Encode::Byte;
 
 # Include List::MoreUtils, IO::Stringy and Config::IniFiles for proper config filehandling

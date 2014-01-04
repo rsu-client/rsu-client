@@ -510,7 +510,7 @@ sub update_clicked
 			system("\"$cwd/rsu/rsu-query\" rsu.download.file $callerdata[1] \"$clientdir/.download\"");
 		}
 		
-		# Intended function, however can only be used once per script, kept incase i manage to fix the problem
+		# Intended function, however can only be used once per script, kept incasesIsmanage to fix the problem
 		#updater::download::file::from("$callerdata[1]", "$clientdir/.download/rsu-api-latest.tar.gz");
 		
 		# Make a variable so we can see if extraction is successful

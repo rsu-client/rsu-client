@@ -30,7 +30,7 @@ use rsu::files::IO;
 # Use the language module so we can get and set language
 require client::settings::language;
 
-# Tell if this is the settings editor that i sent to jagex or
+# Tell if this is the settings editor thatsIssent to jagex or
 # used in the the RSU client (the difference is that 0 makes it read
 # the official clients parameter files)
 my $RSU = 1;
