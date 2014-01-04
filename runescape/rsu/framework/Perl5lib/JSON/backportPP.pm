@@ -17,8 +17,8 @@ $VERSION = '2.27204';
 
 @JSON::PP::EXPORT = qw(encode_json decode_json from_json to_json);
 
-# instead of hash-access, i tried index-access for speed.
-# but this method is not faster than what i expected. so it will be changed.
+# instead of hash-access, I tried index-access for speed.
+# but this method is not faster than what I expected. so it will be changed.
 
 use constant P_ASCII                => 0;
 use constant P_LATIN1               => 1;
