@@ -82,29 +82,17 @@ sub install_desktop_files
 		# Get the file content
 		my $content = `cat $desktopfiles[$desktopcounter]`;
 		
+		# Replace Icon= with Icon={PATH TO ICONS}
+		$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
+			
+		# Replace Exec= with Exec={PATH TO BINARY}
+		$content =~ s/Exec=/Exec=$cwd\//;
+			
+		# Fix parts using xterm
+		$content =~ s/Exec=$cwd\/xterm/Exec=xterm/;
+
 		# Edit the desktop file correctly for system install
-		if ($isroot =~ /root/)
-		{
-			# Replace Icon= with Icon={PATH TO ICONS}
-			$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
-			
-			# Replace Exec= with Exec={PATH TO BINARY}
-			$content =~ s/Exec=/Exec=$cwd\//;
-			
-			# Fix parts using xterm
-			$content =~ s/Exec=$cwd\/xterm/Exec=xterm/;
-		}
-		# else if local install then edit the file for that
-		else
-		{
-			# Replace Icon= with Icon={PATH TO ICONS}
-			$content =~ s/Icon=/Icon=$cwd\/share\/img\//;
-			
-			# Replace Exec= with Exec={PATH TO BINARY}
-			$content =~ s/Exec=/Exec=$cwd\//;
-			
-			# Fix parts using xterm
-			$content =~ s/Exec=$cwd\/xterm/Exec=xterm/;
+		if ($isroot !~ /root/){	
 			$content =~ s/update-runescape-client/$cwd\/update-runescape-client/;
 		}
 		
@@ -133,20 +121,16 @@ sub install_desktop_files
 		$desktopcounter += 1;
 	}
 	
-	if ($isroot =~ /root/)
+	# If Wx is able to be loaded
+	if ($wxloaded eq '1')
 	{
-		# If Wx is able to be loaded
-		if ($wxloaded eq '1')
+		if ($isroot =~ /root/)
 		{
 			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
 			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/runescape-oldschool.desktop';
 			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" /usr/share/applications/runescape-update-client.desktop';
 		}
-	}
-	else
-	{
-		# If Wx is able to be loaded
-		if ($wxloaded eq '1')
+		else
 		{
 			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
 			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-oldschool.desktop';
