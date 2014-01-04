@@ -3,5 +3,4 @@
 -Xmx512m
 -Xss2m
 -Dsun.java2d.noddraw=true
-
 jagexappletviewer
