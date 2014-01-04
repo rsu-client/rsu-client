@@ -190,7 +190,7 @@ runescape (4.0.4) precise; urgency=low
     to the java binary when launched (it will not overwrite your parameters 
     from the .prm if they already exist there), if you want to be able to 
     disable automatic optimizations then please poke me on the RuneScape forums
-    or on github andsIswill make an option for it :)
+    or on github and I will make an option for it :)
   * Fixed the issue of loading repositories on windows in the updater
   * Added timeouts for fetching news (5-10 sec timeout) so it does no longer
     try to constantly load them if the rssfeed is down.
@@ -399,7 +399,7 @@ runescape (3.8.2) maverick; urgency=high
   * Updated the rsu-settings gui to be more userfriendly
   * Added support for clearing the jagexcache through rsu-settings
   * Added support for clearing the BETA jagexcache through rsu-settings
-  * Final release for Ubuntu10.10 maverick (becausesIshad to fix 
+  * Final release for Ubuntu10.10 maverick (because I had to fix 
     the .desktop file for the application menu this got delayed to this
     release)
 
@@ -445,7 +445,7 @@ runescape (3.5-0) maverick; urgency=high
     It is however not required in order to run.
     The rsu-settings script is known to work on Linux, Windows and Mac
     
-  * Updated the perl binariessIshave to distribute to Windows users.
+  * Updated the perl binaries I have to distribute to Windows users.
     The new version is perl-5.14.2
     
   * Created a perl binary bundle which MacOSX users needs to download
@@ -556,7 +556,7 @@ runescape (3.1-0) lucid; urgency=low
   * Improved the unix_findlibrarypath function (BIG THANKS TO Jmb71 FOR THE NEW REGEX!)
 
   * AUR package will be released in the very near future (BIG THANKS TO Ker Laeda FOR THAT!)
-    assIsdo not have Arch Linux, Ker Laeda have helped me a lot with the testing and preparations
+    as I do not have Arch Linux, Ker Laeda have helped me a lot with the testing and preparations
     for the client to be distributed from a repository
     
   * Documentation.txt will be discontinued and the script themselves will
@@ -594,7 +594,7 @@ runescape (2.8-1) lucid; urgency=low
   * Made the update-runescape-client ASK if it is ok to download and compile
     p7zip-full if it is not detected, this was done by request from one of the
     players who were concerned that it happened without permission.
-    I guesssIsfocused so much on compability thatsIsforgot my manners.
+    I guess I focused so much on compability that I forgot my manners.
     I am sorry that it happened, hope you all can forgive me :)
     
   * update-runescape-client script now gives more info if the 7z binary is not found,
@@ -603,7 +603,7 @@ runescape (2.8-1) lucid; urgency=low
  -- HikariKnight <mu.antilag@gmail.com>  Wed, 04 Jun 2012 12:01:02 +0200
 
 runescape (2.8-0) lucid; urgency=low
-  * Fixed a glitch in readconf function in the runescape script wheresIshad
+  * Fixed a glitch in readconf function in the runescape script where I had
     forgotten to consider the different line endings :P
     line 597
     from: my @settings = split /\n/, "@$confcontent";

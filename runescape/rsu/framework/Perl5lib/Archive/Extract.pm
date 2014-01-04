@@ -664,7 +664,7 @@ sub have_old_bunzip2 {
         }
 
         ### XXX figure out how to make IPC::Run do this in one call --
-        ### currentlysIsdon't know how to get output of a command after a pipe
+        ### currently I don't know how to get output of a command after a pipe
         ### trapped in a scalar. Mailed barries about this 5th of june 2004.
 
         ### see what command we should run, based on whether

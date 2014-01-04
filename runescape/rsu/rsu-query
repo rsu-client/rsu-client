@@ -4,7 +4,7 @@
 use strict;
 
 # Include the byte encryption so that the script will work on all localizations of windows or other systems
-# OddsIsknow, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
+# Odd I know, but it is caused by the windows codepages (like chcp 1252 which is scandinavian)
 use Encode::Byte;
 
 # Include the module for extracting archives
