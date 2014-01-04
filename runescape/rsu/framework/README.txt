@@ -65,14 +65,14 @@ A:	It is bridging the query over to the actual rsu-query which comes in 2 versio
 	script will warn the user that the GUI scripts might not work and it will tell
 	if the Wx modules are missing)
 
-Q:	Can i force the rsu-query to use the faster perl script version if i
+Q:	Can I force the rsu-query to use the faster perl script version if i
 	know the system got everything needed for the api call?
 A:	Yes you can, just pass --unixquery as the last parameter in the call.
 	This will force the query to be done in the system installed perl
 	and it will not print to STDERR that it is running in fallback mode.
 	
 Q:	Will you ever ditch perl and move over to "insert programming/script language here"
-A:	No, perl is very easy to code in and i can do several things easier than on other
+A:	No, perl is very easy to code in and I can do several things easier than on other
 	languages. I do however know that Fallen_Unia is porting the client to C so you can
 	check that out.
 	

@@ -90,31 +90,15 @@ if ($rsu_data->args =~ /--version/)
 elsif ($rsu_data->args =~ /--help/)
 {
 	# Display the help text
-	print "Run the \"runescape\" without any parameters to launch the client normally.
-There are however some parameters you can use to alter
-the behaviour of the script.
-   Launch client by using java from wine: 
-     runescape --compabilitymode
-	
-VERBOSE MODES (warning!: outputs alot of text):
-   Make java display full verbose output: 
-     runescape --verbose
-	
-   Make java display selected verbose outputs (jni, gc and class verbose)
-      runescape --verbose:jni
-      runescape --verbose:gc
-      runescape --verbose:class
-   
-   All 3 of the above verbose modes can be used together like this.
-      runescape --verbose:gc --verbose:jni
-		
-   Save verbose output to a file:
-   Simply add \"&> \$HOME/verbose.txt\" at the end of the command like this.
-      runescape --verbose &> \$HOME/verbose.txt
-      runescape --verbose:class --verbose:jni &> \$HOME/verbose.txt
-      
-   The file verbose.txt in your homefolder will then contain all the output.\n";
-	exit;	
+	print "Usage: runescape [option]\n".
+		"Options:\n".
+		"--help             Display this information\n".
+		"--version          Display the version of this launcher\n".
+		"--verbose:<arg>    Display java output during run\n".
+		"    <arg>          jni | gc | class\n".
+		"                   --verbose:<arg> --verbose:<arg> is valid\n".
+		"--compabilitymode  Launch using wine\n";
+		exit();	
 }
 
 # If this script have been installed systemwide

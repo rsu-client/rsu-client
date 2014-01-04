@@ -72,7 +72,7 @@ sub enableprimus
 	else
 	{
 		# Tell users what we are doing
-		print "\nuseprimusrun is enabled, however i did not find primusrun!\nJava will be launched normally!\n\n";
+		print "\nuseprimusrun is enabled, however I did not find primusrun!\nJava will be launched normally!\n\n";
 		
 		# Set the return_value to blank
 		$return_value = "";
