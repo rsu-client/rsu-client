@@ -17,7 +17,7 @@ If you don't want to submit your code on Github, send a message to [RSCommunityT
 
 ## Submitting Changes
 
-- Go into GitHub and submit a [pull request!](http://help.github.com/send-pull-request/) to the *development* branch of the rsu-client repository.
+- Go into GitHub and submit a [pull request!](https://help.github.com/articles/creating-a-pull-request) to the *development* branch of the rsu-client repository.
 - Add any comments about your code before submitting. 
 - Don't forget to add your name or nickname to AUTHORS.md
 
