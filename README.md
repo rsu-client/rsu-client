@@ -95,24 +95,3 @@ Features
 * Script updater! (If you use the tar.gz archive version, it will let you update the scripts through the updater)
 * Module support (Lets you make your own modules to add functionality to the script part of the client Ex: calculators)
 * Works on several architectures (64bit/amd64, 32bit/i386, armel, lpia, arm32, arm64, sparc32, sparc64) - _NOTE: arm support only tested on Linux, as perl is not compiled for arm on windows yet!_
-
-
-Contribution
------------
-If you want to contribute to the project you can do that in several ways.
-Either do a pull request and contribute through that (make sure you only commit to the development branch!)
-
-Or you can send a message with the code on youtube to [RSCommunityTech](http://www.youtube.com/user/RSCommunityTech).
-If you contribute code you can also get your name or nickname in the contributors list below (if you want)
-
-Developers, Contributors and people that have helped the project
------------
-* HikariKnight - _Developer_
-* [ivanpu](https://github.com/ivanpu) - _Aur Repository_
-* chroot - _force pulseaudio_
-* [Ethoxyethaan (nick.hermans.be+rsu@gmail.com)](mailto:nick.hermans.be+rsu@gmail.com) - _original bash script for launching the jagexappletviewer.jar on Linux_
-* Jmb71 - _findjavalib regex_
-* Test6125 - _stacksize fix in prm_
-* [Fallen_Unia](https://github.com/Unia) - _Zenity support in the Updater_
-* Kalio - _Portable jagexcache_
-* [Jagex](http://jagex.com) - _Making the official client and providing the sourcecode (plus adding the rsu client to_ [downloads](http://runescape.com/downloads)_!)_
