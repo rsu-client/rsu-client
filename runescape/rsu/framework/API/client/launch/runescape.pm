@@ -35,7 +35,11 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "4.2.1";
+# Require the module to read the client version
+require rsu::info;
+
+# Get the client version
+my $scriptversion = rsu::info::getVersion();
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";

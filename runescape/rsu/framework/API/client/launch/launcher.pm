@@ -180,6 +180,9 @@ require rsu::files::grep;
 # Require the files IO module
 require rsu::files::IO;
 
+# Require the info module so we can fetch the version number	
+require rsu::info;
+
 sub new
 {
 	# Create a class
@@ -1846,30 +1849,8 @@ sub about_close
 
 sub get_rsuversion
 {
-	# Make a variable to contain the version number
-	my $version;
-	
-	# If we are on windows
-	if ($OS =~ /MSWin32/)
-	{
-		# Launch the runescape script and get the version
-		$version = `"$cwd/rsu/rsu-query" client.launch.runescape --version`;
-	}
-	# If we are on mac osx
-	if ($OS =~ /darwin/)
-	{
-		# Launch the runescape script and get the version
-		$version = `DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin "$cwd/rsu/bin/rsu-query-darwin" client.launch.runescape --version`;
-	}
-	# Else
-	else
-	{
-		# Launch the runescape script and get the version
-		$version = `"$cwd/rsu/rsu-query" client.launch.runescape --version --unixquery`;
-	}
-	
-	# Use regular expression to get only the version number
-	$version =~ s/.+version\s+(\d{1,1}\.\d{1,1}\.\d{1,1})\s?+/$1/;
+	# Get the version number
+	my $version = rsu::info::getVersion();
 	
 	# Return the result
 	return $version;
