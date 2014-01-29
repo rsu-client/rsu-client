@@ -61,7 +61,7 @@ sub parseprmfile
 		if ("$ARGV[0]" !~ /get\.(client|rsu)\./)
 		{
 			# Print debug info
-			print "This is the info i gathered from the ".$prmfile." file\n######## File Start ########\n$prms\n######## File End ########\n\n";
+			print "This is the info I gathered from the ".$prmfile." file\n######## File Start ########\n$prms\n######## File End ########\n\n";
 		}
 	}
 	

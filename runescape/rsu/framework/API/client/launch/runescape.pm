@@ -35,7 +35,11 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "4.2.1";
+# Require the module to read the client version
+require rsu::info;
+
+# Get the client version
+my $scriptversion = rsu::info::getVersion();
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -90,31 +94,15 @@ if ($rsu_data->args =~ /--version/)
 elsif ($rsu_data->args =~ /--help/)
 {
 	# Display the help text
-	print "Run the \"runescape\" without any parameters to launch the client normally.
-There are however some parameters you can use to alter
-the behaviour of the script.
-   Launch client by using java from wine: 
-     runescape --compabilitymode
-	
-VERBOSE MODES (warning!: outputs alot of text):
-   Make java display full verbose output: 
-     runescape --verbose
-	
-   Make java display selected verbose outputs (jni, gc and class verbose)
-      runescape --verbose:jni
-      runescape --verbose:gc
-      runescape --verbose:class
-   
-   All 3 of the above verbose modes can be used together like this.
-      runescape --verbose:gc --verbose:jni
-		
-   Save verbose output to a file:
-   Simply add \"&> \$HOME/verbose.txt\" at the end of the command like this.
-      runescape --verbose &> \$HOME/verbose.txt
-      runescape --verbose:class --verbose:jni &> \$HOME/verbose.txt
-      
-   The file verbose.txt in your homefolder will then contain all the output.\n";
-	exit;	
+	print "Usage: runescape [option]\n".
+		"Options:\n".
+		"--help             Display this information\n".
+		"--version          Display the version of this launcher\n".
+		"--verbose:<arg>    Display java output during run\n".
+		"    <arg>          jni | gc | class\n".
+		"                   --verbose:<arg> --verbose:<arg> is valid\n".
+		"--compabilitymode  Launch using wine\n";
+		exit();	
 }
 
 # If this script have been installed systemwide
@@ -321,6 +309,23 @@ sub parseargs
 	}
 	else
 	{
+		# If arg2find is cachedir
+		if ($arg2find =~ /^cachedir$/)
+		{
+			# If OS is Windows
+			if ($rsu_data->OS =~ /MSWin32/)
+			{
+				# Change it to the windows parameter
+				$arg2find = "win32_$arg2find";
+			}
+			# Else if we are on darwin/MacOSX
+			elsif ($rsu_data->OS =~ /darwin/)
+			{
+				# Change it to the windows parameter
+				$arg2find = "osx_$arg2find";
+			}
+		}
+		
 		# If no parameter that matches is passed then read from settings.conf
 		my $result = rsu::files::IO::readconf("$arg2find", "$default", "settings.conf");
 		

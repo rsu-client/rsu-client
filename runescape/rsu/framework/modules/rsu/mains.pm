@@ -225,6 +225,9 @@ sub windows_main
 		$javalibspath =~ s/\\java.exe//ig;
 	}
 	
+	# Make sure the javabin is quoted
+	$win32javabin = "\"$win32javabin\"";
+	
 	# Get the language setting
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
@@ -232,7 +235,7 @@ sub windows_main
 	print "Launching client using this java version: \n";
 	
 	# Display the java version
-	system "\"$win32javabin\" -version 2>&1";
+	system "$win32javabin -version 2>&1";
 	
 	# Adjust the parameters abit
 	$params =~ s/jagexappletviewer\.jar/bin\/jagexappletviewer\.jar/;
@@ -244,7 +247,7 @@ sub windows_main
 	if ($rsu_data->optimizejava =~ /^(true|1)$/i)
 	{
 		# Run the java auto optimizer
-		$win32javabin = rsu::java::optimizer::run("\"$win32javabin\"", $params);
+		$win32javabin = rsu::java::optimizer::run("$win32javabin", $params);
 	}
 	
 	# Set the cachedir location
@@ -253,7 +256,7 @@ sub windows_main
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
-	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which i dont know why appears
+	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which I dont know why appears
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
 	# Run the jar file

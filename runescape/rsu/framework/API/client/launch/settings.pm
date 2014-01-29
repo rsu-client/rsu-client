@@ -30,7 +30,7 @@ use rsu::files::IO;
 # Use the language module so we can get and set language
 require client::settings::language;
 
-# Tell if this is the settings editor that i sent to jagex or
+# Tell if this is the settings editor that I sent to jagex or
 # used in the the RSU client (the difference is that 0 makes it read
 # the official clients parameter files)
 my $RSU = 1;
@@ -92,10 +92,20 @@ my $preferredjava = rsu::files::IO::readconf("preferredjava", "default-java", "$
 # Read the cachedir setting in the conf file, if nothing is found then use default
 my $cachedir = rsu::files::IO::readconf("cachedir", "default", "$conf_file");
 
-# If we are running on windows then
+# If we are running on Windows then
 if ($OS =~ /MSWin32/)
 {
+	# Get the preferredjava on Windows
 	$preferredjava = rsu::files::IO::readconf("win32java.exe", "default-java", "$conf_file");
+	
+	# Get the cachedir on Windows
+	$cachedir = rsu::files::IO::readconf("win32_cachedir", "default", "$conf_file");
+}
+# Else if we are running on darwin/MacOSX then
+elsif ($OS =~ /darwin/)
+{
+	# Get the cachedir on MacOSX
+	$cachedir = rsu::files::IO::readconf("osx_cachedir", "default", "$conf_file");
 }
 
 # Read from the config file if the user want to force the client to use pulseaudio
@@ -181,6 +191,9 @@ use File::Path qw(make_path remove_tree);
 # Require the client::settings::cache module
 require client::settings::cache;
 
+# Require the rsu::files::dirs module
+require rsu::files::dirs;
+
 sub new
 {
 	# Create a class
@@ -259,6 +272,7 @@ sub set_events
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('close2'), \&close_clicked);
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('saveconf'), \&saveconf_clicked);
 	EVT_CHOICE($self, Wx::XmlResource::GetXRCID('preferredjava'), \&preferredjava_changed);
+	EVT_CHOICE($self, Wx::XmlResource::GetXRCID('cachedir'), \&cachedir_changed);
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('clear_main'), \&delete_maincache);
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('clear_oldschool'), \&delete_oldschoolcache);
 	EVT_BUTTON($self, Wx::XmlResource::GetXRCID('open_clientdir'), \&open_clientdir);
@@ -286,6 +300,7 @@ sub set_events
 	$self->{tab_box1} = $self->FindWindow('tab_box1');
 	$self->{primusmode} = $self->FindWindow('primusmode');
 	$self->{optimizejava} = $self->FindWindow('optimizejava');
+	$self->{customcache} = $self->FindWindow('customcache');
 	
 	# If we are on linux, darwin/mac or windows (which supports addons)
 	#if ($OS =~ /(linux|darwin|MSWin32)/)
@@ -841,8 +856,6 @@ sub writeprmfile
 #---------------------------------------- *** ----------------------------------------
 #
 
-
-
 sub loadconfig
 {
 	# Get the pointers
@@ -850,6 +863,24 @@ sub loadconfig
 	
 	# Set the prmfile to the gui
 	$self->{prmFile}->SetValue("$prmfile");
+	
+	# Get a list of all the prm files and put them in an array
+	my @prmlist = rsu::files::dirs::list("$clientdir/share/prms");
+	
+	# For each value in the array
+	foreach my $prmfilefound(@prmlist)
+	{
+		# Next if filename starts with .
+		next if $prmfilefound =~ /^\./;
+		# Next if filename is runescape.prm, oldschool.prm or runescape-beta.prm
+		next if $prmfilefound =~ /^(runescape|oldschool|runescape-beta)\.prm$/;
+		# Next if filename ends with .example
+		next if $prmfilefound =~ /\.example$/;
+		
+		# Append the file to the combobox
+		$self->{prmFile}->Append("$prmfilefound");
+	}
+	
 	
 	# If forcealsa and forcepulse is enabled
 	if ($forcealsa =~ /true|1/i && $forcepulseaudio =~ /true/i)
@@ -925,6 +956,18 @@ sub loadconfig
 	{
 		# Set the cachedir dropdown to portable
 		$self->{cachedir}->SetSelection(1);
+	}
+	# Else if cachedir is set to custom then
+	elsif ($cachedir =~ /^(\/|[a-z]:)/i)
+	{
+		# Set the cachedir dropdown to custom
+		$self->{cachedir}->SetSelection(2);
+		
+		# Enable the customcache widget
+		$self->{customcache}->Enabled(1);
+		
+		# Set the path to the customcache
+		$self->{customcache}->SetPath("$cachedir");
 	}
 	
 	# If Automatic Java Optimization is disabled  (its enabled by default)
@@ -1235,6 +1278,19 @@ sub delete_maincache
 	# Get the cachedir setting
 	my $cachelocation = rsu::files::IO::readconf("cachedir", "default", "settings.conf");
 	
+	# If we are on Windows
+	if ($OS =~ /MSWin32/)
+	{
+		# Get the cachelocation for Windows
+		$cachelocation = rsu::files::IO::readconf("win32_cachedir", "default", "settings.conf");
+	}
+	# Else if we are on darwin/MacOSX
+	elsif ($OS =~ /darwin/)
+	{
+		# Get the cachelocation for MacOSX
+		$cachelocation = rsu::files::IO::readconf("osx_cachedir", "default", "settings.conf");
+	}
+	
 	# Get the path to the cachedir
 	$cachelocation = client::settings::cache::getcachedir($cachelocation);
 	
@@ -1248,6 +1304,8 @@ sub delete_maincache
 		# Delete the cache
 		remove_dir($self, "$cachelocation/jagexcache/runescape/LIVE", 1);
 		remove_dir($self, "$cachelocation/jagexcache1/runescape/LIVE", 1);
+		remove_dir($self, "$cachelocation/jagexcache/runescape/LIVE_BETA", 1);
+		remove_dir($self, "$cachelocation/jagexcache1/runescape/LIVE_BETA", 1);
 		remove_dir($self, "$cachelocation/.jagex_cache_32", 1);
 		remove_dir($self, "$HOME/.jagex_cache_32", 1);
 		remove_dir($self, "$HOMEDRIVE/.jagex_cache_32", 1);
@@ -1258,6 +1316,7 @@ sub delete_maincache
 	{
 		# Delete the cache
 		remove_dir($self, "$cachelocation/jagexcache/runescape/LIVE", 1);
+		remove_dir($self, "$cachelocation/jagexcache/runescape/LIVE_BETA", 1);
 		remove_dir($self, "$cachelocation/.jagex_cache_32", 1);
 		
 		# If we are on darwin/MacOSX
@@ -1265,6 +1324,7 @@ sub delete_maincache
 		{
 			# The cache can appear on another location so we delete that too
 			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE", 1);
+			remove_dir($self, "$HOME/Library/Caches/jagexcache/runescape/LIVE_BETA", 1);
 		}
 	}
 }
@@ -1340,7 +1400,7 @@ sub preferredjava_changed
 	my ($self, $event) = @_;
 	
 	# If preferredjava is set to custom-java
-	if ($self->{preferredjava}->GetCurrentSelection =~ 3)
+	if ($self->{preferredjava}->GetCurrentSelection =~ /^3$/)
 	{
 		# Enable the filepicker
 		$self->{customjava}->Enable(1);
@@ -1353,6 +1413,32 @@ sub preferredjava_changed
 		
 		# Set the filepicker value to nothing
 		$self->{customjava}->SetPath('');
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub cachedir_changed
+{
+	# Get the pointers
+	my ($self, $event) = @_;
+	
+	# If preferredjava is set to custom-java
+	if ($self->{cachedir}->GetCurrentSelection =~ /^2$/)
+	{
+		# Enable the filepicker
+		$self->{customcache}->Enable(1);
+	}
+	# Else
+	else
+	{
+		# Make sure the filepicker is disabled
+		$self->{customcache}->Enable(0);
+		
+		# Set the filepicker value to nothing
+		$self->{customcache}->SetPath('');
 	}
 }
 
@@ -1375,6 +1461,7 @@ sub saveconf_clicked
 	my $old_win32java = rsu::files::IO::readconf("win32java.exe", "default-java", "settings.conf");
 	my $old_unixjava = rsu::files::IO::readconf("preferredjava", "default-java", "settings.conf");
 	my $cachedir_setting = $self->{cachedir}->GetSelection;
+	my $customcache_setting = $self->{customcache}->GetPath;
 	my $optimizejava_setting = $self->{optimizejava}->GetValue;
 	
 	# Prepare a message that will be shown once all settings are saved
@@ -1473,11 +1560,35 @@ sub saveconf_clicked
 		# Write cachedir=default to settings.conf
 		rsu::files::IO::writeconf("_", "cachedir", "default", "$conf_file");
 	}
+	# Else if cachedir is set to custom
+	elsif ($cachedir_setting =~ /2/)
+	{
+		# If we are not on windows
+		if ($OS =~ /MSWin32/)
+		{
+			# Add the custom path to the settings.conf
+			rsu::files::IO::writeconf("_", "win32_cachedir", "$customcache_setting", "$conf_file");
+		}
+		# Else if we are on windows
+		elsif ($OS =~ /darwin/)
+		{
+			# Add the custom path to the settings.conf
+			rsu::files::IO::writeconf("_", "osx_cachedir", "$customcache_setting", "$conf_file");
+		}
+		# Else
+		else
+		{
+			# Add the custom path to the settings.conf
+			rsu::files::IO::writeconf("_", "cachedir", "$customcache_setting", "$conf_file");
+		}
+	}
 	# Else
 	else
 	{
 		# Write cachedir=portable to settings.conf
 		rsu::files::IO::writeconf("_", "cachedir", "portable", "$conf_file");
+		rsu::files::IO::writeconf("_", "win32_cachedir", "portable", "$conf_file");
+		rsu::files::IO::writeconf("_", "osx_cachedir", "portable", "$conf_file");
 	}
 	
 	## Write primusmode setting
