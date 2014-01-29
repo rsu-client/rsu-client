@@ -964,7 +964,7 @@ sub loadconfig
 		$self->{cachedir}->SetSelection(2);
 		
 		# Enable the customcache widget
-		$self->{customcache}->Enabled(1);
+		$self->{customcache}->Enable(1);
 		
 		# Set the path to the customcache
 		$self->{customcache}->SetPath("$cachedir");
