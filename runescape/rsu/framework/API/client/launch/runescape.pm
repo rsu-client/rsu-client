@@ -309,6 +309,23 @@ sub parseargs
 	}
 	else
 	{
+		# If arg2find is cachedir
+		if ($arg2find =~ /^cachedir$/)
+		{
+			# If OS is Windows
+			if ($rsu_data->OS =~ /MSWin32/)
+			{
+				# Change it to the windows parameter
+				$arg2find = "win32_$arg2find";
+			}
+			# Else if we are on darwin/MacOSX
+			elsif ($rsu_data->OS =~ /darwin/)
+			{
+				# Change it to the windows parameter
+				$arg2find = "osx_$arg2find";
+			}
+		}
+		
 		# If no parameter that matches is passed then read from settings.conf
 		my $result = rsu::files::IO::readconf("$arg2find", "$default", "settings.conf");
 		

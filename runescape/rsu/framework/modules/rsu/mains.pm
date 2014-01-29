@@ -225,6 +225,9 @@ sub windows_main
 		$javalibspath =~ s/\\java.exe//ig;
 	}
 	
+	# Make sure the javabin is quoted
+	$win32javabin = "\"$win32javabin\"";
+	
 	# Get the language setting
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
@@ -232,7 +235,7 @@ sub windows_main
 	print "Launching client using this java version: \n";
 	
 	# Display the java version
-	system "\"$win32javabin\" -version 2>&1";
+	system "$win32javabin -version 2>&1";
 	
 	# Adjust the parameters abit
 	$params =~ s/jagexappletviewer\.jar/bin\/jagexappletviewer\.jar/;
@@ -244,7 +247,7 @@ sub windows_main
 	if ($rsu_data->optimizejava =~ /^(true|1)$/i)
 	{
 		# Run the java auto optimizer
-		$win32javabin = rsu::java::optimizer::run("\"$win32javabin\"", $params);
+		$win32javabin = rsu::java::optimizer::run("$win32javabin", $params);
 	}
 	
 	# Set the cachedir location
