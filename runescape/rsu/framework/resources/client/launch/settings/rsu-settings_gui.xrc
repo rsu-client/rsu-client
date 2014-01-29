@@ -57,11 +57,16 @@
 													</object>
 													<object class="sizeritem">
 														<option>0</option>
-														<flag>wxALL|wxEXPAND</flag>
+														<flag>wxALL</flag>
 														<border>5</border>
-														<object class="wxTextCtrl" name="prmFile">
-															<value></value>
-															<maxlength>0</maxlength>
+														<object class="wxComboBox" name="prmFile">
+															<style>wxCB_SORT</style>
+															<value>runescape.prm</value>
+															<content>
+																<item>runescape.prm</item>
+																<item>oldschool.prm</item>
+																<item>runescape-beta.prm</item>
+															</content>
 														</object>
 													</object>
 													<object class="sizeritem">
@@ -139,9 +144,21 @@
 															<content>
 																<item>Let RSU choose automatically (default)</item>
 																<item>$clientdir/share/cache (portable)</item>
+																<item>Custom Directory (not portable)</item>
 															</content>
 														</object>
 													</object>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxDirPickerCtrl" name="customcache">
+													<value></value>
+													<message>Select a folder</message>
+													<style>wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL</style>
+													<enabled>0</enabled>
 												</object>
 											</object>
 										</object>
