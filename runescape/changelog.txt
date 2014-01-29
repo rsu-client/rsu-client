@@ -1,3 +1,20 @@
+runescape (4.2.2) precise; urgency=low
+
+  * Added a details file that contains the client version
+    and most likely other data in the future
+    
+  * Fixed a bug that prevented the client from running on
+    Windows if automatic optimizations were disabled.
+    
+  * Added a combobox to the settings editor which generates
+    a list of prmfiles found inside $clientdir/share/prms
+    
+  * Added support for custom cache directories so that
+    players can store their jagexcache on separate
+    harddrives or in a more preferable location.
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 29 Jan 2013 10:16:20 +0200
+
 runescape (4.2.1) precise; urgency=low
 
   * Added option to download the jagexappletviewer.jar

@@ -35,7 +35,11 @@ package client::launch::runescape;
 # If you like this script you may want to check out my other projects at
 # http://hkprojects.weebly.com
 
-my $scriptversion = "4.2.1";
+# Require the module to read the client version
+require rsu::info;
+
+# Get the client version
+my $scriptversion = rsu::info::getVersion();
 
 # Before starting show runescape script version
 print "RuneScape Unix Client script version $scriptversion\n\n";
@@ -305,6 +309,23 @@ sub parseargs
 	}
 	else
 	{
+		# If arg2find is cachedir
+		if ($arg2find =~ /^cachedir$/)
+		{
+			# If OS is Windows
+			if ($rsu_data->OS =~ /MSWin32/)
+			{
+				# Change it to the windows parameter
+				$arg2find = "win32_$arg2find";
+			}
+			# Else if we are on darwin/MacOSX
+			elsif ($rsu_data->OS =~ /darwin/)
+			{
+				# Change it to the windows parameter
+				$arg2find = "osx_$arg2find";
+			}
+		}
+		
 		# If no parameter that matches is passed then read from settings.conf
 		my $result = rsu::files::IO::readconf("$arg2find", "$default", "settings.conf");
 		
