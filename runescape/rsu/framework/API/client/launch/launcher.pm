@@ -123,6 +123,12 @@ if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 		# Copy the example file to clientdir as runescape.prm
 		rsu::files::copy::print_cp($cwd."/share/prms/runescape.prm.example", $clientdir."/share/prms/runescape.prm");
 	}
+	# If runescape-beta.prm do not exist
+	if (!-e "$clientdir/share/prms/runescape-beta.prm")
+	{
+		# Copy the example file to clientdir as runescape.prm
+		rsu::files::copy::print_cp($cwd."/share/prms/runescape-beta.prm", $clientdir."/share/prms/runescape-beta.prm");
+	}
 	# If oldschool.prm do not exist
 	if (!-e "$clientdir/share/prms/oldschool.prm")
 	{
