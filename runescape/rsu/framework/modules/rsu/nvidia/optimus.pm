@@ -66,7 +66,10 @@ sub enableprimus
 		print "\nprimusrun will be used to launch java!\n\n";
 		
 		# Return "primusrun"
-		$return_value = "PRIMUS_UPLOAD=1 primusrun";
+		$return_value = "primusrun";
+		
+		# Future env var
+		# PRIMUS_UPLOAD=1 and PRIMUS_UPLOAD=2
 	}
 	# Else
 	else
