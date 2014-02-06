@@ -1,9 +1,4 @@
 runescape (4.2.3) precise; urgency=low
-
-  * Makes the game launch with the environment variable
-    "PRIMUS_UPLOAD=1 primusrun" if user have enabled
-    primusmode, this is to fix a potential OpenGL issue
-    with Nvidia Optimus cards.
     
   * Added libjli.so to the Java OpenGL Library fix
   
