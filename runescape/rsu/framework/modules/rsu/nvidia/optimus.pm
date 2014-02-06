@@ -66,7 +66,7 @@ sub enableprimus
 		print "\nprimusrun will be used to launch java!\n\n";
 		
 		# Return "primusrun"
-		$return_value = "primusrun";
+		$return_value = "PRIMUS_UPLOAD=1 primusrun";
 	}
 	# Else
 	else

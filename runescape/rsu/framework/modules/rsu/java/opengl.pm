@@ -15,6 +15,9 @@ package rsu::java::opengl;
 		# and after the path.
 		$lddresult =~ s/\s*libjli\.so\s*=>\s+(.*)jli\/libjli\.so\s+\(\S+\)\s*$/$1/;
 		
+		# Add the libjli back in a different variable
+		my $libjli = $lddresult."jli/";
+		
 		# Remove the TAB and whitespaces before the path
 		#$lddresult =~ s/^(\t+\s+|\t+|\s+)//g;
 		
@@ -22,7 +25,7 @@ package rsu::java::opengl;
 		#$lddresult =~ s/\n//g;
 		
 		# Return the library path for java
-		return "LD_LIBRARY_PATH=$lddresult:\$LD_LIBRARY_PATH";
+		return "LD_LIBRARY_PATH=$lddresult:$libjli:\$LD_LIBRARY_PATH";
 	}
 
 	#
