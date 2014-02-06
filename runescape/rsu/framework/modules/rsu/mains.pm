@@ -5,6 +5,7 @@ require rsu::java::jre;
 require client::settings::prms;
 require rsu::files::clientdir;
 require rsu::java::optimizer;
+require client::appletviewer::icon;
 
 sub unix_main
 {
@@ -57,6 +58,9 @@ sub unix_main
 	
 	# Get the language setting
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
+	
+	# Make a variable to contain the clienticon folder
+	my $iconfolder = client::appletviewer::icon::getIcon($params);
 	
 	# Make a variable to contain the java library path
 	my $javalibpath;
@@ -188,10 +192,10 @@ sub unix_main
 	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img/$iconfolder\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully)
-	rsu::mains::runjar("cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img 2>&1");
+	rsu::mains::runjar("cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img/$iconfolder 2>&1");
 }
 
 #
@@ -231,6 +235,9 @@ sub windows_main
 	# Get the language setting
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
+	# Make a variable to contain the clienticon folder
+	my $iconfolder = client::appletviewer::icon::getIcon($params);
+	
 	# Display java version we are using
 	print "Launching client using this java version: \n";
 	
@@ -254,13 +261,13 @@ sub windows_main
 	$win32javabin = "$win32javabin -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img/$iconfolder\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully) and then pipe the output to grep to remove the lines saying "Recieved command: _11" which I dont know why appears
 	#system "set PATH=$javalibspath;%PATH% && \"$win32javabin\" ".$rsu_data->verboseprms." -cp  $params /share 2>&1";
 	
 	# Run the jar file
-	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img\" 2>&1");
+	rsu::mains::runjar("set PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img/$iconfolder\" 2>&1");
 }
 
 #
@@ -281,6 +288,9 @@ sub checkcompabilitymode
 		# Parse the prm file
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
+		# Make a variable to contain the clienticon folder
+		my $iconfolder = client::appletviewer::icon::getIcon($params);
+		
 		# Make a variable containing the launch code
 		my $launchline = "cd \"".$rsu_data->clientdir."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\"";
 		
@@ -292,7 +302,7 @@ sub checkcompabilitymode
 		}
 		
 		# Finish the launch code
-		$launchline = "$launchline -cp $params /share/img && exit\"";
+		$launchline = "$launchline -cp $params /share/img/$iconfolder && exit\"";
 		
 		# Tell what we are doing
 		print "Launching the client through wine with this command:\n$launchline\n\n";
