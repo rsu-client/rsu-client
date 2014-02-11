@@ -222,41 +222,38 @@ package rsu::java::jre;
 			return "/usr/bin/java";
 		}
 		
-		# Make a variable to contain the testing results
-		my $test_exec;
-		
-		# Make a for loop which follows symlinks up to 10 times in order to find the java binary
-		# (you must be really silly if you have 10 symlinks together to point to it!)
-		my $counter;
-		for ($counter = 0; $counter < 10; $counter++)
+		# If we are not run through an API call
+		if ($ARGV[0] !~ /^(get|set)\..+/)
 		{
-			# Check if this is the true binary
-			$test_exec = `ls -la $whereisjava`;
+			# Remove the newline at the end of the string
+			chomp($whereisjava);
 			
-			# If the result contains "java -> /" then
-			if ($test_exec =~ /java\ -.\ \//)
-			{
-				# Split the result by whitespace
-				my @newtest = split(/\ /, $test_exec);
-				
-				# Replace $whereisjava with the new location to test
-				$whereisjava = $newtest[-1];
-			}
-			else
-			{
-				# Split the result by whitespace
-				my @truebinary = split(/\ /, $test_exec);
-				
-				# Replace $whereisjava with the new location to test
-				$whereisjava = $truebinary[-1];
-				
-				# Remove the newline from the output
-				$whereisjava =~ s/\n//;
-				
-				# Make sure we end this loop (no point to continue checking)
-				$counter = 11;
-			}
+			# Print debug info and tell user what we are doing
+			print "Locating the binary that $whereisjava is symlinked to.\n";
 		}
+		
+		# Make a variable to contain the symlink
+		my $javasymlink = $whereisjava;
+		
+		# Follow symlinks til we locate the binary
+		while(-l $whereisjava)
+		{
+			# Read the symlink and get the path it is linking to
+			$whereisjava = readlink $whereisjava;
+			
+			# If we are not run through an API call
+			if ($ARGV[0] !~ /^(get|set)\..+/)
+			{
+				# Tell where the symlink is pointing to
+				print "$javasymlink -> $whereisjava\n";
+			}
+			
+			# Update the $javasymlink
+			$javasymlink = $whereisjava;
+		}
+		
+		# Tell that we located the java binary
+		print "Java binary located: $whereisjava\n";
 		
 		# Do a final check to see if the java binary is found...
 		# If $whereisjava do not end with /bin/java then
