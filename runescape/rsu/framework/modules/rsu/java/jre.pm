@@ -253,7 +253,7 @@ package rsu::java::jre;
 		}
 		
 		# Tell that we located the java binary
-		print "Java binary located: $whereisjava\n";
+		print "Java binary located: $whereisjava\n\n";
 		
 		# Do a final check to see if the java binary is found...
 		# If $whereisjava do not end with /bin/java then
