@@ -118,12 +118,12 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	print "Symlinking icon and updating examples\n\n";
 	
 	# Remove old unused icon
-	unlink "\"".$clientdir."/share/img/jagexappletviewer.png\"";
+	unlink "\"".$rsu_data->clientdir."/share/img/jagexappletviewer.png\"";
 	
 	# Symlink or Copy needed resources to the clientdir
-	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$clientdir."/share/img/OldSchool\"";
-	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$clientdir."/share/img/RuneScape3\"";
-	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$clientdir."/share/img/Retro\"";
+	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$rsu_data->clientdir."/share/img/OldSchool\"";
+	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$rsu_data->clientdir."/share/img/RuneScape3\"";
+	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$rsu_data->clientdir."/share/img/Retro\"";
 	
 	# Copy the examples (should always be kept up to date)
 	rsu::files::copy::print_cp($rsu_data->cwd."/share/configs/settings.conf.example", $rsu_data->clientdir."/share/configs/settings.conf.example");
