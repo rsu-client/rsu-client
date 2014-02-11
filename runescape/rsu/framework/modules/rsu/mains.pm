@@ -28,17 +28,17 @@ sub unix_main
 		# Use default java
 		$rsu_data->javabin = "java";
 		
-		# If we are not on mac (mac does not have opengl issues with java7)
+		# If we are on mac
 		if ($rsu_data->OS !~ /darwin/)
-		{
-			# Search for the location of the true default java binary (not the symlink)
-			$rsu_data->javabin = rsu::java::jre::unix_find_default_java_binary($rsu_data->javabin, "$clientdir/share/configs", "settings.conf");
-		}
-		# Else we are on mac
-		else
 		{
 			# Probe for Java6 and use that instead of Java7 (if Java6 exists)
 			$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data->preferredjava);
+		}
+		# Else we are on Linux,Solaris,BSD or other Unix
+		else
+		{
+			# Search for the location of the true default java binary (not the symlink)
+			$rsu_data->javabin = rsu::java::jre::unix_find_default_java_binary($rsu_data->javabin, "$clientdir/share/configs", "settings.conf");
 		}		
 	}
 	# Else if user have set a custom path to a java binary (most likely sun/oracle java)
@@ -55,7 +55,6 @@ sub unix_main
 		$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data->preferredjava);
 	}
 	
-	
 	# Get the language setting
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
@@ -65,7 +64,7 @@ sub unix_main
 	# Make a variable to contain the java library path
 	my $javalibpath;
 	
-	# If we are not on MacOSX
+	# If we are not on MacOSX (as OSX java libraries are bugged)
 	if ($rsu_data->OS !~ /darwin/)
 	{
 		# Locate the java JRE lib folder so we can add it to the library PATH
