@@ -14,6 +14,9 @@ sub WriteFile
 
 	# Write the content passed to the function to the file
 	print $FILE "$content\n";
+	
+	# Close the file when done
+	close ($FILE);
 }
 
 #
