@@ -29,7 +29,7 @@ sub unix_main
 		$rsu_data->javabin = "java";
 		
 		# If we are on mac
-		if ($rsu_data->OS !~ /darwin/)
+		if ($rsu_data->OS =~ /darwin/)
 		{
 			# Probe for Java6 and use that instead of Java7 (if Java6 exists)
 			$rsu_data->javabin = rsu::java::jre::findjavabin($rsu_data->preferredjava);
@@ -47,7 +47,6 @@ sub unix_main
 		# Use the user set java binary
 		$rsu_data->javabin = $rsu_data->preferredjava;
 	}
-	
 	# Else just check what java to use
 	else
 	{
