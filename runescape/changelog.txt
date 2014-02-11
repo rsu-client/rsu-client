@@ -1,3 +1,10 @@
+runescape (4.2.4) precise; urgency=low
+    
+  * Fixed the java binary locator and hopefully fix bug
+    http://services.runescape.com/m=forum/forums.ws?25,26,99,61985129,goto,735#7341
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Tue, 11 Feb 2013 10:26:03 +0200
+ 
 runescape (4.2.3) precise; urgency=low
     
   * Added libjli.so to the Java OpenGL Library fix
