@@ -149,12 +149,12 @@ sub unix_main
 		my $primusrun_bin = rsu::nvidia::optimus::enableprimus($rsu_data);
 		
 		# Tell user what we are doing
-		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n";
+		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n\n";
 		
 		if ($primusrun_bin !~ /^$/)
 		{
 			# Tell user what we are doing
-			print "Adding $primusrun_bin to the launch command\n";
+			print "Adding $primusrun_bin to the launch command\n\n";
 		}
 		
 		
@@ -165,7 +165,7 @@ sub unix_main
 	else
 	{
 		# Tell user what we are doing
-		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n";
+		print "Fixing possible OpenGL issues by adding the environment variable\n$javalibpath\n\n";
 				
 		# Add the library path to the java binary command
 		$rsu_data->javabin = "$javalibpath ".$rsu_data->javabin;
@@ -190,7 +190,7 @@ sub unix_main
 	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
-	print "\nLaunching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img/$iconfolder\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
+	print "Launching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img/$iconfolder\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
 	
 	# Execute the runescape client(hopefully)
 	rsu::mains::runjar("cd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img/$iconfolder 2>&1");
