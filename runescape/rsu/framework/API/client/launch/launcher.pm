@@ -75,15 +75,15 @@ if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	make_path($clientdir."/bin", $clientdir."/share/img", $clientdir."/share/configs", $clientdir."/share/prms");
 	
 	# Tell user what we are doing
-	print "Symlinking icon and updating examples\n\n";
+	print "Symlinking icon and updating examples\n";
 	
 	# Remove old unused icon
 	unlink "\"".$clientdir."/share/img/jagexappletviewer.png\"";
 	
 	# Symlink or Copy needed resources to the clientdir
-	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$clientdir."/share/img/OldSchool\"";
-	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$clientdir."/share/img/RuneScape3\"";
-	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$clientdir."/share/img/Retro\"";
+	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$clientdir."/share/img/OldSchool\"" unless -e $clientdir."/share/img/OldSchool/jagexappletviewer.png";
+	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$clientdir."/share/img/RuneScape3\"" unless -e $clientdir."/share/img/RuneScape3/jagexappletviewer.png";
+	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$clientdir."/share/img/Retro\"" unless -e $clientdir."/share/img/Retro/jagexappletviewer.png";
 	
 	# Copy the examples (should always be kept up to date)
 	rsu::files::copy::print_cp($cwd."/share/configs/settings.conf.example", $clientdir."/share/configs/settings.conf.example");
@@ -327,18 +327,8 @@ sub set_layout
 	$self->{buttonsizer}->Add(1,1,1);
 	make_bitmapbutton($self, "linuxthread", "linuxthread");
 	
-	# If we are on MacOSX
-	if ($OS =~ /darwin/)
-	{
-		# Use the fallback/old aboutdialog as mac have issues with the modern one
-		make_bitmapbutton($self, "about_FALLBACK", "about");
-	}
-	# Else
-	else
-	{
-		# Use the new and improved aboutdialog
-		make_bitmapbutton($self, "about", "about");
-	}
+	# Make a bitmap button for the about dialog
+	make_bitmapbutton($self, "about", "about");
 	
 	# If the --add-exitbutton is passed as an argument
 	if ("@ARGV" =~ /--closebutton=1/)
@@ -1344,8 +1334,8 @@ sub about
 	$about->{vertical} = Wx::BoxSizer->new(wxVERTICAL);
 	$about->{horizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
 	
-	# Else if we are not on windows and the icon exists
-	if ($OS =~ /(MSWin32|linux)/ && -e "$cwd/share/img/runescape.png")
+	# If we are on windows, linux or mac and the icon exists
+	if ($OS =~ /(MSWin32|linux|darwin)/ && -e "$cwd/share/img/runescape.png")
 	{
 		# Set the window icon
 		$about->{dialog}->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
@@ -1421,10 +1411,7 @@ sub about
 	$about->{dialog}->SetMinSize($about->{dialog}->GetSize);
 	
 	# Show the dialog
-	$about->{dialog}->ShowModal();
-	
-	# Destroy the object when the user closes the window
-	$about->{dialog}->Destroy;
+	$about->{dialog}->Show();
 }
 
 #
@@ -1443,13 +1430,13 @@ sub about_credits
 	$credits->{writtenby} = "HikariKnight - <rshikariknight\@gmail.com>";
 	$credits->{artworkby} = "none so far";
 	$credits->{contributors} = "Ker Laeda - AUR Repository maintainer
-	Garage Punk - forcepulseaudio code
-	Jmb71 - findjavalib regex
-	Ethoxyethaan - original launch script for Linux
-	Fallen_Unia - Zenity support in the Updater
-	Kalio - Portable jagexcache
-	Jagex Ltd - Releasing the official client as opensource
-	RS Linux Community - Built up from their ideas";
+Garage Punk - forcepulseaudio code
+Jmb71 - findjavalib regex
+Ethoxyethaan - original launch script for Linux
+Fallen_Unia - Zenity support in the Updater
+Kalio - Portable jagexcache
+Jagex Ltd - Releasing the official client as opensource
+RS Linux Community - Built up from their ideas";
 	
 	# Make the dialog window
 	$credits->{dialog} = Wx::Dialog->new(undef, -1, "Credits");
@@ -1478,9 +1465,7 @@ sub about_credits
 	$credits->{dialog}->SetSize(350,300);
 	
 	# Show the window
-	$credits->{dialog}->ShowModal;
-	$credits->{dialog}->Destroy;
-	
+	$credits->{dialog}->Show();
 }
 
 #
@@ -1527,7 +1512,7 @@ sub about_license
 	$license->{dialog} = Wx::Dialog->new(undef, -1, "License");
 	
 	# Make a scrolledwindow
-	$license->{scroll} = Wx::ScrolledWindow->new($license->{dialog}, -1);
+	$license->{panel} = Wx::Panel->new($license->{dialog}, -1);
 	
 	# Make a flexgrid sizer with 1 column and 2 rows (works better for this purpose)
 	$license->{vertical} = Wx::BoxSizer->new(wxVERTICAL);
@@ -1536,7 +1521,7 @@ sub about_license
 	$license->{scrollgrid} = Wx::GridSizer->new(1,1,0,0);
 	
 	# Make label to with the license text (so much text!)
-	$license->{text} = Wx::TextCtrl->new($license->{scroll}, -1, "            GNU GENERAL PUBLIC LICENSE
+	$license->{text} = Wx::TextCtrl->new($license->{panel}, -1, "            GNU GENERAL PUBLIC LICENSE
                Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.
@@ -1823,8 +1808,8 @@ POSSIBILITY OF SUCH DAMAGES.
 	
 	# Add everything to the sizer
 	$license->{scrollgrid}->Add($license->{text}, 1, wxALL|wxEXPAND, 5);
-	$license->{scroll}->SetSizer($license->{scrollgrid});
-	$license->{vertical}->Add($license->{scroll}, 1, wxALL|wxEXPAND, 5);
+	$license->{panel}->SetSizer($license->{scrollgrid});
+	$license->{vertical}->Add($license->{panel}, 1, wxALL|wxEXPAND, 5);
 	$license->{vertical}->Add($license->{close}, 0, wxALL|wxALIGN_RIGHT, 5);
 	$license->{dialog}->SetSizer($license->{vertical});
 	
@@ -1833,12 +1818,8 @@ POSSIBILITY OF SUCH DAMAGES.
 	$license->{dialog}->SetMinSize($license->{dialog}->GetSize());
 	$license->{dialog}->SetMaxSize($license->{dialog}->GetSize());
 	
-	setScrollBars($license->{scroll});
-	
 	# Show the dialog
-	$license->{dialog}->ShowModal;
-	$license->{dialog}->Destroy;
-	
+	$license->{dialog}->Show();
 }
 
 #
@@ -2024,51 +2005,6 @@ sub linuxthread
 {
 	# Open the linux thread in the default web browser
 	Wx::LaunchDefaultBrowser("http://services.runescape.com/m=forum/forums.ws?25,26,99,61985129,goto,99999");
-}
-
-#
-#---------------------------------------- *** ----------------------------------------
-#
-
-sub about_FALLBACK
-{
-	my $self = shift;
-	
-	# Make the about dialog info
-	my $info = Wx::AboutDialogInfo->new;
-	
-	# Make a variable to contain the version number and also get the version number
-	my $version = get_rsuversion();
-
-	# Add info to the about dialog
-	$info->SetName( 'RuneScape Unix Client' );
-    $info->SetVersion( $version );
-    $info->SetDescription( 'The Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows' );
-    $info->SetCopyright( '(c) 2011-2013 HikariKnight' );
-    $info->SetWebSite( 'https://github.com/HikariKnight/rsu-client', 'Get the sourcecode from GitHub.com' );
-    $info->SetDevelopers( ['HikariKnight - Main developer <rshikariknight@gmail.com>', 'Ker Laeda - AUR Repository maintainer', 'Garage Punk - forcepulseaudio code', 'Jmb71 - findjavalib regex', 'Ethoxyethaan - original launch script for Linux', 'Fallen_Unia - Zenity support in the Updater', 'Kalio - Portable jagexcache', 'Jagex - Releasing the official client as opensource', 'RS Linux Community - Built up from their ideas' ] );
-    $info->SetLicense("GNU General Public License Version2
-Copyright (C) 2011-2013  HikariKnight
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-See the file COPYING for more information.");
-
-    $info->SetArtists( [ 'None' ] );
-
-    Wx::AboutBox( $info );
 }
 
 #
