@@ -1,3 +1,12 @@
+runescape (4.2.5) precise; urgency=low
+    
+  * Fixed the about dialog on mac osx, so it will now use the new one
+  * Made it so that when reading or writing config files, the files
+    do not get filled with newlines over time
+  * Fixed a warning when making symlinks on a systemwide install
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 12 Feb 2013 11:41:41 +0200
+
 runescape (4.2.4) precise; urgency=low
     
   * Fixed the java binary locator and hopefully fix bug
