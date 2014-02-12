@@ -115,15 +115,15 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	make_path($rsu_data->clientdir."/bin", $rsu_data->clientdir."/share/img", $rsu_data->clientdir."/share/configs", $rsu_data->clientdir."/share/prms");
 	
 	# Tell user what we are doing
-	print "Symlinking icon and updating examples\n\n";
+	print "Symlinking icon and updating examples\n";
 	
 	# Remove old unused icon
 	unlink "\"".$rsu_data->clientdir."/share/img/jagexappletviewer.png\"";
 	
 	# Symlink or Copy needed resources to the clientdir
-	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$rsu_data->clientdir."/share/img/OldSchool\"";
-	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$rsu_data->clientdir."/share/img/RuneScape3\"";
-	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$rsu_data->clientdir."/share/img/Retro\"";
+	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$rsu_data->clientdir."/share/img/OldSchool\"" unless -e $rsu_data->clientdir."/share/img/OldSchool/jagexappletviewer.png";
+	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$rsu_data->clientdir."/share/img/RuneScape3\"" unless -e $rsu_data->clientdir."/share/img/RuneScape3/jagexappletviewer.png";
+	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$rsu_data->clientdir."/share/img/Retro\"" unless -e $rsu_data->clientdir."/share/img/Retro/jagexappletviewer.png";
 	
 	# Copy the examples (should always be kept up to date)
 	rsu::files::copy::print_cp($rsu_data->cwd."/share/configs/settings.conf.example", $rsu_data->clientdir."/share/configs/settings.conf.example");
