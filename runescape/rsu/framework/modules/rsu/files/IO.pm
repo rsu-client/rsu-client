@@ -192,8 +192,12 @@ sub iniRead
 	# Get the passed data
 	my ($filename, $section, $key, $default) = @_;
 	
-	# Make sure the file exists by writing nothing to it
-	rsu::files::IO::WriteFile("",">>","$filename");
+	# If the file does not exist
+	unless (-e "$filename")
+	{
+		# Make sure the file exists by writing nothing to it
+		rsu::files::IO::WriteFile("",">>","$filename");
+	}
 	
 	# Create a IniFile object
 	my $cfg = Config::IniFiles->new( -file => "$filename", -default => "_", -fallback => "_", -allowempty => 1, -allowedcommentchars => "#" );
@@ -214,8 +218,12 @@ sub iniWrite
 	# Get the passed data
 	my ($filename, $section, $key, $value) = @_;
 	
-	# Make sure the file exists by writing nothing to it
-	rsu::files::IO::WriteFile("",">>","$filename");
+	# If the file does not exist
+	unless (-e "$filename")
+	{
+		# Make sure the file exists by writing nothing to it
+		rsu::files::IO::WriteFile("",">>","$filename");
+	}
 	
 	# Create a IniFile object
 	my $cfg = Config::IniFiles->new( -file => "$filename", -default => "_", -fallback => "_", -allowempty => 1, -allowedcommentchars => "#" );
