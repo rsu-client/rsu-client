@@ -138,6 +138,9 @@ package rsu::java::jre;
 			$javabin = "java";
 		}
 		
+		# Run a symlink check to make sure we got the binary
+		$javabin = rsu::java::jre::symlinkcheck($javabin);
+		
 		# Return to call with the java executable
 		return $javabin;
 	}
@@ -222,38 +225,8 @@ package rsu::java::jre;
 			return "/usr/bin/java";
 		}
 		
-		# If we are not run through an API call
-		if ($ARGV[0] !~ /^(get|set)\..+/)
-		{
-			# Remove the newline at the end of the string
-			chomp($whereisjava);
-			
-			# Print debug info and tell user what we are doing
-			print "Locating the binary that $whereisjava is symlinked to.\n";
-		}
-		
-		# Make a variable to contain the symlink
-		my $javasymlink = $whereisjava;
-		
-		# Follow symlinks til we locate the binary
-		while(-l $whereisjava)
-		{
-			# Read the symlink and get the path it is linking to
-			$whereisjava = readlink $whereisjava;
-			
-			# If we are not run through an API call
-			if ($ARGV[0] !~ /^(get|set)\..+/)
-			{
-				# Tell where the symlink is pointing to
-				print "$javasymlink -> $whereisjava\n";
-			}
-			
-			# Update the $javasymlink
-			$javasymlink = $whereisjava;
-		}
-		
-		# Tell that we located the java binary
-		print "Java binary located: $whereisjava\n\n";
+		# Run a symlink check to make sure we got the binary
+		$whereisjava = rsu::java::jre::symlinkcheck($whereisjava);
 		
 		# Do a final check to see if the java binary is found...
 		# If $whereisjava do not end with /bin/java then
@@ -384,83 +357,149 @@ java_not_binary_message
 		return "$newjavapath";
 	}
 
-	#
-	#---------------------------------------- *** ----------------------------------------
-	#
+#
+#---------------------------------------- *** ----------------------------------------
+#
 
-	sub win32_find_java
+sub win32_find_java
+{
+	# Require the grep module
+	require rsu::files::grep;
+	
+	# Gets passed data from the function call
+	my ($win32java_setting) = @_;
+	
+	# Make an array for the current version
+	my $currentversion = "6";
+	
+	# If the win32java setting is default-java
+	if ($win32java_setting =~ /default-java/)
 	{
-		# Require the grep module
-		require rsu::files::grep;
-		
-		# Gets passed data from the function call
-		my ($win32java_setting) = @_;
-		
-		# Make an array for the current version
-		my $currentversion = "6";
-		
-		# If the win32java setting is default-java
-		if ($win32java_setting =~ /default-java/)
-		{
-			# Run a registry query and grep for the current java version (example: 1.6)
-			$currentversion = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v CurrentVersion`;
-			
-			# Run a string grep query
-			my @currentversion = rsu::files::grep::strgrep($currentversion, "CurrentVersion");
-			
-			# Convert array to string
-			$currentversion = "@currentversion";
-			
-			# Remove all tabs, whitespace and newlines and the 1. and also remove REG_SZ and everything before that from the last array entry
-			$currentversion =~ s/(.+REG_SZ|\n\r|\r|\n|\s+|\t+|1\.)//g;
-		}
-		else
-		{
-			# Prepare the win32java setting so that we only get the number we want
-			$win32java_setting =~ s/(\d{1,1}\.|\.\d{1,2}_\d{1,2})//g;
-			
-			# Set the currentversion_array content to be the same as the win32java setting
-			$currentversion = $win32java_setting;
-		}
-		
-		# Make the string Java#FamilyVersion
-		my $javafamily = "Java$currentversion"."FamilyVersion";
-		
-		# Use the current version to run a new registry query and grep for Java#FamilyVersion (replace # with number)
-		my $javafamilyversion = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v $javafamily`;
+		# Run a registry query and grep for the current java version (example: 1.6)
+		$currentversion = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v CurrentVersion`;
 		
 		# Run a string grep query
-		my @javafamilyversion = rsu::files::grep::strgrep($javafamilyversion, $javafamily);
+		my @currentversion = rsu::files::grep::strgrep($currentversion, "CurrentVersion");
 		
 		# Convert array to string
-		$javafamilyversion = "@javafamilyversion";
+		$currentversion = "@currentversion";
 		
-		# Remove all tabs, whitespace and newlines and also remove REG_SZ and everything before that from the last array entry
-		$javafamilyversion =~ s/(.+REG_SZ|\n\r|\r|\n|\s|\t|\s+)//g;
-		
-		# Use the javafamilyversion to run a new registry querty and grep for JavaHome which contains the location of the java installation
-		my $javahome = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\\$javafamilyversion\" /v JavaHome`;
-		
-		# Run a string grep query
-		my @javahome = rsu::files::grep::strgrep($javahome, "JavaHome");
-		
-		# Convert array to string
-		$javahome = "@javahome";
-		
-		# Split the result by REG_SZ and add everything to an array
-		my @javahome_array = split(/REG_SZ/i, $javahome);
-		# Remove all tabs, whitespace and newlines and also remove REG_SZ and everything before that from the last array entry
-		$javahome_array[-1] =~ s/(.+REG_SZ|\n\r|\r|\n|\t+|\s{2,10})//g;
-		
-		# Put together the path to the java.exe
-		my $javabin_result = "$javahome_array[-1]\\bin\\java.exe";
-		
-		# Return the result
-		return $javabin_result;
+		# Remove all tabs, whitespace and newlines and the 1. and also remove REG_SZ and everything before that from the last array entry
+		$currentversion =~ s/(.+REG_SZ|\n\r|\r|\n|\s+|\t+|1\.)//g;
 	}
+	else
+	{
+		# Prepare the win32java setting so that we only get the number we want
+		$win32java_setting =~ s/(\d{1,1}\.|\.\d{1,2}_\d{1,2})//g;
+		
+		# Set the currentversion_array content to be the same as the win32java setting
+		$currentversion = $win32java_setting;
+	}
+	
+	# Make the string Java#FamilyVersion
+	my $javafamily = "Java$currentversion"."FamilyVersion";
+	
+	# Use the current version to run a new registry query and grep for Java#FamilyVersion (replace # with number)
+	my $javafamilyversion = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\" /v $javafamily`;
+	
+	# Run a string grep query
+	my @javafamilyversion = rsu::files::grep::strgrep($javafamilyversion, $javafamily);
+	
+	# Convert array to string
+	$javafamilyversion = "@javafamilyversion";
+	
+	# Remove all tabs, whitespace and newlines and also remove REG_SZ and everything before that from the last array entry
+	$javafamilyversion =~ s/(.+REG_SZ|\n\r|\r|\n|\s|\t|\s+)//g;
+	
+	# Use the javafamilyversion to run a new registry querty and grep for JavaHome which contains the location of the java installation
+	my $javahome = `reg query \"hklm\\Software\\JavaSoft\\Java Runtime Environment\\$javafamilyversion\" /v JavaHome`;
+	
+	# Run a string grep query
+	my @javahome = rsu::files::grep::strgrep($javahome, "JavaHome");
+	
+	# Convert array to string
+	$javahome = "@javahome";
+	
+	# Split the result by REG_SZ and add everything to an array
+	my @javahome_array = split(/REG_SZ/i, $javahome);
+	# Remove all tabs, whitespace and newlines and also remove REG_SZ and everything before that from the last array entry
+	$javahome_array[-1] =~ s/(.+REG_SZ|\n\r|\r|\n|\t+|\s{2,10})//g;
+	
+	# Put together the path to the java.exe
+	my $javabin_result = "$javahome_array[-1]\\bin\\java.exe";
+	
+	# Return the result
+	return $javabin_result;
+}
 
-	#
-	#---------------------------------------- *** ----------------------------------------
-	#
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub symlinkcheck
+{
+	# Get the passed data
+	my ($javabin) = @_;
+	
+	# Remove the newline at the end of the string
+	chomp($javabin);
+	# Backup solution incase chomp fails
+	$javabin =~ s/\s+$//;
+	
+	# If we are not run through an API call
+	if ($ARGV[0] !~ /^(get|set)\..+/)
+	{
+		# Print debug info and tell user what we are doing
+		print "Locating the binary that $javabin is symlinked to.\n";
+	}
+	
+	# Make a variable to contain the symlink
+	my $javasymlink = $javabin;
+	
+	# Follow symlinks til we locate the binary
+	while(-l $javabin)
+	{
+		# Read the symlink and get the path it is linking to
+		$javabin = readlink $javabin;
+		
+		# If the symlink points to a relative location
+		if ($javabin =~ /^\.\./)
+		{
+			# Fix it so that its a path we can use
+			my $javafix = $javasymlink;
+			
+			# Make the relative path an absolute path
+			$javafix =~ s/java$/$javabin/;
+			
+			# Transfer the path to the $javabin variable
+			$javabin = $javafix;
+		}
+		
+		# If we are not run through an API call
+		if ($ARGV[0] !~ /^(get|set)\..+/)
+		{
+			# Tell where the symlink is pointing to
+			print "$javasymlink -> $javabin\n";
+		}
+		
+		# Update the $javasymlink
+		$javasymlink = $javabin;
+	}
+	
+	# If we are not run through an API call
+	if ($ARGV[0] !~ /^(get|set)\..+/)
+	{
+		# Tell that we located the java binary
+		print "Java binary located: $javabin\n\n";
+	}
+	
+	# Return the actual binary
+	return $javabin;
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+	
 
 1;

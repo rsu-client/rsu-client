@@ -1410,9 +1410,6 @@ sub about_link
 	# Else
 	else
 	{
-		# Remove mailto: from the url incase it is an E-Mail adress
-		$url =~ s/^mailto://;
-		
 		# If we are on windows
 		if ($OS =~ /MSWin32/)
 		{
@@ -1428,6 +1425,9 @@ sub about_link
 		# Else
 		else
 		{
+			# Remove mailto: from the url incase it is an E-Mail adress
+			$url =~ s/^mailto://;
+			
 			# Use the default application to open the url handle
 			system "xdg-open \"$url\"";
 		}
