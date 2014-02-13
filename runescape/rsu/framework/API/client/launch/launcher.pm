@@ -1352,8 +1352,6 @@ sub about
 	
 	# Create a HtmlWindow  (not to be confused with a browser window!)
 	$about->{info} = Wx::HtmlWindow->new($about->{dialog}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_DEFAULT_STYLE);
-	# Connect the htmlwindow to the html link event
-	EVT_HTML_LINK_CLICKED($about->{info},$about->{info}, \&about_link);
 	
 	# Fill the htmlview with information
 	$about->{info}->SetPage("<body bgcolor=#222222>
@@ -1375,6 +1373,9 @@ sub about
 			</tr>
 		</table>
 	</body>");
+	
+	# Connect the htmlwindow to the html link event
+	EVT_HTML_LINK_CLICKED($about->{info},$about->{info}, \&about_link);
 	
 	# Create the Program name label
 	#$about->{version} = Wx::StaticText->new($about->{dialog}, -1, "\nRuneScape Unix Client\nVersion: $version", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
@@ -1403,10 +1404,10 @@ sub about
 #	$about->{copyright}->SetFont(Wx::Font->new(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
 #	
 	# Make a hyperlink to the sourcecode/projectpage
-	$about->{website} = Wx::Button->new($about->{dialog}, -1, 'Get the &sourcecode from GitHub.com');
-	$about->{website}->SetToolTip("https://github.com/HikariKnight/rsu-client");
+	#$about->{website} = Wx::Button->new($about->{dialog}, -1, 'Get the &sourcecode from GitHub.com');
+	#$about->{website}->SetToolTip("https://github.com/HikariKnight/rsu-client");
 	# Make an event for the get source button
-	EVT_BUTTON($about->{website}, -1, \&getsource_clicked);
+	#EVT_BUTTON($about->{website}, -1, \&getsource_clicked);
 	
 	# Make bitmapbuttons for the bottom of the about dialog
 	# And make the events for the buttons
