@@ -1,21 +1,20 @@
-##
-# Authors, Contributors, Maintainers and other awesome people!
-##
+The RuneScape Unix Client (RSU-Client for short) have been in development
+since October 2011 as a project to make an "official" unofficial Linux Client
+for the MMORPG RuneScape by using the official appletviewer made by Jagex Ltd.
 
-# Developers
-HikariKnight
+The PRIMARY AUTHORS are (and/or have been):
 
-# Package maintainers
-Ivan_p
-HikariKnight
+	* HikariKnight <rshikariknight@gmail.com>
+	
+People/Players that are (or have) contributed to or helped the project:
 
-# Contributors (runescape names)
-Garage Punk
-Jmb71
-Ethoxyethaan
-Fallen_Unia (Jente)
-Test6125
-Kalio
-
-# Game Owners/Developers (not associated with the project)
-Jagex Ltd. (for making their client launcher opensource)
+	* Ivan_p <https://aur.archlinux.org/packages/unix-runescape-client>
+	* Garage Punk
+	* Jmb71
+	* Ethoxyethaan <nick.hermans.be+rsu@gmail.com>
+	* Fallen_Unia <https://github.com/Unia>
+	* Test6125
+	* Kalio
+	* loganom <https://github.com/loganom>
+	* RS Linux Community <http://services.runescape.com/m=forum/forums.ws?25,26,99,61985129,goto,99999>
+	* Jagex Ltd <http://jagex.com>
