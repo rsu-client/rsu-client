@@ -1337,25 +1337,16 @@ sub about
 	$about->{vertical} = Wx::BoxSizer->new(wxVERTICAL);
 	$about->{horizontal} = Wx::BoxSizer->new(wxHORIZONTAL);
 	
-	# If we are on windows, linux or mac and the icon exists
-#	if ($OS =~ /(MSWin32|linux|darwin)/ && -e "$cwd/share/img/runescape.png")
-#	{
-#		# Set the window icon
-#		$about->{dialog}->SetIcon(Wx::Icon->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
-#		
-#		# Set the aboutdialog icon
-#		$about->{icon} = Wx::StaticBitmap->new($about->{dialog}, -1, Wx::Bitmap->new("$cwd/share/img/runescape.png", wxBITMAP_TYPE_PNG));
-#		
-#		# Add the aboutdialog icon to the dialog
-#		$about->{vertical}->Add($about->{icon}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
-#	}
-	
 	# Create a HtmlWindow  (not to be confused with a browser window!)
 	$about->{info} = Wx::HtmlWindow->new($about->{dialog}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_DEFAULT_STYLE);
 	
-	# Fill the htmlview with information
-	$about->{info}->SetPage("<body bgcolor=#222222>
-		<table valign=top bgcolor=#222222>
+	# Connect the htmlwindow to the html link event
+	EVT_HTML_LINK_CLICKED($about->{info},$about->{info}, \&about_link);
+	
+	# Fill the htmlwindow with information
+	$about->{info}->SetPage("<html>
+	<body bgcolor=#222222>
+		<table bgcolor=#222222>
 			<tr>
 				<td><center><img src='$cwd/share/img/runescape.png'></center></td>
 			</tr>
@@ -1366,48 +1357,14 @@ sub about
 				<td><center><font color=#B8B8B8>The Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows</font></center></td>
 			</tr>
 			<tr>
-				<td><center><font color=#B8B8B8>\xa9 2011-2014 <a href=http://twitter.com/rsHikariKnight><font color=#B8B8B8>HikariKnight</font></a></font></center></td>
+				<td><center><font color=#B8B8B8>&copy; 2011-2014 <a href=http://twitter.com/rsHikariKnight><font color=#B8B8B8>HikariKnight</font></a></font></center></td>
 			</tr>
 			<tr>
 				<td><center><a href=https://github.com/HikariKnight/rsu-client><font color=#E8B13F>Get the sourcecode from GitHub.com</font></a></center></td>
 			</tr>
 		</table>
-	</body>");
-	
-	# Connect the htmlwindow to the html link event
-	EVT_HTML_LINK_CLICKED($about->{info},$about->{info}, \&about_link);
-	
-	# Create the Program name label
-	#$about->{version} = Wx::StaticText->new($about->{dialog}, -1, "\nRuneScape Unix Client\nVersion: $version", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
-	
-	# Make the label the correct size
-	#$about->{version}->SetFont(Wx::Font->new(15, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, 0));
-	
-	# Make a description label
-	#$about->{description} = Wx::StaticText->new($about->{dialog}, -1, "The Unofficial Universal Unix port of the RuneScape Downloadable Client for Windows", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
-	#$about->{description}->Wrap(300);
-	
-	# If we are on windows
-#	if ($OS =~ /MSWin32/)
-#	{
-#		# Make the copyright line (windows cannot read \xc2)
-#		$about->{copyright} = Wx::StaticText->new($about->{dialog}, -1, "\n\xa9 2011-2014 HikariKnight\n", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
-#	}
-#	# Else
-#	else
-#	{
-#		# Make the copyright line
-#		$about->{copyright} = Wx::StaticText->new($about->{dialog}, -1, "\n\xa9 2011-2014 HikariKnight\n", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
-#	}
-#	
-#	# Set the correct font size
-#	$about->{copyright}->SetFont(Wx::Font->new(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, 0));
-#	
-	# Make a hyperlink to the sourcecode/projectpage
-	#$about->{website} = Wx::Button->new($about->{dialog}, -1, 'Get the &sourcecode from GitHub.com');
-	#$about->{website}->SetToolTip("https://github.com/HikariKnight/rsu-client");
-	# Make an event for the get source button
-	#EVT_BUTTON($about->{website}, -1, \&getsource_clicked);
+	</body>
+</html>");
 	
 	# Make bitmapbuttons for the bottom of the about dialog
 	# And make the events for the buttons
@@ -1418,20 +1375,15 @@ sub about
 	
 	# Add everything to the vertical sizer
 	$about->{vertical}->Add($about->{info},1, wxEXPAND,0);
-	#$about->{vertical}->Add($about->{description}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
-	#$about->{vertical}->Add($about->{copyright}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
-	#$about->{vertical}->Add($about->{website}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,0);
 	$about->{vertical}->Add($about->{horizontal}, 0, wxALIGN_CENTER_HORIZONTAL|wxALL,5);
 	
 	# Set the sizers
 	$about->{dialog}->SetSizer($about->{vertical});
 	
 	# Set max and min size of the aboutdialog
-	#$about->{dialog}->SetMaxSize(Wx::Size->new(405,425));
-	$about->{dialog}->SetMinSize(Wx::Size->new(405,425));
-	
-	# Set the size of the aboutdialog
-	$about->{dialog}->Fit();
+	$about->{dialog}->SetMaxSize(Wx::Size->new(405,435));
+	$about->{dialog}->SetMinSize(Wx::Size->new(405,435));
+	$about->{dialog}->SetSize(Wx::Size->new(405,435));
 	
 	# Show the dialog
 	$about->{dialog}->Show();
@@ -1458,6 +1410,9 @@ sub about_link
 	# Else
 	else
 	{
+		# Remove mailto: from the url incase it is an E-Mail adress
+		$url =~ s/^mailto://;
+		
 		# If we are on windows
 		if ($OS =~ /MSWin32/)
 		{
@@ -1492,19 +1447,15 @@ sub about_credits
 	my $credits = {};
 	
 	# Add credits to the object
-	$credits->{writtenby} = "HikariKnight - <rshikariknight\@gmail.com>";
+	$credits->{writtenby} = "name:HikariKnight;mailto:rshikariknight+client\@gmail.com;youtube:rsCommunityTech;twitter:rsHikariKnight;github:HikariKnight";
 	$credits->{artworkby} = "none so far";
-	$credits->{contributors} = "Ker Laeda - AUR Repository maintainer
-Garage Punk - forcepulseaudio code
-Jmb71 - findjavalib regex
-Ethoxyethaan - original launch script for Linux
-Fallen_Unia - Zenity support in the Updater
-Kalio - Portable jagexcache
-Jagex Ltd - Releasing the official client as opensource
-RS Linux Community - Built up from their ideas";
+	$credits->{contributors} = "file:AUTHORS";
 	
 	# Make the dialog window
 	$credits->{dialog} = Wx::Dialog->new($about, -1, "Credits");
+	
+	# Set the colors of the dialog
+	$credits->{dialog}->SetBackgroundColour(Wx::Colour->new("#222222"));
 	
 	# Make a tab window
 	$credits->{tabwindow} = Wx::Notebook->new($credits->{dialog}, -1);
@@ -1513,21 +1464,20 @@ RS Linux Community - Built up from their ideas";
 	$credits->{mainsizer} = Wx::BoxSizer->new(wxVERTICAL);
 	
 	# Make tabs
-	about_credits_maketab($credits, $credits->{writtenby}, "Written By");
-	about_credits_maketab($credits, $credits->{contributors}, "Contributors");
+	about_credits_maketab($credits, "writtenby", $credits->{writtenby}, "Written By");
+	about_credits_maketab($credits, "contributors", $credits->{contributors}, "Contributors");
 	#about_credits_maketab($credits, $credits->{artworkby}, "Artwork By");
+		
+	# Add stuff to the window
+	$credits->{mainsizer}->Add($credits->{tabwindow},1,wxEXPAND|wxALL,0);
 	
 	# Make the close button and make it close the window when clicked
-	$credits->{close} = Wx::Button->new($credits->{dialog}, -1, "Close");
-	EVT_BUTTON($credits->{close}, -1, \&about_close);
+	make_bitmapbutton($credits, $credits->{dialog},$credits->{mainsizer},"about_close", "close");
 	
-	# Add stuff to the window
-	$credits->{mainsizer}->Add($credits->{tabwindow},1,wxEXPAND|wxALL,5);
-	$credits->{mainsizer}->Add($credits->{close},0,wxALIGN_RIGHT,0);
 	$credits->{dialog}->SetSizer($credits->{mainsizer});
 	
 	# Set size of the window
-	$credits->{dialog}->SetSize(350,300);
+	$credits->{dialog}->SetSize(545,430);
 	
 	# Show the window
 	$credits->{dialog}->Show();
@@ -1540,7 +1490,7 @@ RS Linux Community - Built up from their ideas";
 sub about_credits_maketab
 {
 	# Get the passed data
-	my ($credits, $names, $tabname) = @_;
+	my ($credits, $name, $info, $tabname) = @_;
 	
 	# Make the page
 	$page = Wx::Panel->new($credits->{tabwindow}, -1);
@@ -1548,11 +1498,225 @@ sub about_credits_maketab
 	# Make a gridsizer
 	$grid = Wx::GridSizer->new(1,1,0,0);
 	
-	# Make a textcontrol
-	$textcontrol = Wx::TextCtrl->new($page,-1,"$names",wxDefaultPosition,wxDefaultSize,wxTE_READONLY|wxTE_MULTILINE);
+	# Make a variable for the credits content
+	my $content = "<html>
+	<body bgcolor=#222222>
+		<table bgcolor=#000000>
+			<tr>
+				<td width=36%>
+					<b><font color=#E8B13F>Name (or RS Name):</font></b>
+				</td>
+				<td width=64%>
+					<b><font color=#E8B13F>Contact or Website:</font></b>
+				</td>
+			</tr>
+";
+	
+	# If the info starts with file: 
+	if ($info =~ /^file:/)
+	{
+		# Remove file: from the $info
+		$info =~ s/^file://;
+		
+		# Read the file provided
+		my $file = rsu::files::IO::ReadFile("$cwd/$info");
+		
+		# Grep for only the authors and remove other text
+		@authors = rsu::files::grep::strgrep("@$file","^\\s+\\*\\s+");
+		
+		# For each author listed
+		foreach my $author(@authors)
+		{
+			# Skip these names as they are listed in a different tab
+			next if $author =~ /HikariKnight/;
+			
+			# Format the string a bit better
+			$author =~ s/^\s+\*\s+(.+)/$1/;
+						
+			# If the author has a website/email listed
+			if ($author =~ /<(.+)>/)
+			{
+				# Format the string again
+				$author =~ s/^(.+)\s<(.+)>/$1;$2/;
+				
+				# Split the string at ;
+				my @authorinfo = split(/;/,$author);
+				
+				# Make a variable for the clickable link
+				my $link;
+				
+				# If the second column will be a website then
+				if ($authorinfo[1] =~ /^(http|https):/)
+				{
+					# Split the url into an array using the rfc2396 regex so we can easily get the protocol and domain
+					my @website = split(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,$authorinfo[1]);
+					
+					# Generate a link for the website
+					$link = "<font color=#B8B8B8>&lt;<a href='$authorinfo[1]'><font color=#E8B13F>$website[1]$website[3]</font></a>&gt;</font>";
+				}
+				# Else
+				else
+				{
+					# Generate an email link
+					$link = "<font color=#B8B8B8>&lt;<a href='mailto:$authorinfo[1]'><font color=#E8B13F>$authorinfo[1]</font></a>&gt;</font>";
+				}
+				
+				# Generate the table entry for that contributor
+				$content = "$content
+			<tr>
+				<td bgcolor=#222222>
+					<font color=#B8B8B8>$authorinfo[0]</font>
+				</td>
+				<td bgcolor=#222222>
+					$link
+				</td>
+			</tr>";
+			}
+			# Else
+			else
+			{
+				# Generate the table entry for the contributor without email/website
+				$content = "$content
+			<tr>
+				<td bgcolor=#222222>
+					<font color=#B8B8B8>$author</font>
+				</td>
+				<td bgcolor=#222222>
+					
+				</td>
+			</tr>";
+			}
+		}
+	}
+	# Else
+	else
+	{
+		# Split the authors by newline
+		my @authors = split(/\n/,$info);
+		
+		# For each author that is hardcoded
+		foreach my $authordata(@authors)
+		{
+			# Split the authorinfo by ;
+			my @authorinfo = split(/;/, $authordata);
+			
+			# Generate a new table row
+			$content = "$content
+			<tr>";
+			
+			# For each piece of info about the author
+			foreach my $authorvalue(@authorinfo)
+			{
+				# If the value is a name
+				if ($authorvalue =~ /^name:/)
+				{
+					# Remove the "name:" part of the string
+					$authorvalue =~ s/^name://;
+					
+					# Generate the table entry
+					$content = "$content
+				<td bgcolor=#222222 valign=top>
+					<br><br><font color=#B8B8B8>$authorvalue</font>
+				</td>
+				<td bgcolor=#222222>";
+				}
+				# Else if the value is a youtube name
+				elsif ($authorvalue =~ /^youtube:/)
+				{
+					# Remove the "youtube:" part of the string
+					$authorvalue =~ s/^youtube://;
+					
+					# Generate the table data
+					$content = "$content
+					<table>
+						<td>
+							<a href='http://youtube.com/user/$authorvalue'><img height=24 width=24 src=$resourcedir/bitmaps/links/youtube.png></a>
+						</td>
+						<td>
+							<div valign=top><a href='http://youtube.com/user/$authorvalue'><font color=#E8B13F>$authorvalue</font></div></a>
+						</td>
+					</table>";
+				}
+				# Else if the value is a twitter name
+				elsif ($authorvalue =~ /^twitter:/)
+				{
+					# Remove the "twitter:" part of the string
+					$authorvalue =~ s/^twitter://;
+					
+					# Generate the table data
+					$content = "$content
+					<table>
+						<td>
+							<a href='http://twitter.com/$authorvalue'><img height=24 width=24 src=$resourcedir/bitmaps/links/twitter.png></a>
+						</td>
+						<td>
+							<div valign=top><a href='http://twitter.com/$authorvalue'><font color=#E8B13F>\@$authorvalue</font></div></a>
+						</td>
+					</table>";
+				}
+				# Else if the value is a github name
+				elsif ($authorvalue =~ /^github:/)
+				{
+					# Remove the "github:" part of the string
+					$authorvalue =~ s/^github://;
+					
+					# Generate the table data
+					$content = "$content
+					<table>
+						<td>
+							<a href='http://github.com/$authorvalue'><img height=24 width=24 src=$resourcedir/bitmaps/links/github.png></a>
+						</td>
+						<td>
+							<div valign=top><a href='http://github.com/$authorvalue'><font color=#E8B13F>\@$authorvalue</font></div></a>
+						</td>
+					</table>";
+				}
+				# Else if the value is a twitter name
+				elsif ($authorvalue =~ /^mailto:/)
+				{
+					# Remove the "mailto:" part of the string
+					$authorvalue =~ s/^mailto://;
+					
+					# Generate the table data
+					$content = "$content
+					<table>
+						<td>
+							<a href='mailto:$authorvalue'><img height=24 width=24 src=$resourcedir/bitmaps/links/mail.png></a>
+						</td>
+						<td>
+							<div valign=top><a href='mailto:$authorvalue'><font color=#E8B13F>$authorvalue</font></div></a>
+						</td>
+					</table>";
+				}
+			}
+			
+			# Close the table row
+			$content = "$content
+				</td>
+			</tr>";
+		}
+	}
+	# Finish the html for the creditsbox
+	$content = "$content
+		</table>
+	</body>
+</html>";
+	
+	# Make a htmlwindow
+	$credits->{$name} = Wx::HtmlWindow->new($page, -1, wxDefaultPosition, wxDefaultSize, wxHW_DEFAULT_STYLE);
+	
+	# Connect the htmlwindow to the html link event
+	EVT_HTML_LINK_CLICKED($credits->{$name},$credits->{$name}, \&about_link);
+	
+	# Set the colors of the htmlwindow
+	$credits->{$name}->SetBackgroundColour(Wx::Colour->new("#222222"));
+	$credits->{$name}->SetForegroundColour(Wx::Colour->new("#222222"));
+	
+	# Set the content for the creditsbox
+	$credits->{$name}->SetPage($content);
 	
 	# Add the textcontrol to the sizer
-	$grid->Add($textcontrol, 0, wxALL|wxEXPAND, 5);
+	$grid->Add($credits->{$name}, 0, wxALL|wxEXPAND, 0);
 	
 	# Add the sizer to the page
 	$page->SetSizer($grid);
