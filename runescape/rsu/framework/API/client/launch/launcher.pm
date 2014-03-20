@@ -2518,7 +2518,7 @@ sub forums
 sub linuxthread
 {
 	# Open the linux thread in the default web browser
-	Wx::LaunchDefaultBrowser("http://services.runescape.com/m=forum/forums.ws?25,26,99,61985129,goto,99999");
+	Wx::LaunchDefaultBrowser("http://services.runescape.com/m=forum/forums.ws?25,26,5,65329684,goto,99999");
 }
 
 #
