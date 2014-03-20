@@ -1,4 +1,10 @@
-runescape (4.2.5) precise; urgency=low
+runescape (4.2.6) precise; urgency=low
+    
+  * Make the Linux thread button link to the new thread
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 20 MAR 2014 17:27:57 +0200
+ 
+ runescape (4.2.5) precise; urgency=low
     
   * Fixed the about dialog on mac osx, so it will now use the new one
   
@@ -17,14 +23,14 @@ runescape (4.2.5) precise; urgency=low
     
   * Fix the symlinkcheck for openjdk
     
- -- HikariKnight <rshikariknight@gmail.com>  Wed, 12 Feb 2013 11:41:41 +0200
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 12 Feb 2014 11:41:41 +0200
 
 runescape (4.2.4) precise; urgency=low
     
   * Fixed the java binary locator and hopefully fix bug
     http://services.runescape.com/m=forum/forums.ws?25,26,99,61985129,goto,735#7341
     
- -- HikariKnight <rshikariknight@gmail.com>  Tue, 11 Feb 2013 10:26:03 +0200
+ -- HikariKnight <rshikariknight@gmail.com>  Tue, 11 Feb 2014 10:26:03 +0200
  
 runescape (4.2.3) precise; urgency=low
     
@@ -38,7 +44,7 @@ runescape (4.2.3) precise; urgency=low
   * Added ground support for custom client icon support
    
     
- -- HikariKnight <rshikariknight@gmail.com>  Thu, 06 Feb 2013 15:18:00 +0200
+ -- HikariKnight <rshikariknight@gmail.com>  Thu, 06 Feb 2014 15:18:00 +0200
 
 runescape (4.2.2) precise; urgency=low
 
@@ -55,7 +61,7 @@ runescape (4.2.2) precise; urgency=low
     players can store their jagexcache on separate
     harddrives or in a more preferable location.
     
- -- HikariKnight <rshikariknight@gmail.com>  Fri, 29 Jan 2013 10:16:20 +0200
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 29 Jan 2014 10:16:20 +0200
 
 runescape (4.2.1) precise; urgency=low
 
