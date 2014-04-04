@@ -1,3 +1,12 @@
+runescape (4.2.7) precise; urgency=low
+    
+  * Added internal version of cairo-nogl to fix OpenGL crash on
+    Intel and AMD graphic cards.
+    
+  * Stopped supporting Ubuntu10.04 due to library conflicts.
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 20 MAR 2014 17:27:57 +0200
+
 runescape (4.2.6) precise; urgency=low
     
   * Make the Linux thread button link to the new thread
