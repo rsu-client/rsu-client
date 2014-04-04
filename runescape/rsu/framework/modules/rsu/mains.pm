@@ -68,6 +68,13 @@ sub unix_main
 	{
 		# Locate the java JRE lib folder so we can add it to the library PATH
 		$javalibpath = rsu::java::opengl::unix_findlibrarypath($rsu_data->javabin);
+		
+		# If we are on linux
+		if ($rsu_data->OS =~ /linux/)
+		{
+			# Apply cairo-nogl to the library path
+			$javalibpath = rsu::java::opengl::add_caironogl($javalibpath, $rsu_data->cwd);
+		}
 	}
 	
 	# Check if java can be run in client mode and make sure we use the client mode if available
