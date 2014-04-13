@@ -13,6 +13,9 @@ __Linux Repositories__
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
 
 __Installers (Powered by [BitRock](http://bitrock.com/))__
+* [Main Downloads](https://www.copy.com/s/y88FzDr8iSgS/Public/RSU)
+
+*Dropbox links are may be temponarly disabled due to high traffic (use the main downloads from copy.com)*
 * [Windows Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-windows-installer.exe "Windows Installer")
 * [Linux 32bit Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-linux-installer.run.zip "Linux 32bit Installer")
 * [Linux 64bit Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-linux-x64-installer.run.zip "Linux 64bit Installer")
