@@ -193,8 +193,8 @@ sub unix_main
 		$rsu_data->javabin = rsu::java::optimizer::run($rsu_data->javabin, $params);
 	}
 	
-	# Set the cachedir location
-	$rsu_data->javabin = $rsu_data->javabin." -Duser.home=\"".$rsu_data->cachedir."\"";
+	# Set the cachedir location and enable SSLv3
+	$rsu_data->javabin = $rsu_data->javabin." -Dhttps.protocols=SSLv3 -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "Launching the RuneScape Client using this command:\ncd ".$rsu_data->clientdir."/bin && ".$rsu_data->javabin." $osxprms ".$rsu_data->verboseprms." -cp  $params /share/img/$iconfolder\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
@@ -262,8 +262,8 @@ sub windows_main
 		$win32javabin = rsu::java::optimizer::run("$win32javabin", $params);
 	}
 	
-	# Set the cachedir location
-	$win32javabin = "$win32javabin -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
+	# Set the cachedir location and enable SSLv3
+	$win32javabin = "$win32javabin -Dhttps.protocols=SSLv3 -XX:+AggressiveOpts -Duser.home=\"".$rsu_data->cachedir."\"";
 	
 	# Print debug info
 	print "\nLaunching the RuneScape Client using this command:\nset PATH=$javalibspath;%PATH% && $win32javabin ".$rsu_data->verboseprms." -cp  $params \"$parentfolder[-1]/share/img/$iconfolder\"\n\nExecuting the RuneScape Client!\nYou are now in the hands of Jagex.\n\n######## End Of Script ########\n######## Jagex client output will appear below here ########\n\n";
@@ -306,8 +306,8 @@ sub checkcompabilitymode
 			$launchline = rsu::java::optimizer::run("$launchline", $params);
 		}
 		
-		# Finish the launch code
-		$launchline = "$launchline -cp $params /share/img/$iconfolder && exit\"";
+		# Finish the launch code and enable SSLv3
+		$launchline = "$launchline -Dhttps.protocols=SSLv3 -cp $params /share/img/$iconfolder && exit\"";
 		
 		# Tell what we are doing
 		print "Launching the client through wine with this command:\n$launchline\n\n";
