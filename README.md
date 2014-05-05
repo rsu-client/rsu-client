@@ -55,10 +55,6 @@ __Installation on Fedora__
 
 2. Download and extract the universal archive.
 
-3. Run with:
-
-<pre>perl runescape</pre>
-
 __Other Linux systems__
 
 Please use the bitrock installer or universal archive.
