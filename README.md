@@ -48,6 +48,20 @@ __Installation on ArchLinux__
 1. Open the Terminal program and type in the following command:
 <pre>yaourt unix-runescape-client</pre>
 
+__Installation on Fedora__
+
+Note: You will need to enable the proprietary drivers to get RuneScape to run. 
+
+
+1. Install dependent packages
+<pre>sudo yum install perl "perl(List::MoreUtils)" "perl(Config::IniFiles)"</pre>
+
+2. Download the universal archive.
+
+3. Run with:
+
+<pre>perl runescape</pre>
+
 __Other Linux systems__
 
 Please use the bitrock installer or universal archive.
