@@ -50,13 +50,10 @@ __Installation on ArchLinux__
 
 __Installation on Fedora__
 
-Note: You will need to enable the proprietary drivers to get RuneScape to run. 
-
-
 1. Install dependent packages
 <pre>sudo yum install perl "perl(List::MoreUtils)" "perl(Config::IniFiles)"</pre>
 
-2. Download the universal archive.
+2. Download and extract the universal archive.
 
 3. Run with:
 
