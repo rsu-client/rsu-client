@@ -48,6 +48,13 @@ __Installation on ArchLinux__
 1. Open the Terminal program and type in the following command:
 <pre>yaourt unix-runescape-client</pre>
 
+__Installation on Fedora__
+
+1. Install dependent packages
+<pre>sudo yum install perl "perl(List::MoreUtils)" "perl(Config::IniFiles)"</pre>
+
+2. Download and extract the universal archive.
+
 __Other Linux systems__
 
 Please use the bitrock installer or universal archive.
