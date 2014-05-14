@@ -51,7 +51,7 @@ __Installation on ArchLinux__
 __Installation on Fedora__
 
 1. Install dependent packages
-<pre>sudo yum install perl "perl(List::MoreUtils)" "perl(Config::IniFiles)"</pre>
+<pre>sudo yum install perl "perl(List::MoreUtils)" "perl(Config::IniFiles)" "perl(Archive::Extract)"</pre>
 
 2. Download and extract the universal archive.
 
