@@ -9,7 +9,7 @@ If you require Wine support you should instead install the stable client
 from one of the following repositories:
 
 __Linux Repositories__
-* [ArchLinux AUR Repository](https://aur.archlinux.org/packages.php?ID=59362 "ArchLinux AUR Repository")
+* [ArchLinux AUR Repository](https://aur.archlinux.org/packages/unix-runescape-client/ "ArchLinux AUR Repository")
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
 
 __Installers (Powered by [BitRock](http://bitrock.com/))__
