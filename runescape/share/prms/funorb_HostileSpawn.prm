@@ -1,0 +1,6 @@
+-Djava.class.path=jagexappletviewer.jar
+-Dcom.jagex.config=http://mggameserver4.funorb.com/l=$(Language:0)/g=hostilespawn_vengeance/jav_config.ws
+-Xmx512m
+-Xss2m
+-Dsun.java2d.noddraw=true
+jagexappletviewer

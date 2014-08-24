@@ -1,0 +1,6 @@
+-Djava.class.path=jagexappletviewer.jar
+-Dcom.jagex.config=http://virogrid1.funorb.com/l=$(Language:0)/g=virogrid/jav_config.ws
+-Xmx512m
+-Xss2m
+-Dsun.java2d.noddraw=true
+jagexappletviewer

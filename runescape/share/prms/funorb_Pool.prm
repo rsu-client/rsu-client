@@ -1,0 +1,6 @@
+-Djava.class.path=jagexappletviewer.jar
+-Dcom.jagex.config=http://pool1.funorb.com/l=$(Language:0)/g=pool/jav_config.ws
+-Xmx512m
+-Xss2m
+-Dsun.java2d.noddraw=true
+jagexappletviewer
