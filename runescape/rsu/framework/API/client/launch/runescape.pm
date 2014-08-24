@@ -184,6 +184,20 @@ if ($rsu_data->cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 		rsu::files::copy::print_cp($rsu_data->cwd."/share/configs/addons_updater.conf", $rsu_data->clientdir."/share/configs/addons_updater.conf");
 	}
 	
+	# Check for funorb configs
+	my @funorb = rsu::files::grep::dirgrep($rsu_data->cwd."/share/prms/","funorb_");
+	
+	# For each prm we found in the array
+	foreach my $funorbprm(@funorb)
+	{
+		# If the funorb prm does not exist then
+		if (!-e "$clientdir/share/prms/$funorbprm")
+		{
+			# Copy the funorb prm to the clientdir
+			rsu::files::copy::print_cp($rsu_data->cwd."/share/prms/$funorbprm", $rsu_data->clientdir."/share/prms/$funorbprm")
+		}
+	}
+	
 	# Add a newline for tidyness
 	print "\n";
 }

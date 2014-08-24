@@ -56,6 +56,9 @@ my $clientdir = rsu::files::clientdir::getclientdir();
 # Use the rsu copy module
 require rsu::files::copy;
 
+# Use the grep module
+require rsu::files::grep;
+
 # Use the rsu dirs module
 require rsu::files::dirs;
 
@@ -84,6 +87,7 @@ if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 	system "ln -sf \"".$cwd."/share/img/OldSchool\" \"".$clientdir."/share/img/OldSchool\"" unless -e $clientdir."/share/img/OldSchool/jagexappletviewer.png";
 	system "ln -sf \"".$cwd."/share/img/RuneScape3\" \"".$clientdir."/share/img/RuneScape3\"" unless -e $clientdir."/share/img/RuneScape3/jagexappletviewer.png";
 	system "ln -sf \"".$cwd."/share/img/Retro\" \"".$clientdir."/share/img/Retro\"" unless -e $clientdir."/share/img/Retro/jagexappletviewer.png";
+	system "ln -sf \"".$cwd."/share/img/FunOrb\" \"".$clientdir."/share/img/FunOrb\"" unless -e $clientdir."/share/img/FunOrb/jagexappletviewer.png";
 	
 	# Copy the examples (should always be kept up to date)
 	rsu::files::copy::print_cp($cwd."/share/configs/settings.conf.example", $clientdir."/share/configs/settings.conf.example");
@@ -147,6 +151,20 @@ if ($cwd =~ /^(\/usr\/s?bin|\/opt\/|\/usr\/local\/s?bin)/)
 		rsu::files::copy::print_cp($cwd."/share/configs/addons_updater.conf", $clientdir."/share/configs/addons_updater.conf");
 	}
 	
+	# Check for funorb configs
+	my @funorb = rsu::files::grep::dirgrep($cwd."/share/prms/","funorb_");
+	
+	# For each prm we found in the array
+	foreach my $funorbprm(@funorb)
+	{
+		# If the funorb prm does not exist then
+		if (!-e "$clientdir/share/prms/$funorbprm")
+		{
+			# Copy the funorb prm to the clientdir
+			rsu::files::copy::print_cp($cwd."/share/prms/$funorbprm", $clientdir."/share/prms/$funorbprm")
+		}
+	}
+		
 	# Add a newline for tidyness
 	print "\n";
 }

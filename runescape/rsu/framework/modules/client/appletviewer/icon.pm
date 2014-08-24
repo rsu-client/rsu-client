@@ -18,6 +18,10 @@ sub getIcon
 	{
 		$iconfolder = "OldSchool";
 	}
+	elsif ($paramcheck =~ /-Dcom.jagex.config=http:\/\/.+\.funorb/)
+	{
+		$iconfolder = "FunOrb";
+	}
 	
 	# Return the iconfolder name
 	return $iconfolder;
