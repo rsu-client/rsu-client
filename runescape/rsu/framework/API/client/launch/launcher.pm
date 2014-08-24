@@ -166,7 +166,7 @@ package wxTopLevelFrame;
 use Wx qw[:everything];
 use Wx::XRC;
 # Which events shall we include
-use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED);
+use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED EVT_COMBOBOX);
 
 # FileSystem module, used for addons tab
 #use Wx::FS;
@@ -320,7 +320,7 @@ sub set_layout
 
 	# Make bitmap buttons (mainobject, parent, sizer, eventname, imageprefix)
 	make_bitmapbutton($self, $self->{verticalbuttons}, $self->{buttonsizer}, "playnow", "playnow");
-	make_bitmapbutton($self, $self->{verticalbuttons}, $self->{buttonsizer}, "playoldschool", "oldschool");
+	#make_bitmapbutton($self, $self->{verticalbuttons}, $self->{buttonsizer}, "playoldschool", "oldschool");
 	make_bitmapbutton($self, $self->{verticalbuttons}, $self->{buttonsizer}, "update", "runupdater");
 	make_bitmapbutton($self, $self->{verticalbuttons}, $self->{buttonsizer}, "settings", "settings");
 	make_bitmapbutton($self, $self->{verticalbuttons}, $self->{buttonsizer}, "forums", "forums");
@@ -374,9 +374,14 @@ sub set_layout
 		# Make an event for the refresh button
 		EVT_BUTTON($self, $self->{rssRefresh}, \&refreshnews_clicked);
 		
+		# Make a combobox for the profile selector
+		$self->{prmSelect} = Wx::ComboBox->new($self->{rssview},-1,"");
+		loadprms($self);
+		
 		# Add the playercount and button to the sizer
 		$self->{rss_top}->Add($self->{playercount},1, wxALL|wxALIGN_CENTER_VERTICAL,0);
 		$self->{rss_top}->Add($self->{rssRefresh}, 0, wxALL|wxALIGN_RIGHT, 1);
+		$self->{rss_top}->Add($self->{prmSelect},0,wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL,1);
 		$self->{rss_container}->Add($self->{rss_top}, 0, wxALL|wxEXPAND, 1);
 		
 		# Create a HtmlWindow  (not to be confused with a browser window!)
@@ -766,8 +771,8 @@ sub fetch_rssnews
 	# Make a vertical box sizer for use to organize the rss
 	#$self->{rss_sizer} = Wx::BoxSizer->new(wxVERTICAL);
 	
-	# Fetch the recent activity rss feed (timeout after 5 seconds)
-	my $rssfeed = updater::download::sysdload::readurl($rssurl,5);
+	# Fetch the recent activity rss feed (timeout after 3 seconds)
+	my $rssfeed = updater::download::sysdload::readurl($rssurl,3);
 	
 	# If the rssfeed contains html code
 	if ($rssfeed =~ /<(html|ul|li|ol|body|div)>/)
@@ -1267,8 +1272,23 @@ sub set_events
 	# Setup the events
 	# EVT_BUTTON($self, Wx::XmlResource::GetXRCID('objectname'), \&function);
 	
+	EVT_COMBOBOX($self,$self->{prmSelect},\&prmChanged);
+	
 	EVT_HTML_LINK_CLICKED($self, $self->{htmlview}, \&hyperlink_clicked);
 	EVT_HTML_LINK_CLICKED($self, $self->{addonsview}, \&addon_handler);
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub prmChanged
+{
+	# Get the pointers
+	my ($self) = @_;
+	
+	# Save the prm selection
+	rsu::files::IO::writeconf("_", "prmfile", $self->{prmSelect}->GetValue(), "settings.conf");
 }
 
 #
@@ -2410,23 +2430,29 @@ sub playoldschool
 
 sub playnow
 {
+	# Get the passed data
+	my ($self, $event) = @_;
+	
+	# Get the prmfile that is selected	
+	my $selectedPrm = rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf");
+	
 	# If we are not on windows
 	if ($OS =~ /MSWin32/)
 	{
 		# Run the runescape executable
-		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape");
+		system (1,"\"$cwd/rsu/rsu-query.exe\" client.launch.runescape --prmfile=$selectedPrm");
 	}
 	# If we are on Mac OSX
 	elsif ($OS =~ /darwin/)
 	{
 		# Run the runescape api call
-		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape &";
+		system "DYLD_LIBRARY_PATH=$cwd/rsu/3rdParty/darwin \"$cwd/rsu/bin/rsu-query-darwin\" client.launch.runescape --prmfile=$selectedPrm &";
 	}
 	# Else
 	else
 	{
 		# Run the runescape script
-		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --unixquery &";
+		system "\"$cwd/rsu/rsu-query\" client.launch.runescape --prmfile=$selectedPrm --unixquery &";
 	}
 }
 
@@ -2708,6 +2734,39 @@ sub open_addonsdir
 	}
 }
 
+sub loadprms
+{
+	# Get the pointers
+	my ($self) = @_;
+	
+	# Set the selected prm to what the user used last
+	$self->{prmSelect}->SetValue(rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf"));
+	
+	# Get a list of all the prm files and put them in an array
+	my @prmlist = rsu::files::dirs::list("$clientdir/share/prms");
+	
+	# Sort the prmlist in decending order (makes runescape appear at top)
+	@prmlist = sort {$b cmp $a} @prmlist;
+	
+	# For each value in the array
+	foreach my $prmfilefound(@prmlist)
+	{
+		# Next if filename starts with .
+		next if $prmfilefound =~ /^\./;
+		# Next if filename is runescape.prm, oldschool.prm or runescape-beta.prm
+		#next if $prmfilefound =~ /^(runescape|oldschool|runescape-beta)\.prm$/;
+		# Next if filename ends with .example
+		next if $prmfilefound =~ /\.example$/;
+		
+		# Append the file to the combobox
+		$self->{prmSelect}->Append("$prmfilefound");
+	}
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
 ### Events
 
 sub close_clicked
@@ -2729,6 +2788,8 @@ sub set_tooltips
 		
 	# Set tooltips with info about the settings
 	# $self->objectname->SetToolTip("message");
+	
+	$self->{prmSelect}->SetToolTip("Use this to select what profile to use");
 	
 }
 
