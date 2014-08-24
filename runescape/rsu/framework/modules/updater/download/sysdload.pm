@@ -14,19 +14,19 @@ sub sysdownload
 	if ($OS !~ /MSWin32/)
 	{
 		# Make a variable which will contain the download command we will use
-		my $fetchcommand = "wget --connect-timeout=10 -O";
+		my $fetchcommand = "wget --connect-timeout=3 -O";
 		
 		# If /usr/bin contains wget
 		if(`ls /usr/bin | grep wget` =~  /wget/)
 		{
 			# Use wget command to fetch files
-			$fetchcommand = "wget --connect-timeout=10 -O";
+			$fetchcommand = "wget --connect-timeout=3 -O";
 		}
 		# Else if /usr/bin contains curl
 		elsif(`ls /usr/bin | grep curl` =~  /curl/)
 		{
 			# Curl command equalent to the wget command to fetch files
-			$fetchcommand = "curl -L --connect-timeout 10 -# -o";
+			$fetchcommand = "curl -L --connect-timeout 3 -# -o";
 		}
 		
 		# Split the url by /
@@ -111,7 +111,7 @@ sub readurl_https
 		my $lwp = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 		
 		# Set the timeout
-		$lwp->timeout(30) if !defined $timeout;
+		$lwp->timeout(3) if !defined $timeout;
 		$lwp->timeout($timeout) if defined $timeout;
 		
 		# Get the content of $url
@@ -140,14 +140,14 @@ sub readurl_https
 		if(`ls /usr/bin | grep wget` =~  /wget/)
 		{
 			# Use wget command to fetch files
-			$fetchcommand = "wget -q --connect-timeout=30 -O-" if !defined $timeout;
+			$fetchcommand = "wget -q --connect-timeout=3 -O-" if !defined $timeout;
 			$fetchcommand = "wget -q --connect-timeout=$timeout --timeout=$timeout -O-" if defined $timeout;
 		}
 		# Else if /usr/bin contains curl
 		elsif(`ls /usr/bin | grep curl` =~  /curl/)
 		{
 			# Curl command equalent to the wget command to fetch files
-			$fetchcommand = "curl -L --connect-timeout 30 -#" if !defined $timeout;
+			$fetchcommand = "curl -L --connect-timeout 3 -#" if !defined $timeout;
 			$fetchcommand = "curl -L --connect-timeout $timeout -m $timeout -#" if defined $timeout;
 		}
 
