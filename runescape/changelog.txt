@@ -1,3 +1,17 @@
+runescape (4.2.9) precise; urgency=low
+    
+  * Added a combobox to the launcher to easily change the
+    prmfile used to launch the game (also sets the selected prm file
+    as default prm file)
+    
+  * Added prmfiles for all FunOrb games thanks to Salubrious
+  
+  * Lowered the timeout for playercount and news (from 10 to 3 seconds)
+  
+  * Removed the play oldschool button
+    
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 24 Aug 2014 17:41:12 +0200
+
 runescape (4.2.8) precise; urgency=low
     
   * Added SSLv3 support for loading runescape through https
