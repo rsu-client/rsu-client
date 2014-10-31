@@ -184,7 +184,7 @@ package wxTopLevelFrame;
 use Wx qw[:everything];
 use Wx::XRC;
 # Which events shall we include
-use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED EVT_COMBOBOX);
+use Wx::Event qw(EVT_BUTTON EVT_PAINT EVT_HTML_LINK_CLICKED EVT_CHOICE);
 
 # FileSystem module, used for addons tab
 #use Wx::FS;
@@ -392,8 +392,8 @@ sub set_layout
 		# Make an event for the refresh button
 		EVT_BUTTON($self, $self->{rssRefresh}, \&refreshnews_clicked);
 		
-		# Make a combobox for the profile selector
-		$self->{prmSelect} = Wx::ComboBox->new($self->{rssview},-1,"");
+		# Make a choice for the profile selector
+		$self->{prmSelect} = Wx::Choice->new($self->{rssview}, wxID_ANY);
 		loadprms($self);
 		
 		# Add the playercount and button to the sizer
@@ -1290,7 +1290,7 @@ sub set_events
 	# Setup the events
 	# EVT_BUTTON($self, Wx::XmlResource::GetXRCID('objectname'), \&function);
 	
-	EVT_COMBOBOX($self,$self->{prmSelect},\&prmChanged);
+	EVT_CHOICE($self,$self->{prmSelect},\&prmChanged);
 	
 	EVT_HTML_LINK_CLICKED($self, $self->{htmlview}, \&hyperlink_clicked);
 	EVT_HTML_LINK_CLICKED($self, $self->{addonsview}, \&addon_handler);
@@ -1306,7 +1306,7 @@ sub prmChanged
 	my ($self) = @_;
 	
 	# Save the prm selection
-	rsu::files::IO::writeconf("_", "prmfile", $self->{prmSelect}->GetValue(), "settings.conf");
+	rsu::files::IO::writeconf("_", "prmfile", $self->{prmSelect}->GetString($self->{prmSelect}->GetSelection()), "settings.conf");
 }
 
 #
@@ -2757,9 +2757,6 @@ sub loadprms
 	# Get the pointers
 	my ($self) = @_;
 	
-	# Set the selected prm to what the user used last
-	$self->{prmSelect}->SetValue(rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf"));
-	
 	# Get a list of all the prm files and put them in an array
 	my @prmlist = rsu::files::dirs::list("$clientdir/share/prms");
 	
@@ -2778,9 +2775,16 @@ sub loadprms
                 # Next if filenname does not end with .prm
                 next if $prmfilefound !~ /\.prm$/;
 		
-		# Append the file to the combobox
+		# Append the file to the choice
 		$self->{prmSelect}->Append("$prmfilefound");
 	}
+
+	# Set the selected prm to what the user used last
+        $self->{prmSelect}->SetSelection($self->{prmSelect}->FindString(rsu::files::IO::readconf("prmfile", "runescape.prm", "settings.conf")));
+        if ($self->{prmSelect}->GetSelection() == wxNOT_FOUND)
+        {
+            $self->{prmSelect}->SetSelection(0);
+        }
 }
 
 #
