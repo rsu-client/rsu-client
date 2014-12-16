@@ -13,13 +13,15 @@ __Linux Repositories__
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
 
 __Installers (Powered by [BitRock](http://bitrock.com/))__
-* [Main Downloads](https://www.copy.com/s/y88FzDr8iSgS/Public/RSU)
+* [All Installers Downloads](https://www.copy.com/s/y88FzDr8iSgS/Public/RSU)
+* [Windows Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-windows-installer.exe?download=1 "Windows Installer")
+* [Linux 32bit Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-linux-installer.run.zip?download=1 "Linux 32bit Installer")
+* [Linux 64bit Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-linux-x64-installer.run.zip?download=1 "Linux 64bit Installer")
+* [Mac OSX Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-osx-installer.app.zip?download=1 "Mac OSX Installer")
 
-*Dropbox links are may be temponarly disabled due to high traffic (use the main downloads from copy.com)*
-* [Windows Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-windows-installer.exe "Windows Installer")
-* [Linux 32bit Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-linux-installer.run.zip "Linux 32bit Installer")
-* [Linux 64bit Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-linux-x64-installer.run.zip "Linux 64bit Installer")
-* [Mac OSX Installer](https://dl.dropbox.com/u/11631899/RSU/RSU-osx-installer.app.zip "Mac OSX Installer")
+*NOTE: The installers require an active internet connection to download the latest client files.*
+
+*DROPBOX NOTE: Dropbox links are no longer available as dropbox removed my ability to make the installers public.*
 
 __Universal Archive/Zipped versions (If you dont want an installer)__
 * [Universal tar.gz Archive](https://github.com/HikariKnight/rsu-client/archive/master.tar.gz "Universal tar.gz Archive")
