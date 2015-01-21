@@ -1,3 +1,13 @@
+runescape (4.3.0) trusty; urgency=high
+  
+  * Fixed https protocol issue when loading prm files from https
+
+  * Removed unintended section headers from example files
+  
+  * Added a workaround for playercount when oldschool website is down
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Wed, 21 Jan 2015 16:46:19 +0200
+
 runescape (4.2.9) precise; urgency=low
     
   * Added a combobox to the launcher to easily change the

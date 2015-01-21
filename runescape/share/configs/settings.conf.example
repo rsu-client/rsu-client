@@ -2,7 +2,7 @@
 # IS RENAMED TO settings.conf
 # THE FILE NAMED settings.conf WILL NOT BE OVERWRITTEN BY UPDATES!
 
-[Settings]
+## Settings ##
 # Change the value of this to use your own customized .prm file
 # that will not be overwritten by updates
 # If you have tweaks inside runescape.prm then rename it and put the new name here
@@ -29,7 +29,7 @@ preferredjava=default-java
 # 7 = use java 1.7.0_XX
 win32java.exe=default-java
 
-[Fixes]
+## Fixes ##
 # Force java to use pulseaudio, this can fix several sound related
 # issues with the client (and the system if using sun/oracle java)
 # The final launch command will then be wrapped inside "padsp" so make sure that is installed

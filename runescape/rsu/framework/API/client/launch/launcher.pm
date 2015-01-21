@@ -763,6 +763,13 @@ sub get_playercount
 		# Remove the text
 		$osrs_playercount =~ s/There are currently\s(.+)\speople playing!/$1/;
 		
+		# If OSRS player count failed (as in we dont have a number)
+		if ($osrs_playercount !~ /^\d+$/)
+		{
+			# Replace the OSRS playercount with 0
+			$osrs_playercount = 0;
+		}
+		
 		# Remove OSRS players from RS3 playercount if $playercount is not 0
 		$playercount = $playercount-$osrs_playercount if $playercount !~ /^0$/;
 	}
