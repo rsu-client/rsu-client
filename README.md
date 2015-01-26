@@ -57,6 +57,11 @@ __Installation on Fedora__
 
 2. Download and extract the universal archive.
 
+
+__Installation on Gentoo__
+
+1. Follow JohnPeel's guide [here](https://github.com/JohnPeel/dgby-overlay/wiki/Installing-rsu-client-on-Gentoo) on how to install the RSU-Client on Gentoo
+
 __Other Linux systems__
 
 Please use the bitrock installer or universal archive.
