@@ -60,7 +60,7 @@ __Installation on Fedora__
 
 __Installation on Gentoo__
 
-1. Follow JohnPeel's guide [here](https://github.com/JohnPeel/dgby-overlay/wiki/Installing-rsu-client-on-Gentoo) on how to install the RSU-Client on Gentoo
+1. Follow JohnPeel's guide [here](https://github.com/JohnPeel/dgby-overlay/wiki/Installing-rsu-client-on-Gentoo) on how to install the RSU-Client on Gentoo 
 
 __Other Linux systems__
 
