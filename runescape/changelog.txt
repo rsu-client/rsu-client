@@ -1,3 +1,10 @@
+runescape (4.3.1) trusty; urgency=high
+  
+  * Added prm files for all 3 runescape classic worlds
+    thanks to Mod Philips work on adding support for that
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Sat, 21 Feb 2015 12:36:25 +0200
+
 runescape (4.3.0) trusty; urgency=high
   
   * Fixed https protocol issue when loading prm files from https
