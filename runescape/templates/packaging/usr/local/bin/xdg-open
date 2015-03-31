@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Make a tmp folder
+mkdir "/tmp/bin"
+
+# Copy xdg-open
+cp "/usr/bin/xdg-open" "/tmp/bin/"
+
+# Patch xdg-open
+sed -i -e 's/else DE=""/elif xprop -root 2> \/dev\/null | grep -i \\"xfce_desktop_window\\" >\/dev\/null 2>\&1; then DE=xfce;\nelse DE=\"\"/' "/tmp/bin/xdg-open"
+
+# Execute xdg-open
+env "/tmp/bin/xdg-open" $@
+
+rm -r "/tmp/bin"
