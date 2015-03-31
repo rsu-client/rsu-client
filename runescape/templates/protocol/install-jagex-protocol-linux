@@ -1,0 +1,62 @@
+#!/usr/bin/perl -w
+
+# Be strict to avoid messy code
+use strict;
+
+# Use FindBin module to get script directory
+use FindBin;
+
+# Get script directory
+my $cwd = $FindBin::Bin;
+# Get the homefolder 
+my $homedir = $ENV{"HOME"};
+# Detect the current OS
+my $OS = "$^O";
+
+# If we are inside an interactive shell then
+if (-t STDIN)
+{	
+	# Install the protocol for jagex-jav
+	install_jagex_protocol();
+}
+# else
+else
+{
+	# run script in xterm so we can get input from user
+	system ("x-terminal-emulator -e \"$cwd/install-jagex-protocol-linux\"");
+}
+
+# Kill script if we run Windows, since this script is
+# made for unix platforms like linux, mac, bsd and solaris
+die "This script is designed to only work on Linux, as the official client installs the protocol on Windows and Mac OSX.\n"
+if $OS !~ /(linux)/;
+# End of the unsupported platform check
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+
+sub install_jagex_protocol
+{
+	# Tell what we will be doing
+	print "#### OPTIONAL INTEGRATION WITH THE RUNESCAPE HOMEPAGE! ####
+This script will integrate the jagex-jav:// protocol with your system.
+This however requires administrator access to integrate completely and you will be asked to type in your admin password.
+If you are not interested in integrating the client with the runescape homepage through the jagex-jav:// protocol then press
+CTRL+C when you are asked to type in your password.
+";
+	
+	# Integrate the protocols
+	system "sudo cp -v \"$cwd/../packaging/usr/share/kde4/services/jagex-jav.protocol\" /usr/share/kde4/services/";
+	system "sudo cp -v \"$cwd/../packaging/usr/local/bin/xdg-open\" /usr/local/bin/";
+	system "xdg-mime default runescape.desktop x-scheme-handler/jagex-jav";
+	
+	# Inform that we are done
+	print "Press ENTER/RETURN to exit.\n";
+	my $exit = <STDIN>;
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+

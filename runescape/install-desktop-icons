@@ -44,8 +44,9 @@ if ($OS =~ /(darwin)/)
 # Else we are on other unix platforms
 else
 {
-	# run install_desktop_files function
+	# Run install_desktop_files function
 	install_desktop_files();
+	install_jagex_protocol();
 }
 
 
@@ -133,8 +134,8 @@ sub install_desktop_files
 		else
 		{
 			# Hide the non-wx entries (as the launcher can launch those since we got Wx installed)
-			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-oldschool.desktop';
-			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" $homedir/.local/share/applications/runescape-update-client.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" '.$homedir.'/.local/share/applications/runescape-oldschool.desktop';
+			system 'sed -i -e "s/NoDisplay=false/NoDisplay=true/" '.$homedir.'/.local/share/applications/runescape-update-client.desktop';
 		}
 	}
 	
@@ -200,3 +201,14 @@ sub fetchmacbin
 #
 #---------------------------------------- *** ----------------------------------------
 #
+
+sub install_jagex_protocol
+{
+	# Launch the protocol integration script inside the terminal
+	system ("x-terminal-emulator -e \"perl $cwd/templates/protocol/install-jagex-protocol-linux\"");
+}
+
+#
+#---------------------------------------- *** ----------------------------------------
+#
+

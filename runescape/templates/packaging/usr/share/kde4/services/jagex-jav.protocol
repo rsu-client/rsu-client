@@ -1,0 +1,11 @@
+[Protocol]
+helper=true
+exec=runescape
+defaultMimetype=uri/jagex-jav
+protocol=jagex-jav
+input=none
+output=none
+reading=false
+Icon=www
+URIMode=url
+Class=:internet
