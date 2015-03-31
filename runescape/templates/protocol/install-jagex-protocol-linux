@@ -45,6 +45,9 @@ This however requires administrator access to integrate completely and you will 
 If you are not interested in integrating the client with the runescape homepage through the jagex-jav:// protocol then press
 CTRL+C when you are asked to type in your password.
 ";
+
+	# Make xdg-open runnable
+	system "chmod +x \"$cwd/../packaging/usr/local/bin/xdg-open\""
 	
 	# Integrate the protocols
 	system "sudo cp -v \"$cwd/../packaging/usr/share/kde4/services/jagex-jav.protocol\" /usr/share/kde4/services/";
