@@ -1,3 +1,11 @@
+runescape (4.3.2) trusty; urgency=high
+  
+  * Added support for the new jagex-jav URI that jagex will
+    start using soon, try it out with the command:
+    runescape jagex-jav://www.runescape.com/jav_config.ws
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Tue, 31 Mar 2015 19:51:42 +0200
+
 runescape (4.3.1) trusty; urgency=high
   
   * Added prm files for all 3 runescape classic worlds
