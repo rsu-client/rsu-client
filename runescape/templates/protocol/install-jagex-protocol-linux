@@ -47,7 +47,7 @@ CTRL+C when you are asked to type in your password.
 ";
 
 	# Make xdg-open runnable
-	system "chmod +x \"$cwd/../packaging/usr/local/bin/xdg-open\""
+	system "chmod +x \"$cwd/../packaging/usr/local/bin/xdg-open\"";
 	
 	# Integrate the protocols
 	system "sudo cp -v \"$cwd/../packaging/usr/share/kde4/services/jagex-jav.protocol\" /usr/share/kde4/services/";
