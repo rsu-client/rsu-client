@@ -48,8 +48,13 @@ Else
 	do_update("Download")
 EndIf
 
-; Run the client and hide the cmd window
-Run(@ScriptDir & "\rsu\rsu-query.exe " & $CmdLineRaw,@ScriptDir,@SW_HIDE);
+If StringRegExp($CmdLineRaw,"jagex-jav://") = 1 Then
+	; Run the client and hide the cmd window
+	Run(@ScriptDir & "\rsu\rsu-query.exe client.launch.runescape " & $CmdLineRaw,@ScriptDir,@SW_HIDE);
+Else
+	; Run the client and hide the cmd window
+	Run(@ScriptDir & "\rsu\rsu-query.exe " & $CmdLineRaw,@ScriptDir,@SW_HIDE);
+EndIf
 
 func do_update($text)
 	#Region ### START Koda GUI section ###
