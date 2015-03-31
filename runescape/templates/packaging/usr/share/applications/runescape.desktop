@@ -20,7 +20,7 @@ Icon=/opt/runescape/share/img/runescape.png
 Terminal=false
 
 # Executable binary file
-Exec=/opt/runescape/runescape
+Exec=/opt/runescape/runescape %U
 
 # Menu cathegory (GTK, Development, IDE, Office, Application,
 # AudioVideo, Audio, Video, AudioVideoEditing, GNOME, Utility, 
@@ -30,6 +30,9 @@ Categories=GNOME;GTK;Game;
 
 # Display the menu entry
 NoDisplay=false
+
+# Set mimetype
+MimeType=x-scheme-handler/jagex-jav;
 
 # Unity only support
 X-Ayatana-Desktop-Shortcuts=UpdateClient;

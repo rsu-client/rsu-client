@@ -57,6 +57,26 @@ sub parseprmfile
 		# Make the pointer into a string we can work with
 		$prms = "@$prms";
 		
+		# If the client was launched through a URI then
+		if ("@ARGV" =~ /jagex-jav:\/\//)
+		{
+			# Move the arguments to a string
+			my $protocol = "@ARGV";
+			
+			# Locate the protocol string
+			$protocol =~ s/.+(jagex-jav:\/\/?+\.?w?s?)/-Dcom.jagex.configuri=$1/;
+			
+			# If we are not called through an API query
+			if ("$ARGV[0]" !~ /get\.(client|rsu)\./)
+			{
+				# Tell user we got the protocol
+				print "jagex-jav protocol detected, ignoring config url from prm file.\n\n";
+			}
+			
+			# Replace the config url with the config uri protocol
+			$prms =~ s/-Dcom.jagex.config=.+\.ws/$protocol/;
+		}
+		
 		# If we are not called through an API query
 		if ("$ARGV[0]" !~ /get\.(client|rsu)\./)
 		{
@@ -87,6 +107,8 @@ sub parseprmfile
 	
 	# Apply the language setting to the prms
 	$prms =~ s/\$\(Language:0\)/$lang/g;
+	
+	
 	
 	# If we are not called through an API query
 	if ("$ARGV[0]" !~ /get\.(client|rsu)\./)

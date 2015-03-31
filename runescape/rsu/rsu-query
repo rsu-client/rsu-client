@@ -78,6 +78,10 @@ sub main
 	# If we are on Linux
 	if($OS =~ /linux/)
 	{
+		# Set the url handler for jagex-jav
+		system "xdg-mime default runescape.desktop x-scheme-handler/jagex-jav";
+		
+		# If no arguments are passed then
 		if ("@ARGV" eq '')
 		{
 			# Check if the binary exists in the bin folder
