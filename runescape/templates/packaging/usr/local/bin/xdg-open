@@ -1,15 +1,17 @@
 #!/bin/bash
 
 # Make a tmp folder
-mkdir "/tmp/bin"
+tmpdir=$(mktemp -td xdg-open.XXXX)
 
-# Copy xdg-open
-cp "/usr/bin/xdg-open" "/tmp/bin/"
+if [ $? -eq 0 ]; then
+    # Copy xdg-open
+    cp "/usr/bin/xdg-open" "$tmpdir"
 
-# Patch xdg-open
-sed -i -e 's/else DE=""/elif xprop -root 2> \/dev\/null | grep -i ^xfce_desktop_window >\/dev\/null 2>\&1; then DE=xfce;\nelse DE=\"\"/' "/tmp/bin/xdg-open"
+    # Patch xdg-open
+    sed -i -e 's/else DE=""/elif xprop -root 2> \/dev\/null | grep -i ^xfce_desktop_window >\/dev\/null 2>\&1; then DE=xfce;\nelse DE=\"\"/' "$tmpdir/xdg-open"
 
-# Execute xdg-open
-env "/tmp/bin/xdg-open" $@
+    # Execute xdg-open
+    env "$tmpdir/xdg-open" $@
 
-rm -r "/tmp/bin"
+    rm -rf "$tmpdir"
+fi
