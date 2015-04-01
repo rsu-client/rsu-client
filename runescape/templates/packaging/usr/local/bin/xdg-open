@@ -2,8 +2,9 @@
 
 # Make a tmp folder
 tmpdir=$(mktemp -td xdg-open.XXXX)
+exitcode=$?
 
-if [ $? -eq 0 ]; then
+if [ $exitcode -eq 0 ]; then
     # Copy xdg-open
     cp "/usr/bin/xdg-open" "$tmpdir"
 
@@ -14,4 +15,8 @@ if [ $? -eq 0 ]; then
     env "$tmpdir/xdg-open" $@
 
     rm -rf "$tmpdir"
+    
+else
+    # Pass the exitcode to caller
+    exit $exitcode
 fi
