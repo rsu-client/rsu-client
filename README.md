@@ -13,11 +13,7 @@ __Linux Repositories__
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
 
 __Installers (Powered by [BitRock](http://bitrock.com/))__
-* [All Installers Downloads](https://www.copy.com/s/y88FzDr8iSgS/Public/RSU)
-* [Windows Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-windows-installer.exe?download=1 "Windows Installer")
-* [Linux 32bit Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-linux-installer.run.zip?download=1 "Linux 32bit Installer")
-* [Linux 64bit Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-linux-x64-installer.run.zip?download=1 "Linux 64bit Installer")
-* [Mac OSX Installer](https://copy.com/y88FzDr8iSgS%2FPublic%2FRSU%2FRSU-osx-installer.app.zip?download=1 "Mac OSX Installer")
+* [Installers](https://github.com/HikariKnight/rsu-client/releases/latest)
 
 *NOTE: The installers require an active internet connection to download the latest client files.*
 
