@@ -34,7 +34,7 @@ Install instructions
 __Installation on Debian__
 
 1. Open the Terminal program and type in the following commands:
-<pre>echo "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu precise main" | sudo tee -a /etc/apt/sources.list
+<pre>echo "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu trusty main" | sudo tee -a /etc/apt/sources.list
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9BA73CFA
 sudo apt-get update && sudo apt-get install unix-runescape-client</pre>
 
@@ -132,4 +132,7 @@ Developers, Contributors and people that have helped the project
 * Test6125 - _stacksize fix in prm_
 * [Fallen_Unia](https://github.com/Unia) - _Zenity support in the Updater_
 * Kalio - _Portable jagexcache_
+* [loganom](https://github.com/loganom) - Patches and bugfixes
+* [Salubrious](https://twitter.com/salubriousrs) - FunOrb support
+* [RS Linux Community](http://services.runescape.com/m=forum/forums.ws?25,26,5,65329684,goto,99999) - Without you people I would not be developing this client!
 * [Jagex](http://jagex.com) - _Making the official client and providing the sourcecode (plus adding the rsu client to_ [downloads](http://runescape.com/downloads)_!)_
