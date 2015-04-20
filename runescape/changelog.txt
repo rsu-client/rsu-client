@@ -1,3 +1,10 @@
+runescape (4.3.3) trusty; urgency=high
+  
+  * Added new RS3 icon from pull request #58
+  * Try to fix the detection of a failed RSSFEED request (again)
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Mon, 20 Apr 2015 11:18:33 +0200
+
 runescape (4.3.2) trusty; urgency=high
   
   * Added support for the new jagex-jav URI that jagex will

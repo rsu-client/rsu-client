@@ -799,8 +799,11 @@ sub fetch_rssnews
 	# Fetch the recent activity rss feed (timeout after 3 seconds)
 	my $rssfeed = updater::download::sysdload::readurl($rssurl,3);
 	
-	# If the rssfeed contains html code
-	if ($rssfeed =~ /<(html|ul|li|ol|body|div)>/)
+	# Display the response, for debugging purposes
+	print "\n\nResponse from RSSFEED: $rssfeed\n\n";
+	
+	# If the rssfeed contains html code, nothing or a "bad response"
+	if ($rssfeed =~ /<(html|ul|li|ol|body|div)>/ || $rssfeed =~ /^$/ || $rssfeed =~ /(could not connect to|bad hostname)/i)
 	{
 		# Print error message
 		print "Error reading rssfeed, found html code instead!\nMaybe the website is down for maintenance?\n\n";
