@@ -134,5 +134,6 @@ Developers, Contributors and people that have helped the project
 * Kalio - _Portable jagexcache_
 * [loganom](https://github.com/loganom) - Patches and bugfixes
 * [Salubrious](https://twitter.com/salubriousrs) - FunOrb support
+* [JohnPeel](https://github.com/JohnPeel) - Gentoo repository
 * [RS Linux Community](http://services.runescape.com/m=forum/forums.ws?25,26,5,65329684,goto,99999) - Without you people I would not be developing this client!
 * [Jagex](http://jagex.com) - _Making the official client and providing the sourcecode (plus adding the rsu client to_ [downloads](http://runescape.com/downloads)_!)_
