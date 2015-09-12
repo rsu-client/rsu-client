@@ -53,6 +53,12 @@ __Installation on Fedora__
 
 2. Download and extract the universal archive.
 
+__Installation on OpenSUSE__
+
+1. Install dependent packages
+<pre>sudo zypper in perl "perl(List::MoreUtils)" "perl(Config::IniFiles)" "perl(Archive::Extract)"</pre>
+
+2. Download and extract the universal archive.
 
 __Installation on Gentoo__
 
