@@ -1,3 +1,13 @@
+runescape (4.3.4) trusty; urgency=high
+  
+  * Added prm file for DarkScape
+  * Added the possibility to assign different client icons for prms
+    see "share/img/Custom Icons.txt" for more info
+  * Added 2 community created icons for DarkScape created by
+    byadamsbeard and Deranext on reddit.
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Fri, 18 Sep 2015 11:32:48 +0200
+
 runescape (4.3.3) trusty; urgency=high
   
   * Added new RS3 icon from pull request #58
