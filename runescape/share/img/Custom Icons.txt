@@ -1,0 +1,23 @@
+With version 4.3.4 of the RSU-Client you can now add
+custom client window icons!
+
+To do this just make a new prm file and name it for example:
+runescape_custom.prm
+
+Now go to the client's share/img folder and create a folder named
+runescape_custom
+
+Inside this new folder you place a PNG file that you want to use as
+the icon for the client window and name it:
+jagexappletviewer.png
+or just jagexappletviewer if you have file extensions hidden.
+
+If no folder for a prm is detected it will default to the RuneScape3 folder.
+
+NOTE: Some prm files have hardcoded icon folders! These are:
+runescape.prm
+oldschool.prm
+rsdarkscape.prm
+darkscape.prm
+runescape_darkscape.prm
+and all the prm files starting with "funorb_"
