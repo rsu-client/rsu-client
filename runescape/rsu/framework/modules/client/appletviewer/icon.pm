@@ -8,19 +8,48 @@ package client::appletviewer::icon;
 sub getIcon
 {
 	# Get the passed data
-	my ($paramcheck) = @_;
+	my ($paramcheck, $prmfile, $clientdir) = @_;
 	
 	# Make a variable to contain the iconfolder name (by default RuneScape3)
 	my $iconfolder = "RuneScape3";
 	
-	# If $paramcheck contains the oldschool config
-	if ($paramcheck =~ /-Dcom.jagex.config=http:\/\/oldschool/)
+	# If $prmfile is runescape.prm then
+	if ($prmfile =~ /^runescape\.prm/)
 	{
+		# Set iconfolder to RuneScape3
+		$iconfolder = "RuneScape3";
+	}
+	# Else if $prmfile is oldschool.prm then
+	elsif ($prmfile =~ /^oldschool\.prm/)
+	{
+		# Set iconfolder to OldSchool
 		$iconfolder = "OldSchool";
 	}
-	elsif ($paramcheck =~ /-Dcom.jagex.config=http:\/\/.+\.funorb/)
+	# Else if $prmfile starts with funorb_ hten
+	elsif ($prmfile =~ /^funorb_.+/)
 	{
+		# Set iconfolder to FunOrb
 		$iconfolder = "FunOrb";
+	}
+	# Else if $prmfile is darkscape.prm or rsdarkscape.prm or runescape_darkscape.prm then
+	elsif ($prmfile =~ /^(darkscape\.prm|rsdarkscape\.prm|runescape_darkscape\.prm)/)
+	{
+		# Set iconfolder to DarkScape
+		$iconfolder = "DarkScape";
+	}
+	# Else
+	else
+	{
+		# Remove .prm from the $prmfile
+		$prmfile =~ s/\.prm$//;
+		
+		# If a custom icon folder for the prm file exists then
+		if (-d "$clientdir/share/img/$prmfile")
+		{
+			# Set the iconfolder to the custom folder
+			$iconfolder = "$prmfile";
+		}
+		# Else use the default that is defined in $iconfolder
 	}
 	
 	# Return the iconfolder name

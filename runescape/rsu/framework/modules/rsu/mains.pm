@@ -58,7 +58,7 @@ sub unix_main
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
 	# Make a variable to contain the clienticon folder
-	my $iconfolder = client::appletviewer::icon::getIcon($params);
+	my $iconfolder = client::appletviewer::icon::getIcon($params, $rsu_data->prmfile, $rsu_data->clientdir);
 	
 	# Make a variable to contain the java library path
 	my $javalibpath;
@@ -241,7 +241,7 @@ sub windows_main
 	my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 	
 	# Make a variable to contain the clienticon folder
-	my $iconfolder = client::appletviewer::icon::getIcon($params);
+	my $iconfolder = client::appletviewer::icon::getIcon($params, $rsu_data->prmfile, $rsu_data->clientdir);
 	
 	# Display java version we are using
 	print "Launching client using this java version: \n";
@@ -294,7 +294,7 @@ sub checkcompabilitymode
 		my $params = client::settings::prms::parseprmfile($rsu_data->prmfile);
 		
 		# Make a variable to contain the clienticon folder
-		my $iconfolder = client::appletviewer::icon::getIcon($params);
+		my $iconfolder = client::appletviewer::icon::getIcon($params, $rsu_data->prmfile, $rsu_data->clientdir);
 		
 		# Make a variable containing the launch code
 		my $launchline = "cd \"".$rsu_data->clientdir."/\" && WINEDEBUG=fixme-all wine cmd /c \"set PATH=%CD%\\rsu\\3rdParty\\Win32;%PATH% && cd Z:".$rsu_data->clientdir."/bin && java -Duser.home=\"Z:".$rsu_data->cachedir."\"";
