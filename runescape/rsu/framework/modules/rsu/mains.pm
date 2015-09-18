@@ -45,7 +45,7 @@ sub unix_main
 	elsif (($rsu_data->preferredjava =~ /^\//))
 	{
 		# Use the user set java binary
-		$rsu_data->javabin = $rsu_data->preferredjava;
+		$rsu_data->javabin = "\"".$rsu_data->preferredjava."\"";
 	}
 	# Else just check what java to use
 	else

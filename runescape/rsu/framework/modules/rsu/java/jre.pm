@@ -44,6 +44,12 @@ package rsu::java::jre;
 				# Use the Apple Java as javabin (and avoid java7 until apple actually removes java6)
 				$javabin = "/System/Library/Frameworks/JavaVM.framework/Commands/java";
 			}
+			# Else
+			else
+			{
+				# Use Oracle Java which should be installed by the user if Apple Java doesnt exist
+				$javabin = "\"/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java\"";
+			}
 		}
 		# Else if we are on linux
 		elsif($OS =~ /linux/)
