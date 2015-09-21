@@ -1,3 +1,9 @@
+runescape (4.3.5) trusty; urgency=high
+  
+  * Fixed the playercount for OldSchool
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Mon, 21 Sep 2015 10:32:32 +0200
+
 runescape (4.3.4) trusty; urgency=high
   
   * Added prm file for DarkScape
