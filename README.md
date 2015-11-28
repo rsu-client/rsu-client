@@ -64,14 +64,33 @@ __Installation on Gentoo__
 
 1. Follow JohnPeel's guide [here](https://github.com/JohnPeel/dgby-overlay/wiki/Installing-rsu-client-on-Gentoo) on how to install the RSU-Client on Gentoo 
 
+or:
+
+1. Install Layman, if it is not already installed, with:
+```bash
+sudo emerge -av layman
+```
+2. Add the `sabayon` overlay with:
+```bash
+sudo layman -a sabayon
+```
+3. Emerge the RSU Client:
+```bash
+sudo emerge -av games-rpg/unix-runescape-client
+```
+
+__Installation on Sabayon__
+Provided the sabayonlinux.org repository is enabled, merely run:
+```bash
+sudo equo i games-rpg/unix-runescape-client
+```
+
 __Other Linux systems__
 
 Please use the bitrock installer or universal archive.
 The RSU-Client is not officially supported on other Linux systems
 due to the lack of package maintainers for those systems.
 Also the RSU-Client may not work correctly on other Linux systems due to missing packages
-
-
 
 About the Project
 ----------
