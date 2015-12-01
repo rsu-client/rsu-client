@@ -38,60 +38,61 @@ sudo apt-get update && sudo apt-get install unix-runescape-client
 
 __Installation on Ubuntu or Linux Mint__
 
-1. Open the Terminal program and type in the following command:
+* Open the Terminal program and type in the following command:
 ```bash
 sudo apt-add-repository ppa:hikariknight/unix-runescape-client
 ```
-2. Then once that is done type in the following commands:
+* Then once that is done type in the following commands:
 ```bash
 sudo apt-get update && sudo apt-get install unix-runescape-client
 ```
 
 __Installation on ArchLinux__
 
-1. Open the Terminal program and type in the following command:
+* Open the Terminal program and type in the following command:
 ```bash
 yaourt -S unix-runescape-client
 ```
 
 __Installation on Fedora__
 
-1. Install dependent packages
+* Install dependent packages
 ```bash
 sudo dnf install perl "perl(List::MoreUtils)" "perl(Config::IniFiles)" "perl(Archive::Extract)" "perl-Wx"
 ```
 
-2. Download and extract the universal archive.
+* Download and extract the universal archive.
 
 __Installation on openSUSE__
 
-1. Install dependent packages
+* Install dependent packages
 ```bash
 sudo zypper in perl "perl(List::MoreUtils)" "perl(Config::IniFiles)" "perl(Archive::Extract)"
 ```
 
-2. Download and extract the universal archive.
+* Download and extract the universal archive.
 
 __Installation on Gentoo Linux__
 
-1. Follow JohnPeel's guide [here](https://github.com/JohnPeel/dgby-overlay/wiki/Installing-rsu-client-on-Gentoo) on how to install the RSU-Client on Gentoo 
+* Follow JohnPeel's guide [here](https://github.com/JohnPeel/dgby-overlay/wiki/Installing-rsu-client-on-Gentoo) on how to install the RSU-Client on Gentoo
 
 or:
 
-1. Install [Layman](https://wiki.gentoo.org/wiki/Layman), if it is not already installed, with:
+* Install [Layman](https://wiki.gentoo.org/wiki/Layman), if it is not already installed, with:
 ```bash
 sudo emerge -av layman
 ```
-2. Add the `sabayon` overlay with:
+* Add the [`sabayon`](https://github.com/Sabayon/for-gentoo) overlay with:
 ```bash
 sudo layman -a sabayon
 ```
-3. Emerge the RSU Client:
+* Emerge the RSU Client:
 ```bash
 sudo emerge -av games-rpg/unix-runescape-client
 ```
 
 __Installation on Sabayon__
+
 Provided the sabayonlinux.org repository is enabled, merely run:
 ```bash
 sudo equo i games-rpg/unix-runescape-client
