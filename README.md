@@ -38,7 +38,7 @@ sudo apt-get update && sudo apt-get install unix-runescape-client
 
 __Installation on Ubuntu or Linux Mint__
 
-1. Open the Terminal program and type in the following command:
+1. Open the Terminal program and type in the following command:
 ```bash
 sudo apt-add-repository ppa:hikariknight/unix-runescape-client
 ```
