@@ -73,19 +73,19 @@ else
 	require updater::download::file;
 	
 	# Make a variable to contain the download url for the jar file directly
-	my $url = "http://www.runescape.com/downloads/jagexappletviewer.jar";
+	my $url = "https://www.runescape.com/downloads/jagexappletviewer.jar";
 	
 	# If we are on Mac or we are on linux and dmg is passed
 	if (($OS =~ /(linux|darwin)/ && defined $ARGV[1] && $ARGV[1] =~ /^dmg$/i) || ($OS =~ /(linux|darwin)/ && defined $ARGV[2] && $ARGV[2] =~ /^dmg$/i))
 	{
 		# Download the dmg file instead
-		$url = "http://www.runescape.com/downloads/runescape.dmg";
+		$url = "https://www.runescape.com/downloads/runescape.dmg";
 	}
 	# Else If we are on Windows or we are on linux and msi is passed
 	elsif (($OS =~ /(linux|MSWin32)/ && defined $ARGV[1] && $ARGV[1] =~ /^msi$/i) || ($OS =~ /(linux|MSWin32)/ && defined $ARGV[2] && $ARGV[2] =~ /^msi$/i))
 	{
-		# Download the dmg file instead
-		$url = "http://www.runescape.com/downloads/runescape.msi";
+		# Download the msi file instead
+		$url = "https://www.runescape.com/downloads/runescape.msi";
 	}
 	
 	# Split the url by /
