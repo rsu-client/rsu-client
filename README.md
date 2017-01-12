@@ -11,6 +11,7 @@ from one of the following repositories:
 __Linux Repositories__
 * [ArchLinux AUR Repository](https://aur.archlinux.org/packages/unix-runescape-client/ "ArchLinux AUR Repository")
 * [Launchpad Ubuntu/Mint PPA](https://launchpad.net/~hikariknight/+archive/unix-runescape-client/ "Launchpad PPA")
+* [Repository for Centos, Fedora, RHEL, OpenSuse, SL and SLE](https://software.opensuse.org/download.html?project=home%3Afusion809&package=unix-runescape-client)
 
 __Installers (Powered by [BitRock](http://bitrock.com/))__
 * [Installers](https://github.com/HikariKnight/rsu-client/releases/latest)
@@ -160,6 +161,7 @@ Developers, Contributors and people that have helped the project
 -----------
 * HikariKnight - _Developer_
 * [ivanpu](https://github.com/ivanpu) - _Aur Repository_
+* [fusion809](https://github.com/fusion809) - _RPM based Repository_
 * chroot - _force pulseaudio_
 * [Ethoxyethaan (nick.hermans.be+rsu@gmail.com)](mailto:nick.hermans.be+rsu@gmail.com) - _original bash script for launching the jagexappletviewer.jar on Linux_
 * Jmb71 - _findjavalib regex_
