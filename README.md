@@ -68,7 +68,7 @@ __Installation on openSUSE__
 
 * Install dependent packages
 ```bash
-sudo zypper in perl "perl(List::MoreUtils)" "perl(Config::IniFiles)" "perl(Archive::Extract)"
+sudo zypper in perl perl-List-MoreUtils perl-List-moreUtils-XS perl-Config-IniFiles perl-Archive-Extract
 ```
 
 * Download and extract the universal archive.
