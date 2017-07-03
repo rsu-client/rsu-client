@@ -1,7 +1,11 @@
 package client::launch::runescape;
 #
 #    The main script of the rsu-client, this takes care of overhead stuff
-#    Copyright (C) 2011-2013  HikariKnight
+#    Copyright (C) 2011-2017  HikariKnight
+#    and contributors found in the AUTHORS file.
+#    Use of this script is governed by a GPL v2 license
+#    that can be found in the LICENSE file.
+#    Source code and contact info at https://github.com/HikariKnight/runescape
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

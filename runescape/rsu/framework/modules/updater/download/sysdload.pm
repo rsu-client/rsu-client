@@ -1,4 +1,9 @@
 package updater::download::sysdload;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 # This function provides a way to download files if the binary version of rsu-query is not installed
 # (meaning the system perl might not be compatible with the other commands)

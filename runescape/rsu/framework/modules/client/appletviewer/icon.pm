@@ -1,4 +1,9 @@
 package client::appletviewer::icon;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 # This is a module to fetch which icon to use for
 # the client window, in the near future the user

@@ -1,4 +1,9 @@
 package rsu::files::copy;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 # Use the File::Copy module
 use File::Copy qw(cp mv);

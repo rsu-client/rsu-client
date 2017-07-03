@@ -1,4 +1,9 @@
 package platform::info;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 # Use the Config module so we can get some info about this perl install
 use Config;

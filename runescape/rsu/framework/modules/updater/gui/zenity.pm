@@ -1,4 +1,9 @@
 package updater::gui::zenity;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 ##############################################################
 # This module was written based of Fallen Unia's fork of the #
 #        update-runescape-client script to use zenity        #

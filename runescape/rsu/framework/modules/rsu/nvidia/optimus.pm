@@ -1,4 +1,9 @@
 package rsu::nvidia::optimus;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 # Thanks to Tzbob for mentioning that primusrun works with runescape (on arch linux)
 # Thanks to 1g for testing this module on ubuntu to see if

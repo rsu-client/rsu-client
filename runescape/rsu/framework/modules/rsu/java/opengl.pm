@@ -1,6 +1,11 @@
 # This module deals with making sure that opengl works with java on linux
 # NOTE: no support for nvidia optimus yet! but it is being worked on!
 package rsu::java::opengl;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 sub unix_findlibrarypath
 {

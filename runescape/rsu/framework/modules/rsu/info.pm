@@ -2,6 +2,11 @@
 # information about the RSU-Client like it's version number.
 # More features will come soon
 package rsu::info;
+#       Copyright (C) 2017 HikariKnight <rshikariknight@gmail.com>
+#       and contributors found in the AUTHORS file.
+#       Use of this script is governed by a GPL v2 license
+#       that can be found in the LICENSE file.
+#       Source code and contact info at https://github.com/HikariKnight/runescape
 
 # All functions in this module requires these modules
 require rsu::files::IO;

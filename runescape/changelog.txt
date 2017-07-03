@@ -1,3 +1,9 @@
+runescape (4.3.6) trusty; urgency=high
+  
+  * Updated files with copyright info for #115
+  
+ -- HikariKnight <rshikariknight@gmail.com>  Mon, 03 Jul 2017 12:21:44 +0200
+
 runescape (4.3.5) trusty; urgency=high
   
   * Fixed the playercount for OldSchool
