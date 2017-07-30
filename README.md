@@ -141,12 +141,12 @@ Features
 * Settings editor (Easily edit the runescape.prm or settings.conf to tweak the client to optimal performance) - _requires WxPerl_
 * Working Language Settings! (Previously the language settings would not work on Linux on the client)
 * Ability to change which Java to run the Client with
-* Crossplatform! (works natively in Windows, MacOSX and Linux, may also run on Solaris and BSD but with limited support)
+* Crossplatform! Works natively in Windows, MacOSX and Linux (may also run on Solaris, ChromeOS and BSD __but with no testing or support from me__)
 * Integrates with both Mac and Linux (the __install-desktop-icons__ script makes a launcher for the client in the systems native format)
 * Built in updater! (Lets you easily update __jagexappletviewer.jar__ easily whenever jagex updates their client!)
 * Script updater! (If you use the tar.gz archive version, it will let you update the scripts through the updater)
 * Module support (Lets you make your own modules to add functionality to the script part of the client Ex: calculators)
-* Works on several architectures (64bit/amd64, 32bit/i386, armel, lpia, arm32, arm64, sparc32, sparc64) - _NOTE: arm support only tested on Linux, as perl is not compiled for arm on windows yet!_
+* Tested and works on several architectures 64bit/amd64/x86_64 and 32bit/x86 (may work on armel, lpia, arm32, arm64, sparc32, sparc64 but without support from me due to lack of access to said architecture and may lack working libraries for the client or scripts)
 
 
 Contribution
@@ -154,7 +154,6 @@ Contribution
 If you want to contribute to the project you can do that in several ways.
 Either do a pull request and contribute through that (make sure you only commit to the development branch!)
 
-Or you can send a message with the code on youtube to [RSCommunityTech](http://www.youtube.com/user/RSCommunityTech).
 If you contribute code you can also get your name or nickname in the contributors list below (if you want)
 
 Developers, Contributors and people that have helped the project
