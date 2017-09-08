@@ -32,7 +32,7 @@ __Installation on Debian__
 
 1. Open the Terminal program and type in the following commands:
 ```bash
-echo "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu trusty main" | sudo tee -a /etc/apt/sources.list
+echo "deb http://ppa.launchpad.net/hikariknight/unix-runescape-client/ubuntu zesty main" | sudo tee -a /etc/apt/sources.list
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9BA73CFA
 sudo apt-get update && sudo apt-get install unix-runescape-client
 ```
