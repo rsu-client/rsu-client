@@ -1,7 +1,8 @@
 RuneScape Unix/Linux Client (rsu-client)
 ==========
 
-This is the git repository for the RSU-Client, all development happens
+This is the git repository for the RSU-Client, a RuneScape Client Launcher
+written for the now Legacy client and now OldSchool, all development happens
 here before updates are pushed to the client and other repositories.
 This repository does not include the jawt.dll file neccessary for running
 the game through Wine, however you __can run the game__ natively __without that file__.
