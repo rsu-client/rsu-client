@@ -32,9 +32,9 @@ package client::launch::updater;
 # Fallen Unia - Zenity support  #
 #################################
 
-my $windowsurl = "http://www.runescape.com/downloads/runescape.msi";
-my $macurl = "http://www.runescape.com/downloads/runescape.dmg";
-my $jarurl = "http://www.runescape.com/downloads/jagexappletviewer.jar";
+my $windowsurl = "https://www.runescape.com/downloads/oldschool.msi";
+my $macurl = "https://www.runescape.com/downloads/runescape.dmg";
+my $jarurl = "https://www.runescape.com/downloads/jagexappletviewer.jar";
 my $updateurl = "https://github.com/HikariKnight/rsu-client/archive/rsu-api-latest.tar.gz";
 
 # Be strict to avoid messy code
