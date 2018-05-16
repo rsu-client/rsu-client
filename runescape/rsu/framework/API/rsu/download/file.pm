@@ -24,14 +24,14 @@ NOTES:
 	it will result in \$clientdir/foldername
 
 Examples:
-	$ARGV[0] http://www.runescape.com/downloads/runescape.msi
-	result: downloads the runescape.msi to \$clientdir/.download
+	$ARGV[0] http://www.runescape.com/downloads/oldschool.msi
+	result: downloads the oldschool.msi to \$clientdir/.download
 	
-	$ARGV[0] http://www.runescape.com/downloads/runescape.msi \"/tmp\"
-	result: downloads the runescape.msi to /tmp
+	$ARGV[0] http://www.runescape.com/downloads/oldschool.msi \"/tmp\"
+	result: downloads the oldschool.msi to /tmp
 	
-	$ARGV[0] http://www.runescape.com/downloads/runescape.msi \"tmp\"
-	result: downloads the runescape.msi to \$clientdir/tmp
+	$ARGV[0] http://www.runescape.com/downloads/oldschool.msi \"tmp\"
+	result: downloads the oldschool.msi to \$clientdir/tmp
 	
 Remarks:
 	Returns nothing unless Wx is not installed.

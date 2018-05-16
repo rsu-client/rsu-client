@@ -44,7 +44,7 @@ sub msiextract
 		$clientdir =~ s/\//\\/g;
 		
 		# Extract the .msi using msiexec
-		system "msiexec /a \"$clientdir\\.download\\runescape.msi\" /qn TARGETDIR=\"$clientdir\\.download\\extracted_files\"";
+		system "msiexec /a \"$clientdir\\.download\\oldschool.msi\" /qn TARGETDIR=\"$clientdir\\.download\\extracted_files\"";
 		
 		# Copy the jagexappletviewer.jar to $placejar
 		rsu::files::copy::print_cp("$clientdir/.download/extracted_files/jagexlauncher/jagexlauncher/bin/jagexappletviewer.jar", "$clientdir/$placejar/");
@@ -135,7 +135,7 @@ sub p7zip_msi
 	my ($placejar, $extractjawt) = @_;
 	
 	# Extract the msi using p7zip
-	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y runescape.msi";
+	system "cd \"$clientdir/.download/\" && 7z e -oextracted_files -y oldschool.msi";
 	
 	# Check for the files we are looking for
 	my @files = rsu::files::grep::dirgrep("$clientdir/.download/extracted_files", "^(rslauncher|JagexAppletViewerJarFile|AWTDLLFile|JAWTDLLFile|MSVCR100DLLFile)\..+");

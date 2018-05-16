@@ -46,7 +46,7 @@ Examples:
 	result: downloads the runescape.dmg and extracts the jar file
 	
 	$ARGV[0] \"JAR/applet\" msi
-	result: downloads the runescape.msi and extracts the jar file and jawt for wine
+	result: downloads the oldschool.msi and extracts the jar file and jawt for wine
 	
 Remarks:
 	Returns nothing.
@@ -90,8 +90,13 @@ else
 	elsif (($OS =~ /(linux|MSWin32)/ && defined $ARGV[1] && $ARGV[1] =~ /^msi$/i) || ($OS =~ /(linux|MSWin32)/ && defined $ARGV[2] && $ARGV[2] =~ /^msi$/i))
 	{
 		# Download the msi file instead
-		$url = "https://www.runescape.com/downloads/runescape.msi";
+		$url = "https://www.runescape.com/downloads/oldschool.msi";
 	}
+        elsif (($OS =~ /linux/) && !defined $ARGV[1] && !defined $ARGV[2])
+        {
+                # Use the msi on linux by default
+                $url = "https://www.runescape.com/downloads/oldschool.msi";
+        }
 	
 	# Split the url by /
 	my @filename = split /\//, $url;
@@ -139,8 +144,8 @@ sub extractclient
 	# Get the client directory
 	my $clientdir = rsu::files::clientdir::getclientdir();
 	
-	# If we are not on MacOSX and the filename is runescape.msi
-	if ($filename =~ /runescape.msi/ && $OS !~ /darwin/)
+	# If we are not on MacOSX and the filename is oldschool.msi
+	if ($filename =~ /oldschool.msi/ && $OS !~ /darwin/)
 	{
 		# Run the msiextract function
 		updater::extract::client::msiextract($placejar,"true");
