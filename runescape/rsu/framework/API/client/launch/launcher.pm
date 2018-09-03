@@ -754,7 +754,7 @@ sub get_playercount
 	print "Fetching the current playercount from Old School RuneScape.\n";
 	
 	# Get the html from the oldschool homepage
-	my $osrs_html = updater::download::sysdload::readurl("http://oldschool.runescape.com",5);
+	my $osrs_html = updater::download::sysdload::readurl("https://oldschool.runescape.com",5);
 	
 	# Fetch the oldschool homepage html so we can find the playercount
 	my @osrs_grep = rsu::files::grep::strgrep($osrs_html, "There are currently");
