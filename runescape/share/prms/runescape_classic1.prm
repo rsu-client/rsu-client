@@ -1,6 +1,0 @@
--Djava.class.path=jagexappletviewer.jar
--Dcom.jagex.config=http://classic1.runescape.com/jav_config.ws
--Xmx512m
--Xss2m
--Dsun.java2d.noddraw=true
-jagexappletviewer
