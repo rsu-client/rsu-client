@@ -766,7 +766,7 @@ sub get_playercount
 	if ($osrs_playercount =~ /There are currently\s(.+)\speople playing!/)
 	{
 		# Remove the text
-		$osrs_playercount =~ s/.+There are currently\s(.+)\speople playing!.+/$1/;
+		$osrs_playercount =~ s/\D//g;
 		
 		# If OSRS player count failed (as in we dont have a number)
 		if ($osrs_playercount !~ /^\d+$/)
