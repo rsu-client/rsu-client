@@ -53,8 +53,9 @@ __Installation on ArchLinux__
 
 * Open the Terminal program and type in the following command:
 ```bash
-yaourt -S unix-runescape-client
+yay -S unix-runescape-client
 ```
+*NOTE: The AUR package is currently orphaned if you have any previous experience maintaining an AUR package please consider doing so.*
 
 __Installation on Fedora__
 
