@@ -423,13 +423,13 @@ sub set_layout
 		if ($newschannel =~ /oldschool/)
 		{
 			# Fetch rssfeed for oldschool
-			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss?oldschool=true");
+			fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss?oldschool=true");
 		}
 		# Else
 		else
 		{
 			# Fetch rssfeed for oldschool
-			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+			fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss");
 		}
 	}
 	
@@ -766,7 +766,7 @@ sub get_playercount
 	if ($osrs_playercount =~ /There are currently\s(.+)\speople playing!/)
 	{
 		# Remove the text
-		$osrs_playercount =~ s/.+There are currently\s(.+)\speople playing!.+/$1/;
+		$osrs_playercount =~ s/\D//g;
 		
 		# If OSRS player count failed (as in we dont have a number)
 		if ($osrs_playercount !~ /^\d+$/)
@@ -1054,13 +1054,13 @@ sub refreshnews_clicked
 	if ($newschannel =~ /oldschool/)
 	{
 		# Refresh the rssfeed for oldschool
-		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss?oldschool=true");
+		fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss?oldschool=true");
 	}
 	# Else
 	else
 	{
 		# Refresh the rssfeed for runescape
-		fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+		fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss");
 	}
 }
 
@@ -1083,7 +1083,7 @@ sub hyperlink_clicked
 		if ($call =~ /^news:\/\/oldschool/)
 		{
 			# Refresh the rssfeed with oldschool news
-			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss?oldschool=true");
+			fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss?oldschool=true");
 			
 			# Set the newschannel to oldschool in settings
 			rsu::files::IO::writeconf("_", "newschannel", "oldschool", "settings.conf");
@@ -1092,7 +1092,7 @@ sub hyperlink_clicked
 		elsif ($call =~ /^news:\/\/runescape/)
 		{
 			# Refresh the rssfeed with RuneScape news
-			fetch_rssnews($self, "http://services.runescape.com/m=news/latest_news.rss");
+			fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss");
 			
 			# Set the newschannel to oldschool in settings
 			rsu::files::IO::writeconf("_", "newschannel", "runescape", "settings.conf");
