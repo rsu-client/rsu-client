@@ -20,7 +20,7 @@ if [ $exitcode -eq 0 ]; then
     sed -i -e 's/else DE=""/elif xprop -root 2> \/dev\/null | grep -i ^xfce_desktop_window >\/dev\/null 2>\&1; then DE=xfce;\nelse DE=\"\"/' "$tmpdir/xdg-open"
 
     # Execute xdg-open
-    env "$tmpdir/xdg-open" $@
+    env "$tmpdir/xdg-open" "$@"
 
     rm -rf "$tmpdir"
     
