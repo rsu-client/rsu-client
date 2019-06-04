@@ -428,7 +428,7 @@ sub set_layout
 		# Else
 		else
 		{
-			# Fetch rssfeed for oldschool
+			# Fetch rssfeed for runescape
 			fetch_rssnews($self, "https://services.runescape.com/m=news/latest_news.rss");
 		}
 	}
