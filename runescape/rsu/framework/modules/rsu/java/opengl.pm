@@ -39,7 +39,7 @@ sub unix_findlibrarypath
 		$lddresult =~ s/\s*libjli\.so\s*=>\s+(.*)jli\/libjli\.so\s+\(\S+\)\s*$/$1/;
 		
 		# Return the library path with a separate path for libjli.so for older javas
-		return "LD_LIBRARY_PATH=$lddresult:$lddresult","jli/:\$LD_LIBRARY_PATH";
+		return "LD_LIBRARY_PATH=$lddresult:$lddresult"."jli/:\$LD_LIBRARY_PATH";
 	}
 }
 
