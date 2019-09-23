@@ -10,18 +10,11 @@ package rsu::java::opengl;
 sub unix_findlibrarypath
 {
 	# Gets passed data from the function call
-	my ($binary) = @_;
+	my ($binary, $version) = @_;
 	
 	# List up the shared library files used by the java binary (not the symlink!) and remove unneeded info
 	my $lddresult = `ldd $binary | grep libjli.so`;
 	#my $lddresult = `ldd $binary | grep libjli.so | sed s/libjli.so\\ =\\>// | sed s/\\(.*// | sed s/jli\\\\/libjli.so//`;
-	
-	# Finds the library path from the ldd output line, removing whitespaces before 
-	# and after the path.
-	$lddresult =~ s/\s*libjli\.so\s*=>\s+(.*)jli\/libjli\.so\s+\(\S+\)\s*$/$1/;
-	
-	# Add the libjli back in a different variable
-	my $libjli = $lddresult."jli/";
 	
 	# Remove the TAB and whitespaces before the path
 	#$lddresult =~ s/^(\t+\s+|\t+|\s+)//g;
@@ -29,8 +22,25 @@ sub unix_findlibrarypath
 	# Remove the newline from the output
 	#$lddresult =~ s/\n//g;
 	
-	# Return the library path for java
-	return "LD_LIBRARY_PATH=$lddresult:$libjli:\$LD_LIBRARY_PATH";
+	# If the java version is 12
+	if ($version =~ /build 12/i)
+	{
+		# Find the library path for java 12 from the ldd output line and remove
+		# whitespaces before and after the path
+		$lddresult =~ s/\s*libjli\.so\s*=>\s+(.*)libjli\.so\s+\(\S+\)\s*$/$1/;
+		
+		# Return the library path for java 12
+		return "LD_LIBRARY_PATH=$lddresult:\$LD_LIBRARY_PATH";
+	}
+	else
+	{
+		# Find the library path for older javas from the ldd output line and remove
+		# whitespaces before and after the path
+		$lddresult =~ s/\s*libjli\.so\s*=>\s+(.*)jli\/libjli\.so\s+\(\S+\)\s*$/$1/;
+		
+		# Return the library path with a separate path for libjli.so for older javas
+		return "LD_LIBRARY_PATH=$lddresult:$lddresult"."jli/:\$LD_LIBRARY_PATH";
+	}
 }
 
 #

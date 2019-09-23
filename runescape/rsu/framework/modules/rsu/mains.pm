@@ -65,23 +65,6 @@ sub unix_main
 	# Make a variable to contain the clienticon folder
 	my $iconfolder = client::appletviewer::icon::getIcon($params, $rsu_data->prmfile, $rsu_data->clientdir);
 	
-	# Make a variable to contain the java library path
-	my $javalibpath;
-	
-	# If we are not on MacOSX (as OSX java libraries are bugged)
-	if ($rsu_data->OS !~ /darwin/)
-	{
-		# Locate the java JRE lib folder so we can add it to the library PATH
-		$javalibpath = rsu::java::opengl::unix_findlibrarypath($rsu_data->javabin);
-		
-		# If we are on linux
-		if ($rsu_data->OS =~ /linux/)
-		{
-			# Apply cairo-nogl to the library path
-			$javalibpath = rsu::java::opengl::add_caironogl($javalibpath, $rsu_data->cwd);
-		}
-	}
-	
 	# Check if java can be run in client mode and make sure we use the client mode if available
 	# as the client mode gives a HUGE boost in performance compared to the default server mode.
 	$rsu_data->javabin = rsu::java::jre::check_client_mode($rsu_data->javabin);
@@ -91,6 +74,23 @@ sub unix_main
 	
 	# Run the java -version command and check if it is openjdk or java (or to check if its 32bit or 64bit)
 	$rsu_data->javaversion = `$javabin -version 2>&1`;
+	
+	# Make a variable to contain the java library path
+	my $javalibpath;
+	
+	# If we are not on MacOSX (as OSX java libraries are bugged)
+	if ($rsu_data->OS !~ /darwin/)
+	{
+		# Locate the java JRE lib folder so we can add it to the library PATH
+		$javalibpath = rsu::java::opengl::unix_findlibrarypath($rsu_data->javabin, $rsu_data->javaversion);
+		
+		# If we are on linux
+		if ($rsu_data->OS =~ /linux/)
+		{
+			# Apply cairo-nogl to the library path
+			$javalibpath = rsu::java::opengl::add_caironogl($javalibpath, $rsu_data->cwd);
+		}
+	}
 	
 	# If user enabled alsa sounds and OS is linux
 	if ($rsu_data->forcealsa =~ /(1|true)/i && $rsu_data->OS =~ /linux/)
