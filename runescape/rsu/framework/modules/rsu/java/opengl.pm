@@ -22,8 +22,11 @@ sub unix_findlibrarypath
 	# Remove the newline from the output
 	#$lddresult =~ s/\n//g;
 	
-	# If the java version is 12
-	if ($version =~ /build 12/i)
+	# Extract the major version from the java build string
+	($version) = $version =~ /.*build (\d+).*/;
+	
+	# If the java version is greater than or equal to 12
+	if ($version >= 12)
 	{
 		# Find the library path for java 12 from the ldd output line and remove
 		# whitespaces before and after the path
