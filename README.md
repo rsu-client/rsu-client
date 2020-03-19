@@ -1,6 +1,8 @@
 RuneScape Unix/Linux Client (rsu-client)
 ==========
 
+### NOTE: This client no longer works with RS3, it only works with OldSchool due to the removal of the java client support. <br>As such, further development of this client will not happen.
+
 This is the git repository for the RSU-Client, a RuneScape Client Launcher
 written for the now Legacy client and now OldSchool, all development happens
 here before updates are pushed to the client and other repositories.
